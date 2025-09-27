@@ -8,7 +8,7 @@ import {
   HiOutlineUser,
 } from "react-icons/hi";
 import { GiCrystalBall } from "react-icons/gi";
-
+import assets from "../assets/assets";
 // Helper component: Accent
 const Accent = ({ children }) => (
   <span className="text-orange-600">{children}</span>
@@ -34,12 +34,10 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-4">
             <a href="#" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-orange-200 to-orange-300 flex items-center justify-center shadow">
-                <GiCrystalBall className="text-orange-700 text-xl" />
-              </div>
+              
               <div>
-                <div className="text-lg font-bold text-gray-800">AstroPlanets</div>
-                <div className="text-xs text-gray-500">Guidance • Yoga • Healing</div>
+                <img src={assets.logo} className="w-28" alt="" />
+
               </div>
             </a>
           </div>
