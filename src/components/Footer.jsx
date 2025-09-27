@@ -1,6 +1,7 @@
 import React from "react";
 import { GiCrystalBall } from "react-icons/gi";
 import { HiMail, HiPhone } from "react-icons/hi";
+import assets from "../assets/assets";
 
 // Helper component: Accent
 const Accent = ({ children }) => (
@@ -15,11 +16,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-200 to-orange-300 rounded-md flex items-center justify-center">
-                <GiCrystalBall className="text-orange-700" />
-              </div>
-              <div>
-                <div className="font-bold">AstroPlanets</div>
+              
+              <div className="flex flex-col items-center">
+                <img src={assets.logo} className="w-36" alt="" />
                 <div className="text-sm text-gray-500">Align your stars. Find your calm.</div>
               </div>
             </div>
