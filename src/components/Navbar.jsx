@@ -80,34 +80,40 @@ const Navbar = () => {
       </div>
 
       {/* Mobile menu panel */}
-      <AnimatePresence>
-        {open && (
-          <motion.nav
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-orange-50"
+<AnimatePresence>
+  {open && (
+    <motion.nav
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+      className="md:hidden bg-white border-t border-orange-50"
+    >
+      <div className="px-4 py-4 space-y-2">
+        {[
+          ["Services", "/services"],
+          ["Classes", "/classes"],
+          ["Products", "/products"],
+          ["About", "/about"],
+          ["Contact", "/contact"],
+        ].map(([label, href]) => (
+          <Link
+            key={label}
+            to={href}
+            className="block py-2 text-gray-700 hover:text-orange-600"
+            onClick={() => setOpen(false)} // <-- close menu on click
           >
-            <div className="px-4 py-4 space-y-2">
-              {[
-                ["Services", "#services"],
-                ["Classes", "#classes"],
-                ["Products", "#products"],
-                ["About", "#about"],
-                ["Contact", "#contact"],
-              ].map(([label, href]) => (
-                <a key={label} href={href} className="block py-2 text-gray-700 hover:text-orange-600">
-                  {label}
-                </a>
-              ))}
+            {label}
+          </Link>
+        ))}
 
-              <div className="pt-2">
-                <CTAButton>Book Now</CTAButton>
-              </div>
-            </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
+        <div className="pt-2">
+          <CTAButton onClick={() => setOpen(false)}>Book Now</CTAButton>
+        </div>
+      </div>
+    </motion.nav>
+  )}
+</AnimatePresence>
+
     </header>
   );
 };
