@@ -2,6 +2,7 @@ import React from "react";
 import { GiCrystalBall } from "react-icons/gi";
 import { HiMail, HiPhone } from "react-icons/hi";
 import assets from "../assets/assets";
+import { Link } from "react-router-dom";
 
 // Helper component: Accent
 const Accent = ({ children }) => (
@@ -32,10 +33,10 @@ const Footer = () => {
           <div>
             <div className="font-semibold mb-3">Explore</div>
             <ul className="text-sm text-gray-600 space-y-2">
-              <li><a href="#services" className="hover:text-orange-600">Services</a></li>
-              <li><a href="#classes" className="hover:text-orange-600">Classes</a></li>
-              <li><a href="#products" className="hover:text-orange-600">Products</a></li>
-              <li><a href="#about" className="hover:text-orange-600">About</a></li>
+              <li><Link to="/services" className="hover:text-orange-600">Services</Link></li>
+              <li><Link to="/classes" className="hover:text-orange-600">Classes</Link></li>
+              <li><Link to="/products" className="hover:text-orange-600">Products</Link></li>
+              <li><Link to="/about" className="hover:text-orange-600">About</Link></li>
             </ul>
           </div>
 

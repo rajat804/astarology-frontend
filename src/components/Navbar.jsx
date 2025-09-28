@@ -9,6 +9,7 @@ import {
 } from "react-icons/hi";
 import { GiCrystalBall } from "react-icons/gi";
 import assets from "../assets/assets";
+import { Link } from "react-router-dom";
 // Helper component: Accent
 const Accent = ({ children }) => (
   <span className="text-orange-600">{children}</span>
@@ -33,22 +34,21 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-4">
-            <a href="#" className="flex items-center gap-3">
-              
+            <Link to="/" className="flex items-center gap-3">
               <div>
                 <img src={assets.logo} className="w-28" alt="" />
 
               </div>
-            </a>
+            </Link>
           </div>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
-            <a href="#services" className="text-gray-700 hover:text-orange-600 transition">Services</a>
-            <a href="#classes" className="text-gray-700 hover:text-orange-600 transition">Classes</a>
-            <a href="#products" className="text-gray-700 hover:text-orange-600 transition">Products</a>
-            <a href="#about" className="text-gray-700 hover:text-orange-600 transition">About</a>
-            <a href="#contact" className="text-gray-700 hover:text-orange-600 transition">Contact</a>
+            <Link to="/services" className="text-gray-700 hover:text-orange-600 transition">Services</Link>
+            <Link to="/classes" className="text-gray-700 hover:text-orange-600 transition">Classes</Link>
+            <Link to="/products" className="text-gray-700 hover:text-orange-600 transition">Products</Link>
+            <Link to="/about" className="text-gray-700 hover:text-orange-600 transition">About</Link>
+            <Link to="/contact" className="text-gray-700 hover:text-orange-600 transition">Contact</Link>
           </nav>
 
           <div className="flex items-center gap-3">
