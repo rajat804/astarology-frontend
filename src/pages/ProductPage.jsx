@@ -127,7 +127,7 @@ const ProductsPage = () => {
           <input
             type="email"
             placeholder="Enter your email"
-            className="px-4 py-3 rounded-l-lg w-full sm:w-auto min-w-[260px] text-gray-900 border border-white focus:outline-none focus:ring-2 focus:ring-white focus:border-white"
+            className="px-4 py-3 rounded-l-lg w-full sm:w-auto min-w-[260px] text-white border border-white focus:outline-none focus:ring-2 focus:ring-white focus:border-white"
           />
           <button className="px-6 py-3 bg-white text-orange-600 font-semibold rounded-r-lg hover:bg-orange-100">
             Subscribe
