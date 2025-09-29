@@ -48,7 +48,7 @@ export default function AdminLogin() {
               <circle cx="12" cy="15" r="5" stroke="white" strokeWidth="1.5"/>
             </svg>
           </div>
-          <div className="text-xs text-white/80 text-center">Secure admin access • Built with Tailwind & Framer Motion</div>
+          <div className="text-xs text-white/80 text-center">Secure admin access</div>
         </div>
 
         {/* Right - form */}
