@@ -56,24 +56,7 @@ const ProductsPage = () => {
         </p>
       </section>
 
-      {/* Categories */}
-      <section className="py-12 px-6 text-center">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800">Shop by Category</h2>
-        <div className="flex flex-wrap justify-center gap-6">
-          {["Telescopes", "Space Suits", "Decor", "Collectibles"].map(
-            (category, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ scale: 1.05 }}
-                className="bg-white shadow-lg rounded-2xl px-8 py-6 cursor-pointer hover:bg-orange-50"
-              >
-                <Tag className="w-6 h-6 text-orange-500 mx-auto mb-2" />
-                <p className="font-semibold text-gray-800">{category}</p>
-              </motion.div>
-            )
-          )}
-        </div>
-      </section>
+      
 
       {/* Product Grid */}
       <section className="py-16 px-6">
