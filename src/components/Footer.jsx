@@ -55,6 +55,7 @@ const Footer = () => {
           <div className="flex items-center gap-4">
             <a className="hover:text-orange-600">Privacy</a>
             <a className="hover:text-orange-600">Terms</a>
+            <Link to="/admin/login" className="hover:text-orange-600">Admin</Link>
           </div>
         </div>
       </div>
