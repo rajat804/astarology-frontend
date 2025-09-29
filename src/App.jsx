@@ -10,6 +10,8 @@ import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import ScrollToTop from './components/ScrollToTop'
 import AuthPage from './pages/AuthPage'
+import AdminDashboardShell from './admin/AdminDashboard'
+import AdminLogin from './admin/AdminLogin'
 
 const App = () => {
   return (
@@ -24,7 +26,8 @@ const App = () => {
         <Route path="/about" element={<AboutPage/>} />
         <Route path="/contact" element={<ContactPage/>} />
         <Route path="/auth" element={<AuthPage/>} />
-
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboardShell />} />
       </Routes>
       <Footer/>
     </div>
