@@ -9,6 +9,7 @@ import ProductsPage from './pages/ProductPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import ScrollToTop from './components/ScrollToTop'
+import AuthPage from './pages/AuthPage'
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/products" element={<ProductsPage/>} />
         <Route path="/about" element={<AboutPage/>} />
         <Route path="/contact" element={<ContactPage/>} />
+        <Route path="/auth" element={<AuthPage/>} />
 
       </Routes>
       <Footer/>
