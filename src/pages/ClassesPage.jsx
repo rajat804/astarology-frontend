@@ -1,24 +1,27 @@
-// ClassesPage.jsx
+// src/pages/ClassesPage.jsx (renamed from coursesPage.jsx for consistency)
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   HiOutlineClock,
   HiOutlineUser,
-  HiOutlineVideoCamera,
 } from "react-icons/hi";
 import { FaCheck, FaChevronDown, FaStar } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 
 /* ---------- Helpers ---------- */
 const Accent = ({ children }) => (
   <span className="text-orange-600">{children}</span>
 );
 
-const CTA = ({ children, className = "", ...rest }) => (
+const CTA = ({ children, className = "", onClick, disabled, ...rest }) => (
   <button
     {...rest}
+    onClick={onClick}
+    disabled={disabled}
     className={
       "inline-flex items-center gap-3 px-5 py-2 rounded-2xl font-semibold shadow-md text-white bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transition " +
-      className
+      className + (disabled ? " opacity-50 cursor-not-allowed" : "")
     }
   >
     {children}
@@ -33,11 +36,11 @@ const Hero = () => (
         Learn with <Accent>Experts</Accent>
       </h1>
       <p className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg">
-        Enroll in live and recorded classes led by certified astrologers,
+        Enroll in live and recorded courses led by certified astrologers,
         numerologists, and yoga instructors. Build knowledge step by step.
       </p>
       <div className="mt-6">
-        <CTA>Explore Classes</CTA>
+        <CTA>Explore courses</CTA>
       </div>
     </div>
   </section>
@@ -75,7 +78,7 @@ const Categories = () => {
   return (
     <section className="py-14 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-2xl font-bold mb-8">Class Categories</h2>
+        <h2 className="text-2xl font-bold mb-8">Courses Categories</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {cats.map((c, i) => (
             <motion.div
@@ -106,9 +109,12 @@ const Categories = () => {
   );
 };
 
-/* ---------- FEATURED CLASSES ---------- */
-const FeaturedClasses = () => {
-  const classes = [
+/* ---------- FEATURED COURSES ---------- */
+const FeaturedCourses = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const courses = [
     {
       title: "Astrology 101",
       duration: "6 Weeks",
@@ -132,12 +138,20 @@ const FeaturedClasses = () => {
     },
   ];
 
+  const handleEnroll = () => {
+    if (isAuthenticated) {
+      navigate("/demo-video");
+    } else {
+      navigate("/auth");
+    }
+  };
+
   return (
     <section className="py-14 bg-gradient-to-b from-orange-50 to-white">
       <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-2xl font-bold mb-8">Featured Classes</h2>
+        <h2 className="text-2xl font-bold mb-8">Featured Courses</h2>
         <div className="grid md:grid-cols-3 gap-6">
-          {classes.map((c, i) => (
+          {courses.map((c, i) => (
             <motion.div
               key={c.title}
               initial={{ opacity: 0, y: 12 }}
@@ -173,7 +187,7 @@ const FeaturedClasses = () => {
                 <button className="flex-1 px-4 py-2 rounded-xl border border-orange-100 text-orange-600 font-semibold hover:bg-orange-50">
                   Details
                 </button>
-                <CTA>Enroll</CTA>
+                <CTA onClick={handleEnroll}>Enroll</CTA>
               </div>
             </motion.div>
           ))}
@@ -217,7 +231,7 @@ const Packages = () => {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-6xl mx-auto px-6 text-center">
-        <h2 className="text-3xl font-bold">Class Packages</h2>
+        <h2 className="text-3xl font-bold">Course Packages</h2>
         <p className="text-gray-600 mt-2">
           Choose a package that fits your learning style.
         </p>
@@ -256,8 +270,8 @@ const FAQ = () => {
   const [open, setOpen] = useState(null);
   const faqs = [
     {
-      q: "How are the classes conducted?",
-      a: "Classes are conducted live on Zoom/Google Meet with recordings available for later access.",
+      q: "How are the courses conducted?",
+      a: "Courses are conducted live on Zoom/Google Meet with recordings available for later access.",
     },
     {
       q: "Will I get a certificate?",
@@ -265,7 +279,7 @@ const FAQ = () => {
     },
     {
       q: "Can I interact with the instructor?",
-      a: "Yes, our live classes include Q&A sessions and assignments for feedback.",
+      a: "Yes, our live courses include Q&A sessions and assignments for feedback.",
     },
   ];
 
@@ -316,7 +330,7 @@ const ClassesPage = () => {
     <main>
       <Hero />
       <Categories />
-      <FeaturedClasses />
+      <FeaturedCourses />
       <Packages />
       <FAQ />
     </main>

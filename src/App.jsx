@@ -12,9 +12,12 @@ import ScrollToTop from './components/ScrollToTop'
 import AuthPage from './pages/AuthPage'
 import AdminDashboardShell from './admin/AdminDashboard'
 import AdminLogin from './admin/AdminLogin'
+import { AuthProvider } from './context/AuthContext'
+import DemoVideoPage from './pages/DemoVideoPage'
 
 const App = () => {
   return (
+    <AuthProvider>
     <div>
       <Navbar />
        <ScrollToTop />
@@ -27,10 +30,12 @@ const App = () => {
         <Route path="/contact" element={<ContactPage/>} />
         <Route path="/auth" element={<AuthPage/>} />
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/demo-video" element={<DemoVideoPage />} />
         <Route path="/admin/dashboard" element={<AdminDashboardShell />} />
       </Routes>
       <Footer/>
     </div>
+    </AuthProvider>
   )
 }
 
