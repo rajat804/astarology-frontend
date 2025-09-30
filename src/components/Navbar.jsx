@@ -32,7 +32,7 @@ const Navbar = () => {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/services" className="text-gray-700 hover:text-orange-600">Services</Link>
-            <Link to="/classes" className="text-gray-700 hover:text-orange-600">Classes</Link>
+            <Link to="/courses" className="text-gray-700 hover:text-orange-600">Courses</Link>
             <Link to="/products" className="text-gray-700 hover:text-orange-600">Products</Link>
             <Link to="/about" className="text-gray-700 hover:text-orange-600">About</Link>
             <Link to="/contact" className="text-gray-700 hover:text-orange-600">Contact</Link>
@@ -82,7 +82,7 @@ const Navbar = () => {
             className="md:hidden bg-white border-t border-orange-50"
           >
             <div className="px-4 py-4 space-y-2">
-              {["Services","Classes","Products","About","Contact"].map((label) => (
+              {["Services","courses","Products","About","Contact"].map((label) => (
                 <Link
                   key={label}
                   to={`/${label.toLowerCase()}`}
