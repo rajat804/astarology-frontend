@@ -33,11 +33,10 @@ const Hero = () => (
   <section className="relative bg-gradient-to-b from-orange-50 to-white py-20">
     <div className="max-w-6xl mx-auto px-6 text-center">
       <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
-        Learn with <Accent>Experts</Accent>
+        Unlock the Secrets of <Accent>Numerology, Vastu, and Yoga</Accent>
       </h1>
       <p className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg">
-        Enroll in live and recorded courses led by certified astrologers,
-        numerologists, and yoga instructors. Build knowledge step by step.
+        Enroll in live online courses led by certified experts. Gain diplomas, master certifications, practical training, and transformative experiences.
       </p>
       <div className="mt-6">
         <CTA>Explore courses</CTA>
@@ -50,10 +49,6 @@ const Hero = () => (
 const Categories = () => {
   const cats = [
     {
-      name: "Astrology Basics",
-      img: "https://images.unsplash.com/photo-1517520287167-4bbf64a00d66",
-    },
-    {
       name: "Numerology",
       img: "https://images.unsplash.com/photo-1590080876135-2a34e3a3d6a9",
     },
@@ -64,14 +59,6 @@ const Categories = () => {
     {
       name: "Yoga & Meditation",
       img: "https://images.unsplash.com/photo-1554344056-591b3d3f197d",
-    },
-    {
-      name: "Tarot Reading",
-      img: "https://images.unsplash.com/photo-1622649517030-0e0597f5b6a1",
-    },
-    {
-      name: "Mindfulness",
-      img: "https://images.unsplash.com/photo-1558980664-10ea2320e07a",
     },
   ];
 
@@ -109,93 +96,237 @@ const Categories = () => {
   );
 };
 
-/* ---------- FEATURED COURSES ---------- */
-const FeaturedCourses = () => {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-
-  const courses = [
-    {
-      title: "Astrology 101",
-      duration: "6 Weeks",
-      instructor: "Dr. Meera Sharma",
-      price: "₹4,999",
-      rating: 4.8,
-    },
-    {
-      title: "Advanced Numerology",
-      duration: "4 Weeks",
-      instructor: "Rajesh Kumar",
-      price: "₹3,499",
-      rating: 4.7,
-    },
-    {
-      title: "Vastu for Homes",
-      duration: "8 Weeks",
-      instructor: "Ananya Gupta",
-      price: "₹6,999",
-      rating: 4.9,
-    },
-  ];
-
-  const handleEnroll = () => {
-    if (isAuthenticated) {
-      navigate("/demo-video");
-    } else {
-      navigate("/auth");
-    }
-  };
-
-  return (
-    <section className="py-14 bg-gradient-to-b from-orange-50 to-white">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-2xl font-bold mb-8">Featured Courses</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          {courses.map((c, i) => (
-            <motion.div
-              key={c.title}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.12 }}
-              className="bg-white rounded-2xl shadow-lg p-6 hover:-translate-y-1 hover:shadow-2xl transition"
-            >
-              <h3 className="font-semibold text-lg">{c.title}</h3>
-              <p className="text-gray-600 text-sm mt-2">
-                Learn {c.title} in-depth with practical guidance.
-              </p>
-              <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
-                <span className="flex items-center gap-2">
-                  <HiOutlineClock className="text-orange-500" /> {c.duration}
-                </span>
-                <span className="flex items-center gap-1 text-yellow-500">
-                  {Array.from({ length: 5 }).map((_, idx) => (
-                    <FaStar
-                      key={idx}
-                      className={`w-3 h-3 ${
-                        idx < Math.round(c.rating) ? "" : "opacity-30"
-                      }`}
-                    />
-                  ))}
-                  {c.rating}
-                </span>
-              </div>
-              <div className="mt-4 text-sm text-gray-600 flex items-center gap-2">
-                <HiOutlineUser className="text-orange-500" /> {c.instructor}
-              </div>
-              <div className="mt-4 font-bold text-orange-600">{c.price}</div>
-              <div className="mt-4 flex gap-3">
-                <button className="flex-1 px-4 py-2 rounded-xl border border-orange-100 text-orange-600 font-semibold hover:bg-orange-50">
-                  Details
-                </button>
-                <CTA onClick={handleEnroll}>Enroll</CTA>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+/* ---------- COURSES ---------- */
+const NumerologyCourse = ({ handleEnroll }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 12 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    className="bg-white rounded-2xl shadow-lg p-6"
+  >
+    <h3 className="text-xl font-bold mb-4">Numerology Course</h3>
+    <div className="grid md:grid-cols-2 gap-6">
+      <div>
+        <p><strong>Course:</strong> Numerology</p>
+        <p><strong>Certification:</strong> Diploma/Master</p>
+        <p><strong>Duration:</strong> 3 Months</p>
+        <p><strong>Classes:</strong> 30+ Sessions</p>
+        <p><strong>Offer:</strong></p>
+        <p><strong>Mode:</strong> Live - Online</p>
+        <p><strong>Training:</strong> Practical</p>
+        <p><strong>Study Material:</strong> Soft Copy</p>
+        <p><strong>Language:</strong> Hindi/English</p>
+        <p><strong>Numerology Fee:</strong></p>
       </div>
-    </section>
-  );
-};
+    </div>
+    <h4 className="text-lg font-semibold mt-6">Numerology Syllabus - Diploma</h4>
+    <ul className="list-disc pl-6 space-y-2 text-gray-700">
+      <li>Introduction to Numerology
+        <ul className="list-circle pl-6 space-y-1">
+          <li>Vedic Numerology</li>
+          <li>Chaldean Numerology</li>
+          <li>Pythagorean Numerology</li>
+          <li>Lo Shu</li>
+        </ul>
+      </li>
+      <li>Introduction of nine numbers</li>
+      <li>Characteristics of Numbers</li>
+      <li>Personal Number Calculation
+        <ul className="list-circle pl-6 space-y-1">
+          <li>Psychic / Driver Number</li>
+          <li>Life path Number</li>
+          <li>Destiny / Expression Number</li>
+        </ul>
+      </li>
+      <li>Lo Shu Grid</li>
+      <li>Placement of numbers in Grid</li>
+      <li>Combinations in Grid</li>
+    </ul>
+    <h4 className="text-lg font-semibold mt-6">Numerology Syllabus - Master</h4>
+    <ul className="list-disc pl-6 space-y-2 text-gray-700">
+      <li>Introduction to Numerology
+        <ul className="list-circle pl-6 space-y-1">
+          <li>Vedic Numerology</li>
+          <li>Chaldean Numerology</li>
+          <li>Pythagorean Numerology</li>
+          <li>Lo Shu</li>
+        </ul>
+      </li>
+      <li>Introduction of nine numbers</li>
+      <li>Characteristics of Numbers</li>
+      <li>Number connections</li>
+      <li>Personal Number Calculation
+        <ul className="list-circle pl-6 space-y-1">
+          <li>Psychic / Driver Number</li>
+          <li>Life path Number</li>
+          <li>Destiny / Expression Number</li>
+        </ul>
+      </li>
+      <li>Lo Shu Grid</li>
+      <li>Placement of numbers in Grid</li>
+      <li>Combinations in Grid</li>
+      <li>Name numerology</li>
+      <li>Time Cycle
+        <ul className="list-circle pl-6 space-y-1">
+          <li>Personal Year</li>
+          <li>Personal Month</li>
+          <li>Personal Day</li>
+        </ul>
+      </li>
+      <li>Elements and Planets</li>
+      <li>Karmic numbers</li>
+      <li>Master Numbers</li>
+      <li>Calculation of Dasha
+        <ul className="list-circle pl-6 space-y-1">
+          <li>Maha Dasha</li>
+          <li>Antar Dasha</li>
+        </ul>
+      </li>
+      <li>Zodiac Sign and Numerology</li>
+      <li>Remedies</li>
+    </ul>
+    <div className="mt-6">
+      <CTA onClick={handleEnroll}>Enroll Now</CTA>
+    </div>
+  </motion.div>
+);
+
+const VastuCourse = ({ handleEnroll }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 12 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    className="bg-white rounded-2xl shadow-lg p-6"
+  >
+    <h3 className="text-xl font-bold mb-4">Vastu Course</h3>
+    <div className="grid md:grid-cols-2 gap-6">
+      <div>
+        <p><strong>Course:</strong> Vastu</p>
+        <p><strong>Certification:</strong> Diploma</p>
+        <p><strong>Duration:</strong> 3 Months</p>
+        <p><strong>Classes:</strong> 30+ Sessions</p>
+        <p><strong>Offer:</strong></p>
+        <p><strong>Mode:</strong> Live - Online</p>
+        <p><strong>Training:</strong> Practical</p>
+        <p><strong>Study Material:</strong> Soft Copy</p>
+        <p><strong>Language:</strong> Hindi/English</p>
+        <p><strong>Vastu Fee:</strong></p>
+      </div>
+    </div>
+    <h4 className="text-lg font-semibold mt-6">Vastu Diploma Course</h4>
+    <ul className="list-disc pl-6 space-y-2 text-gray-700">
+      <li>Introduction to Learn Vastu Shastra and origin of Vastu.</li>
+      <li>Importance Vastu Shastra Course.</li>
+      <li>The Origin Vastu Purush.</li>
+      <li>Instruments used in Vastu Shastra.</li>
+      <li>Types of Vastu
+        <ul className="list-circle pl-6 space-y-1">
+          <li>Residential Vastu</li>
+          <li>Commercial Vastu</li>
+          <li>Religious Vastu.</li>
+        </ul>
+      </li>
+      <li>Understand Natural Powers and Energies in Vastu Course:</li>
+      <li>Solar Energy, Magnetic Force and Gravitational Force.</li>
+      <li>Introduction to Five Elements (Panch Mahabhoot) and their Use in Vastu Planning.</li>
+      <li>Earth, Air, Fire, Water and Sky and Relationship between Five Elements.</li>
+      <li>Directions in Vastu</li>
+      <li>Selection of Site
+        <ul className="list-circle pl-6 space-y-1">
+          <li>Surroundings</li>
+          <li>Environment:</li>
+        </ul>
+      </li>
+      <li>Testing of Land and Slope of Land.</li>
+      <li>Type and Best Shape of Plots as per Vastu.</li>
+      <li>Facing of Plots and Adjoining Roads.</li>
+      <li>Extension of Land and Cut of Land.</li>
+      <li>Brief Study of Directions of Rooms according to Residential Vastu.</li>
+      <li>Many other Vastu related topics…</li>
+    </ul>
+    <h4 className="text-lg font-semibold mt-6">Vastu Master Course</h4>
+    <ul className="list-disc pl-6 space-y-2 text-gray-700">
+      <li>All the topics covered in Level I Vastu Course in Depth.</li>
+      <li>Detailed study of Directions of Rooms according to Residential Vastu.</li>
+      <li>Puja Room as per Vastu, Study Room as per Vastu and Safe Room as per Vastu.</li>
+      <li>Master Bedroom as per Vastu, Young Couples Bedroom as per Vastu Shastra.</li>
+      <li>Children Bedroom as per Vastu, Guest Bedroom as per Vastu and Dining Room.</li>
+      <li>Kitchen as per Vastu and Pantry Location as per Vastu.</li>
+      <li>Toilet and Bathroom Zone as per Vastu.</li>
+      <li>Location and Directions for Different Other Spaces:</li>
+      <li>Main Gate, Staircase, Basement, Septic Tank, Boring.</li>
+      <li>Alternative Directions of Different Rooms and Spaces.</li>
+      <li>Direction of Foundation and Height of Building.</li>
+      <li>Commercial Vastu and Principles.</li>
+      <li>Vastu Remedies without Demolition for Residential Buildings.</li>
+      <li>Five Types of Vastu Remedies.</li>
+      <li>Vedic Remedies – Mantra and Yantra Remedies.</li>
+      <li>Gems Remedies and Pyramid Remedies.</li>
+      <li>General Remedies and brief Feng Shui Remedies.</li>
+      <li>Maps and Drawing Discussions for checking Vastu compliance.</li>
+      <li>Practical Vastu Analysis of Drawings.</li>
+      <li>Many other Vastu course related topics…,</li>
+    </ul>
+    <div className="mt-6">
+      <CTA onClick={handleEnroll}>Enroll Now</CTA>
+    </div>
+  </motion.div>
+);
+
+const YogaClasses = ({ handleEnroll }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 12 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    className="bg-white rounded-2xl shadow-lg p-6"
+  >
+    <h3 className="text-xl font-bold mb-4">Yoga Class Offerings - Transformative Sessions for Mind, Body & Spirit</h3>
+    <div className="grid md:grid-cols-2 gap-6">
+      <div className="bg-orange-50 p-6 rounded-xl shadow">
+        <h4 className="font-semibold mb-2">Morning Healing Journey — 6:00 AM IST (60 minutes)- Monday, Wednesday, Friday</h4>
+        <p className="text-sm text-gray-600">[Fees-Rs 2000/- for 12 classes, Early Bird offer 2 extra class for “Dhyana” & “Niyama”]</p>
+        <p className="mt-2"><strong>Focus:</strong> Gentle Healing - Foundation Building - Mind-Body Connection</p>
+        <p className="mt-2">Start your day with intention and grace. This nurturing class welcomes you exactly where you are in your wellness journey, whether you're new to yoga or seeking gentle healing support for conditions like PCOS, PCOD, thyroid imbalances, or weight management concerns.</p>
+        <h5 className="font-medium mt-4">What You'll Experience:</h5>
+        <ul className="list-disc pl-6 space-y-1 text-gray-700">
+          <li>Mindful Movement: Gentle flows that honor your body's wisdom and natural rhythm</li>
+          <li>Pranayama Practice: Transformative breathwork to energize your spirit and quiet mental chatter</li>
+          <li>Foundation Building: Essential postures that cultivate strength, flexibility, and unshakeable confidence</li>
+          <li>Yogic Philosophy: An introduction to the eight limbs of yoga (Ashtanga) for complete well-being</li>
+        </ul>
+        <p className="mt-4">Each session is a loving invitation to reconnect with yourself. You'll leave feeling lighter in both body and heart, centred in your truth, and ready to embrace your day with renewed vitality.</p>
+      </div>
+      <div className="bg-orange-50 p-6 rounded-xl shadow">
+        <h4 className="font-semibold mb-2">Therapeutic Restoration — 11:00 AM IST (45 minutes)- Tuesday, Thursday, Friday</h4>
+        <p className="text-sm text-gray-600">[Fees-Rs 2000/- for 12 classes, Early Bird offer 2 extra class for “Dhyana” & “Niyama”]</p>
+        <p className="mt-2"><strong>Focus:</strong> Deep Relaxation - Nervous System Harmony - Emotional Wellness</p>
+        <p className="mt-2">This is your sanctuary for healing. Designed as a gentle refuge for anyone carrying the weight of stress, anxiety, exhaustion, or physical tension, these therapeutic sessions offer profound restoration through the ancient wisdom of yoga.</p>
+        <h5 className="font-medium mt-4">What You'll Experience:</h5>
+        <ul className="list-disc pl-6 space-y-1 text-gray-700">
+          <li>Stress Transformation: Proven techniques to shift from overwhelm to inner peace</li>
+          <li>Sleep Enhancement: Integrative practices combining breath, alignment, and deep relaxation</li>
+          <li>Nervous System Reset: Restorative and yin yoga to activate your body's natural healing response</li>
+          <li>Emotional Balance: Mindfulness practices that create space between you and life's challenges</li>
+        </ul>
+        <p className="mt-4">This is more than a yoga class—it's a healing journey. Here, you'll release what no longer serves you, rediscover your natural calm, and remember that peace is always available within you, just one conscious breath away.</p>
+      </div>
+    </div>
+    <p className="mt-6 text-gray-700">Each class is thoughtfully crafted to meet you where you are and guide you toward where you want to be. Come as you are, leave as you're meant to be.</p>
+    <div className="mt-6">
+      <CTA onClick={handleEnroll}>Enroll Now</CTA>
+    </div>
+  </motion.div>
+);
+
+const Courses = ({ handleEnroll }) => (
+  <section className="py-14 bg-gradient-to-b from-orange-50 to-white">
+    <div className="max-w-6xl mx-auto px-6">
+      <h2 className="text-2xl font-bold mb-8">Our Courses</h2>
+      <div className="space-y-12">
+        <NumerologyCourse handleEnroll={handleEnroll} />
+        <VastuCourse handleEnroll={handleEnroll} />
+        <YogaClasses handleEnroll={handleEnroll} />
+      </div>
+    </div>
+  </section>
+);
 
 /* ---------- CLASS PACKAGES ---------- */
 const Packages = () => {
@@ -326,11 +457,22 @@ const FAQ = () => {
 
 /* ---------- MAIN PAGE ---------- */
 const ClassesPage = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleEnroll = () => {
+    if (isAuthenticated) {
+      navigate("/demo-video");
+    } else {
+      navigate("/auth");
+    }
+  };
+
   return (
     <main>
       <Hero />
       <Categories />
-      <FeaturedCourses />
+      <Courses handleEnroll={handleEnroll} />
       <Packages />
       <FAQ />
     </main>
