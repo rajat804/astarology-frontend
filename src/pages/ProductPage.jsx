@@ -1,120 +1,152 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart, Star, Tag } from "lucide-react";
+import { ShoppingCart, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import assets from "../assets/assets";
 
 const products = [
   {
     id: 1,
-    name: "Planetary Telescope",
-    description: "High-resolution telescope perfect for stargazing.",
-    price: "$499",
+    name: "3 Face Nepali Rudraksh",
+    description: "Authentic Nepali Rudraksh with natural 3 mukhi formation.",
+    price: "₹650",
     rating: 5,
-    image: "https://source.unsplash.com/400x400/?telescope,astronomy",
+    image: assets.threeFace,
   },
   {
     id: 2,
-    name: "Astronaut Suit Replica",
-    description: "Premium quality space suit replica for enthusiasts.",
-    price: "$899",
-    rating: 4,
-    image: "https://source.unsplash.com/400x400/?space-suit",
+    name: "6 Face Nepali Rudraksh",
+    description: "Premium quality 6 mukhi Rudraksh for peace & balance.",
+    price: "₹550",
+    rating: 5,
+    image: assets.sixFace,
   },
   {
     id: 3,
-    name: "Meteorite Fragment",
-    description: "Real meteorite fragment with authenticity certificate.",
-    price: "$199",
+    name: "7 Face Nepali Rudraksh",
+    description: "Sacred 7 mukhi Rudraksh symbolizing prosperity.",
+    price: "₹550",
     rating: 5,
-    image: "https://source.unsplash.com/400x400/?meteorite,stone",
+    image: assets.sevenFace,
   },
   {
     id: 4,
-    name: "Galaxy Projector",
-    description: "Bring the cosmos to your room with immersive projections.",
-    price: "$149",
-    rating: 4,
-    image: "https://source.unsplash.com/400x400/?galaxy,projector",
+    name: "5 Face Nepali Rudraksh",
+    description: "Most popular Panchmukhi Rudraksh for daily wear.",
+    price: "₹550",
+    rating: 5,
+    image: assets.fiveFace,
+  },
+  {
+    id: 5,
+    name: "1 Face Kaju Rudraksh",
+    description: "Rare Ek Mukhi Kaju Rudraksh with divine energy.",
+    price: "₹2000",
+    rating: 5,
+    image: assets.oneFace,
+  },
+  {
+    id: 6,
+    name: "2 Face Nepali Rudraksh",
+    description: "Dwimukhi Rudraksh promoting harmony & relationships.",
+    price: "₹650",
+    rating: 5,
+    image: assets.twoFace,
+  },
+  {
+    id: 7,
+    name: "4 Face Nepali Rudraksh",
+    description: "Chaturmukhi Rudraksh for clarity and creativity.",
+    price: "₹550",
+    rating: 5,
+    image: assets.fourFace,
+  },
+  {
+    id: 8,
+    name: "5 Face Nepali Rudraksh Mala (Big Beads)",
+    description: "Handcrafted mala with large Panchmukhi beads.",
+    price: "₹650",
+    rating: 5,
+    image: assets.fiveFaceBig,
+  },
+  {
+    id: 9,
+    name: "5 Face Nepali Rudraksh Mala (Small Beads)",
+    description: "Elegant mala with small-sized Panchmukhi beads.",
+    price: "₹500",
+    rating: 5,
+    image: assets.fiveFaceNepali,
+  },
+  {
+    id: 10,
+    name: "Ganesh Nepali Rudraksh",
+    description: "Rare Ganesh Rudraksh symbolizing wisdom & success.",
+    price: "₹550",
+    rating: 5,
+    image: assets.ganesh,
   },
 ];
 
 const ProductsPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-gradient-to-b from-white to-orange-50 text-gray-900">
-      {/* Hero Section */}
-      <section className="relative py-20 px-6 text-center bg-orange-100">
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="text-5xl font-extrabold text-orange-600"
-        >
-          Explore Our Cosmic Products
-        </motion.h1>
-        <p className="mt-4 text-lg text-gray-700 max-w-2xl mx-auto">
-          Discover premium astronomy-inspired products crafted for dreamers,
-          explorers, and stargazers. ✨
+      {/* Hero */}
+      <section className="py-20 px-6 text-center bg-orange-100">
+        <h1 className="text-5xl font-extrabold text-orange-600">
+          Sacred Rudraksh Collection
+        </h1>
+        <p className="mt-4 text-lg max-w-2xl mx-auto text-gray-700">
+          Pure, authentic Nepali Rudraksh for spiritual balance and divine energy.
         </p>
       </section>
 
-      
-
-      {/* Product Grid */}
+      {/* Grid */}
       <section className="py-16 px-6">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
-          Featured Products
-        </h2>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
             <motion.div
               key={product.id}
-              whileHover={{ scale: 1.05 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden"
+              whileHover={{ scale: 1.04 }}
+              onClick={() => navigate(`/product/${product.id}`)}
+              className="cursor-pointer bg-white rounded-2xl shadow-lg overflow-hidden border border-orange-100"
             >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-56 object-cover"
-              />
+              {/* Vertical Image */}
+              <div className="h-80 flex items-center justify-center bg-orange-50">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-full object-contain"
+                />
+              </div>
+
               <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-gray-600 mt-2">{product.description}</p>
-                <div className="flex items-center mt-3 text-yellow-500">
-                  {Array.from({ length: product.rating }).map((_, idx) => (
-                    <Star key={idx} className="w-4 h-4 fill-current" />
+                <h3 className="text-lg font-semibold">{product.name}</h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  {product.description}
+                </p>
+
+                <div className="flex mt-3 text-yellow-500">
+                  {[...Array(product.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
+
                 <p className="mt-4 text-xl font-bold text-orange-600">
                   {product.price}
                 </p>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  className="mt-4 flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition"
+
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="mt-4 w-full flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600"
                 >
-                  <ShoppingCart className="w-5 h-5" /> Add to Cart
-                </motion.button>
+                  <ShoppingCart className="w-5 h-5" />
+                  Add to Cart
+                </button>
               </div>
             </motion.div>
           ))}
-        </div>
-      </section>
-
-      {/* CTA Newsletter */}
-      <section className="bg-orange-600 text-white py-16 px-6 text-center">
-        <h2 className="text-3xl font-bold mb-4">Get 10% Off Your First Order 🚀</h2>
-        <p className="mb-6 text-lg">
-          Join our stargazer community and receive exclusive offers & cosmic news.
-        </p>
-        <div className="flex flex-col sm:flex-row justify-center max-w-xl mx-auto">
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="px-4 py-3 rounded-l-lg w-full sm:w-auto min-w-[260px] text-white border border-white focus:outline-none focus:ring-2 focus:ring-white focus:border-white"
-          />
-          <button className="px-6 py-3 bg-white text-orange-600 font-semibold rounded-r-lg hover:bg-orange-100">
-            Subscribe
-          </button>
         </div>
       </section>
     </div>
