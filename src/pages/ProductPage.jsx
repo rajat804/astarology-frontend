@@ -1,15 +1,15 @@
 import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom"; // <-- Added
 import { motion } from "framer-motion";
 import {
   ShoppingCart,
   Star,
-  SlidersHorizontal,
-  ChevronDown,
 } from "lucide-react";
 import assets from "../assets/assets";
+import PRODUCTS from "../data/products"; // <-- Import shared data
 
 /* =========================================================
-   SHOP BY CATEGORY DATA
+   SHOP BY CATEGORY DATA (unchanged)
 ========================================================= */
 const SHOP_CATEGORIES = [
   {
@@ -23,7 +23,7 @@ const SHOP_CATEGORIES = [
 ];
 
 /* =========================================================
-   TRENDING DATA
+   TRENDING DATA (unchanged)
 ========================================================= */
 const TRENDING = [
   {
@@ -39,122 +39,11 @@ const TRENDING = [
 ];
 
 /* =========================================================
-   PRODUCT DATA
-========================================================= */
-
-
-/* ================== PRODUCT DATA ================== */
-const PRODUCTS = [
-  {
-    id: 1,
-    name: "3 Face Nepali Rudraksh",
-    price: 650,
-    oldPrice: 999,
-    rating: 5,
-    image: assets.threeFace,
-    type: "Rudraksha",
-    gemstone: "Rudraksha",
-    inStock: true,
-    discount: "Best Seller",
-  },
-  {
-    id: 2,
-    name: "6 Face Nepali Rudraksh",
-    price: 550,
-    rating: 5,
-    image: assets.sixFace,
-    type: "Rudraksha",
-    gemstone: "Rudraksha",
-    inStock: true,
-  },
-  {
-    id: 3,
-    name: "7 Face Nepali Rudraksh",
-    price: 550,
-    rating: 5,
-    image: assets.sevenFace,
-    type: "Rudraksha",
-    gemstone: "Rudraksha",
-    inStock: true,
-  },
-  {
-    id: 4,
-    name: "5 Face Nepali Rudraksh",
-    price: 550,
-    rating: 5,
-    image: assets.fiveFace,
-    type: "Rudraksha",
-    gemstone: "Rudraksha",
-    inStock: true,
-  },
-  {
-    id: 5,
-    name: "1 Face Kaju Rudraksh",
-    price: 2000,
-    rating: 5,
-    image: assets.oneFace,
-    type: "Rare",
-    gemstone: "Rudraksha",
-    inStock: false,
-    discount: "Sold Out",
-  },
-  {
-    id: 6,
-    name: "2 Face Nepali Rudraksh",
-    price: 650,
-    rating: 5,
-    image: assets.twoFace,
-    type: "Rudraksha",
-    gemstone: "Rudraksha",
-    inStock: true,
-  },
-  {
-    id: 7,
-    name: "4 Face Nepali Rudraksh",
-    price: 550,
-    rating: 5,
-    image: assets.fourFace,
-    type: "Rudraksha",
-    gemstone: "Rudraksha",
-    inStock: true,
-  },
-  {
-    id: 8,
-    name: "5 Face Rudraksh Mala (Big Beads)",
-    price: 650,
-    rating: 5,
-    image: assets.fiveFaceBig,
-    type: "Mala",
-    gemstone: "Rudraksha",
-    inStock: true,
-    discount: "New",
-  },
-  {
-    id: 9,
-    name: "5 Face Rudraksh Mala (Small Beads)",
-    price: 500,
-    rating: 5,
-    image: assets.fiveFaceNepali,
-    type: "Mala",
-    gemstone: "Rudraksha",
-    inStock: true,
-  },
-  {
-    id: 10,
-    name: "Ganesh Nepali Rudraksh",
-    price: 550,
-    rating: 5,
-    image: assets.ganesh,
-    type: "Rare",
-    gemstone: "Rudraksha",
-    inStock: true,
-  },
-];
-
-/* =========================================================
    SHOP PAGE
 ========================================================= */
 export default function ShopPage() {
+  const navigate = useNavigate(); // <-- Hook for navigation
+
   const [price, setPrice] = useState(2799);
   const [inStock, setInStock] = useState(false);
   const [types, setTypes] = useState([]);
@@ -177,6 +66,10 @@ export default function ShopPage() {
       return true;
     });
   }, [price, inStock, types, gems]);
+
+  const handleProductClick = (id) => {
+    navigate(`/product/${id}`);
+  };
 
   return (
     <div className="min-h-screen bg-[#2b1535] text-[#FCEBDE]">
@@ -242,11 +135,12 @@ export default function ShopPage() {
             <motion.div
               key={p.id}
               whileHover={{ y: -4 }}
-              className="relative border border-[#FCEBDE]/30 p-3"
+              className="relative border border-[#FCEBDE]/30 p-3 cursor-pointer"
+              onClick={() => handleProductClick(p.id)} // <-- Click handler
             >
-              {p.badge && (
-                <span className="absolute top-3 left-3 bg-orange-500 text-xs px-2 py-1 text-black">
-                  {p.badge}
+              {p.discount && (
+                <span className="absolute top-3 left-3 bg-orange-500 text-xs px-2 py-1 text-black z-10">
+                  {p.discount}
                 </span>
               )}
 
@@ -257,7 +151,10 @@ export default function ShopPage() {
                   className="w-full h-full object-cover group-hover:scale-110 transition"
                 />
                 {p.inStock && (
-                  <button className="absolute bottom-3 right-3 bg-[#FCEBDE] text-[#2b1535] p-2 opacity-0 group-hover:opacity-100 transition">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); /* Add to cart logic */ }}
+                    className="absolute bottom-3 right-3 bg-[#FCEBDE] text-[#2b1535] p-2 opacity-0 group-hover:opacity-100 transition"
+                  >
                     <ShoppingCart size={16} />
                   </button>
                 )}
@@ -292,8 +189,7 @@ export default function ShopPage() {
           <div>
             <h4 className="font-semibold mb-2">Availability</h4>
             <label className="block">
-              <input type="checkbox" onChange={() => setInStock(!inStock)} /> In
-              Stock
+              <input type="checkbox" checked={inStock} onChange={() => setInStock(!inStock)} /> In Stock
             </label>
           </div>
 
@@ -301,7 +197,11 @@ export default function ShopPage() {
             <h4 className="font-semibold mb-2">Product type</h4>
             {["108 Mala", "Mala", "Necklace"].map((t) => (
               <label key={t} className="block">
-                <input onChange={() => toggle(t, types, setTypes)} type="checkbox" /> {t}
+                <input
+                  checked={types.includes(t)}
+                  onChange={() => toggle(t, types, setTypes)}
+                  type="checkbox"
+                /> {t}
               </label>
             ))}
           </div>
@@ -313,7 +213,7 @@ export default function ShopPage() {
               min="0"
               max="2799"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => setPrice(Number(e.target.value))}
               className="w-full"
             />
             <p className="mt-1">Rs. 0 — Rs. {price}</p>
@@ -323,7 +223,11 @@ export default function ShopPage() {
             <h4 className="font-semibold mb-2">Gemstones</h4>
             {["Clear Quartz", "Hematite", "Rudraksha", "Citrine"].map((g) => (
               <label key={g} className="block">
-                <input onChange={() => toggle(g, gems, setGems)} type="checkbox" /> {g}
+                <input
+                  checked={gems.includes(g)}
+                  onChange={() => toggle(g, gems, setGems)}
+                  type="checkbox"
+                /> {g}
               </label>
             ))}
           </div>
