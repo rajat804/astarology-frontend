@@ -1,156 +1,336 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart, Star } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import {
+  ShoppingCart,
+  Star,
+  SlidersHorizontal,
+  ChevronDown,
+} from "lucide-react";
 import assets from "../assets/assets";
 
-const products = [
+/* =========================================================
+   SHOP BY CATEGORY DATA
+========================================================= */
+const SHOP_CATEGORIES = [
+  {
+    label: "Pyrite bracelet with magnetic closure",
+    image: "https://justwowfactory.com/cdn/shop/files/Opulence_Drawer_Pyrite_Bracelet.webp?v=1742467045&width=200",
+  },
+  { label: "Top Sellers", image: assets.topSellers },
+  { label: "Sriyantra", image: assets.sriyantra },
+  { label: "Pyrite", image: assets.pyrite },
+  { label: "7 Chakra Stone Bracelet", image: assets.chakra7Stone },
+  { label: "7 Chakra", image: assets.chakra7 },
+  { label: "Shiva", image: assets.shiva },
+];
+
+/* =========================================================
+   TRENDING DATA
+========================================================= */
+const TRENDING = [
+  {
+    tag: "2026 (Calm)",
+    image: assets.trendingCalm,
+    title: "Five Elements Calm Harmoniser Bracelet",
+  },
+  {
+    tag: "2026 (Wealth)",
+    image: assets.trendingWealth,
+    title: "Five Elements Wealth Harmoniser Bracelet",
+  },
+];
+
+/* =========================================================
+   PRODUCT DATA
+========================================================= */
+
+
+/* ================== PRODUCT DATA ================== */
+const PRODUCTS = [
   {
     id: 1,
     name: "3 Face Nepali Rudraksh",
-    description: "Authentic Nepali Rudraksh with natural 3 mukhi formation.",
-    price: "₹650",
+    price: 650,
+    oldPrice: 999,
     rating: 5,
     image: assets.threeFace,
+    type: "Rudraksha",
+    gemstone: "Rudraksha",
+    inStock: true,
+    discount: "Best Seller",
   },
   {
     id: 2,
     name: "6 Face Nepali Rudraksh",
-    description: "Premium quality 6 mukhi Rudraksh for peace & balance.",
-    price: "₹550",
+    price: 550,
     rating: 5,
     image: assets.sixFace,
+    type: "Rudraksha",
+    gemstone: "Rudraksha",
+    inStock: true,
   },
   {
     id: 3,
     name: "7 Face Nepali Rudraksh",
-    description: "Sacred 7 mukhi Rudraksh symbolizing prosperity.",
-    price: "₹550",
+    price: 550,
     rating: 5,
     image: assets.sevenFace,
+    type: "Rudraksha",
+    gemstone: "Rudraksha",
+    inStock: true,
   },
   {
     id: 4,
     name: "5 Face Nepali Rudraksh",
-    description: "Most popular Panchmukhi Rudraksh for daily wear.",
-    price: "₹550",
+    price: 550,
     rating: 5,
     image: assets.fiveFace,
+    type: "Rudraksha",
+    gemstone: "Rudraksha",
+    inStock: true,
   },
   {
     id: 5,
     name: "1 Face Kaju Rudraksh",
-    description: "Rare Ek Mukhi Kaju Rudraksh with divine energy.",
-    price: "₹2000",
+    price: 2000,
     rating: 5,
     image: assets.oneFace,
+    type: "Rare",
+    gemstone: "Rudraksha",
+    inStock: false,
+    discount: "Sold Out",
   },
   {
     id: 6,
     name: "2 Face Nepali Rudraksh",
-    description: "Dwimukhi Rudraksh promoting harmony & relationships.",
-    price: "₹650",
+    price: 650,
     rating: 5,
     image: assets.twoFace,
+    type: "Rudraksha",
+    gemstone: "Rudraksha",
+    inStock: true,
   },
   {
     id: 7,
     name: "4 Face Nepali Rudraksh",
-    description: "Chaturmukhi Rudraksh for clarity and creativity.",
-    price: "₹550",
+    price: 550,
     rating: 5,
     image: assets.fourFace,
+    type: "Rudraksha",
+    gemstone: "Rudraksha",
+    inStock: true,
   },
   {
     id: 8,
-    name: "5 Face Nepali Rudraksh Mala (Big Beads)",
-    description: "Handcrafted mala with large Panchmukhi beads.",
-    price: "₹650",
+    name: "5 Face Rudraksh Mala (Big Beads)",
+    price: 650,
     rating: 5,
     image: assets.fiveFaceBig,
+    type: "Mala",
+    gemstone: "Rudraksha",
+    inStock: true,
+    discount: "New",
   },
   {
     id: 9,
-    name: "5 Face Nepali Rudraksh Mala (Small Beads)",
-    description: "Elegant mala with small-sized Panchmukhi beads.",
-    price: "₹500",
+    name: "5 Face Rudraksh Mala (Small Beads)",
+    price: 500,
     rating: 5,
     image: assets.fiveFaceNepali,
+    type: "Mala",
+    gemstone: "Rudraksha",
+    inStock: true,
   },
   {
     id: 10,
     name: "Ganesh Nepali Rudraksh",
-    description: "Rare Ganesh Rudraksh symbolizing wisdom & success.",
-    price: "₹550",
+    price: 550,
     rating: 5,
     image: assets.ganesh,
+    type: "Rare",
+    gemstone: "Rudraksha",
+    inStock: true,
   },
 ];
 
-const ProductsPage = () => {
-  const navigate = useNavigate();
+/* =========================================================
+   SHOP PAGE
+========================================================= */
+export default function ShopPage() {
+  const [price, setPrice] = useState(2799);
+  const [inStock, setInStock] = useState(false);
+  const [types, setTypes] = useState([]);
+  const [gems, setGems] = useState([]);
+
+  const toggle = (value, state, setState) => {
+    setState(
+      state.includes(value)
+        ? state.filter((v) => v !== value)
+        : [...state, value]
+    );
+  };
+
+  const filteredProducts = useMemo(() => {
+    return PRODUCTS.filter((p) => {
+      if (p.price > price) return false;
+      if (inStock && !p.inStock) return false;
+      if (types.length && !types.includes(p.type)) return false;
+      if (gems.length && !gems.includes(p.gemstone)) return false;
+      return true;
+    });
+  }, [price, inStock, types, gems]);
 
   return (
-    <div className="bg-gradient-to-b from-white to-orange-50 text-gray-900">
-      {/* Hero */}
-      <section className="py-20 px-6 text-center bg-orange-100">
-        <h1 className="text-5xl font-extrabold text-orange-600">
-          Sacred Rudraksh Collection
-        </h1>
-        <p className="mt-4 text-lg max-w-2xl mx-auto text-gray-700">
-          Pure, authentic Nepali Rudraksh for spiritual balance and divine energy.
-        </p>
-      </section>
+    <div className="min-h-screen bg-[#2b1535] text-[#FCEBDE]">
 
-      {/* Grid */}
-      <section className="py-16 px-6">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {products.map((product) => (
-            <motion.div
-              key={product.id}
-              whileHover={{ scale: 1.04 }}
-              onClick={() => navigate(`/product/${product.id}`)}
-              className="cursor-pointer bg-white rounded-2xl shadow-lg overflow-hidden border border-orange-100"
-            >
-              {/* Vertical Image */}
-              <div className="h-80 flex items-center justify-center bg-orange-50">
+      {/* ================= SHOP BY CATEGORY ================= */}
+      <section className="py-16 text-center">
+        <h2 className="tracking-widest text-sm mb-10">Shop By Category</h2>
+        <div className="flex justify-center gap-12 flex-wrap">
+          {SHOP_CATEGORIES.map((cat) => (
+            <div key={cat.label} className="w-28 text-center group cursor-pointer">
+              <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-3 border border-[#FCEBDE]/30">
                 <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-full object-contain"
+                  src={cat.image}
+                  alt={cat.label}
+                  className="w-full h-full object-cover group-hover:scale-110 transition"
                 />
               </div>
+              <p className="text-xs leading-snug">{cat.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-              <div className="p-6">
-                <h3 className="text-lg font-semibold">{product.name}</h3>
-                <p className="text-sm text-gray-600 mt-2">
-                  {product.description}
-                </p>
+      {/* ================= CATEGORY STRIP ================= */}
+      <div className="bg-gradient-to-r from-[#f6a04d] to-[#ffb463] text-[#2b1535] py-3 text-sm font-medium flex justify-center gap-6 flex-wrap">
+        {["Top Sellers", "New", "Numerology", "Zodiac", "Planetary", "Citrine", "Rudraksha"].map(
+          (t) => (
+            <span key={t}>{t}</span>
+          )
+        )}
+      </div>
 
-                <div className="flex mt-3 text-yellow-500">
-                  {[...Array(product.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-current" />
-                  ))}
-                </div>
+      {/* ================= TRENDING ================= */}
+      <section className="py-20 text-center">
+        <h2 className="text-xl mb-10">
+          2026 The Most <span className="text-[#ffcc85]">TRENDING</span>
+        </h2>
+        <div className="flex justify-center gap-12 flex-wrap">
+          {TRENDING.map((t) => (
+            <div key={t.title} className="w-80">
+              <span className="text-xs bg-green-600 px-2 py-1 inline-block mb-2">
+                {t.tag}
+              </span>
+              <div className="h-96 overflow-hidden border border-[#FCEBDE]/30">
+                <img
+                  src={t.image}
+                  alt={t.title}
+                  className="w-full h-full object-cover hover:scale-105 transition"
+                />
+              </div>
+              <p className="mt-3 text-sm">{t.title}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-                <p className="mt-4 text-xl font-bold text-orange-600">
-                  {product.price}
-                </p>
+      {/* ================= MAIN SHOP ================= */}
+      <section className="max-w-7xl mx-auto px-6 pb-32 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-12">
 
-                <button
-                  onClick={(e) => e.stopPropagation()}
-                  className="mt-4 w-full flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600"
-                >
-                  <ShoppingCart className="w-5 h-5" />
-                  Add to Cart
-                </button>
+        {/* ================= PRODUCTS ================= */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          {filteredProducts.map((p) => (
+            <motion.div
+              key={p.id}
+              whileHover={{ y: -4 }}
+              className="relative border border-[#FCEBDE]/30 p-3"
+            >
+              {p.badge && (
+                <span className="absolute top-3 left-3 bg-orange-500 text-xs px-2 py-1 text-black">
+                  {p.badge}
+                </span>
+              )}
+
+              <div className="relative overflow-hidden group h-64 mb-4">
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition"
+                />
+                {p.inStock && (
+                  <button className="absolute bottom-3 right-3 bg-[#FCEBDE] text-[#2b1535] p-2 opacity-0 group-hover:opacity-100 transition">
+                    <ShoppingCart size={16} />
+                  </button>
+                )}
+              </div>
+
+              <h3 className="text-sm font-semibold leading-snug">{p.name}</h3>
+
+              <div className="flex text-yellow-400 my-2">
+                {[...Array(p.rating)].map((_, i) => (
+                  <Star key={i} size={13} fill="currentColor" />
+                ))}
+              </div>
+
+              <div className="text-sm">
+                {p.oldPrice && (
+                  <span className="line-through mr-2 text-gray-400">
+                    Rs. {p.oldPrice}
+                  </span>
+                )}
+                <span className="font-semibold text-[#ffcc85]">
+                  Rs. {p.price}
+                </span>
               </div>
             </motion.div>
           ))}
         </div>
+
+        {/* ================= FILTERS ================= */}
+        <aside className="space-y-10 text-sm">
+          <h3 className="font-semibold">Sale Products</h3>
+
+          <div>
+            <h4 className="font-semibold mb-2">Availability</h4>
+            <label className="block">
+              <input type="checkbox" onChange={() => setInStock(!inStock)} /> In
+              Stock
+            </label>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-2">Product type</h4>
+            {["108 Mala", "Mala", "Necklace"].map((t) => (
+              <label key={t} className="block">
+                <input onChange={() => toggle(t, types, setTypes)} type="checkbox" /> {t}
+              </label>
+            ))}
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-2">Price</h4>
+            <input
+              type="range"
+              min="0"
+              max="2799"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="w-full"
+            />
+            <p className="mt-1">Rs. 0 — Rs. {price}</p>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-2">Gemstones</h4>
+            {["Clear Quartz", "Hematite", "Rudraksha", "Citrine"].map((g) => (
+              <label key={g} className="block">
+                <input onChange={() => toggle(g, gems, setGems)} type="checkbox" /> {g}
+              </label>
+            ))}
+          </div>
+        </aside>
       </section>
     </div>
   );
-};
-
-export default ProductsPage;
+}
