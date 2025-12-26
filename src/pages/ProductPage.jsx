@@ -16,12 +16,10 @@ const SHOP_CATEGORIES = [
     label: "Pyrite bracelet with magnetic closure",
     image: "https://justwowfactory.com/cdn/shop/files/Opulence_Drawer_Pyrite_Bracelet.webp?v=1742467045&width=200",
   },
-  { label: "Top Sellers", image: assets.topSellers },
-  { label: "Sriyantra", image: assets.sriyantra },
-  { label: "Pyrite", image: assets.pyrite },
-  { label: "7 Chakra Stone Bracelet", image: assets.chakra7Stone },
-  { label: "7 Chakra", image: assets.chakra7 },
-  { label: "Shiva", image: assets.shiva },
+  { label: "Top Sellers", image:"https://justwowfactory.com/cdn/shop/files/new_red_string_stainless_sriyantra_bracelet2.webp?v=1756282989&width=200" },
+  { label: "Sriyantra", image :"https://justwowfactory.com/cdn/shop/files/MajesticSimplicityPyriteBraceletformen.webp?v=1743496608&width=200"},
+  { label: "Pyrite", image: "https://justwowfactory.com/cdn/shop/collections/7_chakra_obsidian_bracelet_3.webp?v=1765620347&width=200" },
+  { label: "Shiva", image: "https://justwowfactory.com/cdn/shop/files/Divine_Shelter_Mahadev_Pendant_Rudraksha_Tiger_Eye_Mala_Mala.webp?v=1764667541&width=200" },
 ];
 
 /* =========================================================
@@ -30,12 +28,12 @@ const SHOP_CATEGORIES = [
 const TRENDING = [
   {
     tag: "2026 (Calm)",
-    image: assets.trendingCalm,
+    image:"https://justwowfactory.com/cdn/shop/files/2026_Five_Elements_Calm_Harmoniser_Bracelet1.webp?v=1762926421&width=1200",
     title: "Five Elements Calm Harmoniser Bracelet",
   },
   {
     tag: "2026 (Wealth)",
-    image: assets.trendingWealth,
+    image: "https://justwowfactory.com/cdn/shop/files/Five_ELements_Wealth_Harmoniser_BRACELET3.webp?v=1762926640&width=1200",
     title: "Five Elements Wealth Harmoniser Bracelet",
   },
 ];
