@@ -11,11 +11,6 @@ import { RiStarSLine } from "react-icons/ri";
 import { GiCrystalBall } from "react-icons/gi";
 import { FaChevronLeft, FaChevronRight, FaCheck, FaStar } from "react-icons/fa";
 
-/**
- * Premium HomePage with updated color scheme: Red & Off-white with faded orange accents
- * Hero banner image removed, heading in green, buttons in red.
- * Requires: tailwindcss, framer-motion, react-icons
- */
 
 /* ---------- Helpers ---------- */
 const Accent = ({ children }) => (
@@ -169,21 +164,7 @@ const Hero = () => {
                 </div>
               </div>
 
-              {/* floating card 1 */}
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ repeat: Infinity, duration: 5 }}
-                className="absolute left-6 top-6 bg-white/90 backdrop-blur-sm border border-orange-50 rounded-2xl p-4 w-60 shadow-lg"
-              >
-                <div className="text-xs text-gray-500">Next Live Workshop</div>
-                <div className="font-semibold">Moon Rituals • May 8</div>
-                <div className="text-xs text-gray-400 mt-1">Seats left: 8</div>
-                <div className="mt-3">
-                  <button className="w-full px-3 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600">
-                    Reserve
-                  </button>
-                </div>
-              </motion.div>
+              
 
               
             </div>
