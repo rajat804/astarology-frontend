@@ -10,14 +10,14 @@ import { FaCheck, FaStar, FaChevronDown } from "react-icons/fa";
 
 /* ---------- Helpers ---------- */
 const Accent = ({ children }) => (
-  <span className="text-orange-600">{children}</span>
+  <span className="text-green-600">{children}</span>
 );
 
 const CTA = ({ children, className = "", ...rest }) => (
   <button
     {...rest}
     className={
-      "inline-flex items-center gap-3 px-5 py-2 rounded-2xl font-semibold shadow-md text-white bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transition " +
+      "inline-flex items-center gap-3 px-5 py-2 rounded-2xl font-semibold shadow-md text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transition " +
       className
     }
   >
@@ -27,10 +27,10 @@ const CTA = ({ children, className = "", ...rest }) => (
 
 /* ---------- HERO ---------- */
 const Hero = () => (
-  <section className="relative bg-gradient-to-b from-orange-50 to-white py-20">
+  <section className="relative bg-gradient-to-b from-orange-50/50 to-offWhite py-20">
     <div className="max-w-6xl mx-auto px-6 text-center">
       <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
-        Explore Our <Accent>Premium Services</Accent>
+        Talk to our experts about <Accent>Astro, Numero, Vastu, Yoga</Accent> & more
       </h1>
       <p className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg">
         From astrology to vastu, numerology, and personalized wellness — find
@@ -69,9 +69,9 @@ const Categories = () => {
   ];
 
   return (
-    <section className="py-14 bg-white">
+    <section className="py-14 bg-offWhite">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-2xl font-bold mb-8">Service Categories</h2>
+        <h2 className="text-2xl font-bold mb-8 text-gray-800">Service Categories</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {cats.map((c, i) => (
             <motion.div
@@ -79,7 +79,7 @@ const Categories = () => {
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-orange-50 rounded-2xl shadow hover:shadow-xl overflow-hidden hover:-translate-y-1 transition"
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden hover:-translate-y-1 transition border border-orange-100"
             >
               <img
                 src={c.img}
@@ -91,6 +91,9 @@ const Categories = () => {
                   {c.name}
                 </h3>
                 <p className="text-gray-600 text-sm">{c.desc}</p>
+                <button className="mt-3 text-red-600 font-semibold text-sm hover:text-red-700 transition">
+                  Learn more →
+                </button>
               </div>
             </motion.div>
           ))}
@@ -127,9 +130,9 @@ const ServicesList = () => {
   ];
 
   return (
-    <section className="py-14 bg-gradient-to-b from-orange-50 to-white">
+    <section className="py-14 bg-gradient-to-b from-orange-50/50 to-offWhite">
       <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-2xl font-bold mb-8">Popular Services</h2>
+        <h2 className="text-2xl font-bold mb-8 text-gray-800">Popular Services</h2>
         <div className="grid md:grid-cols-3 gap-6">
           {services.map((s, i) => (
             <motion.div
@@ -137,13 +140,13 @@ const ServicesList = () => {
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.12 }}
-              className="bg-white rounded-2xl shadow-lg p-6 hover:-translate-y-1 hover:shadow-2xl transition"
+              className="bg-white rounded-2xl shadow-lg p-6 hover:-translate-y-1 hover:shadow-2xl transition border border-orange-100"
             >
-              <h3 className="font-semibold text-lg">{s.title}</h3>
+              <h3 className="font-semibold text-lg text-gray-800">{s.title}</h3>
               <p className="text-gray-600 text-sm mt-2">{s.desc}</p>
               <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
                 <span className="flex items-center gap-2">
-                  <HiOutlineClock className="text-orange-500" /> {s.duration}
+                  <HiOutlineClock className="text-red-500" /> {s.duration}
                 </span>
                 <span className="flex items-center gap-1 text-yellow-500">
                   {Array.from({ length: 5 }).map((_, idx) => (
@@ -157,9 +160,9 @@ const ServicesList = () => {
                   {s.rating}
                 </span>
               </div>
-              <div className="mt-4 font-bold text-orange-600">{s.price}</div>
+              <div className="mt-4 font-bold text-red-600">{s.price}</div>
               <div className="mt-4 flex gap-3">
-                <button className="flex-1 px-4 py-2 rounded-xl border border-orange-100 text-orange-600 font-semibold hover:bg-orange-50">
+                <button className="flex-1 px-4 py-2 rounded-xl border border-red-200 text-red-600 font-semibold hover:bg-red-50 transition">
                   Details
                 </button>
                 <CTA>Book</CTA>
@@ -179,6 +182,7 @@ const Pricing = () => {
       name: "Starter",
       price: "₹999",
       features: ["15-min consultation", "1 follow-up email", "Basic notes"],
+      popular: false,
     },
     {
       name: "Premium",
@@ -189,6 +193,7 @@ const Pricing = () => {
         "Priority booking",
         "Free gemstone guide",
       ],
+      popular: true,
     },
     {
       name: "Elite",
@@ -199,13 +204,14 @@ const Pricing = () => {
         "3 follow-up emails",
         "Exclusive remedies kit",
       ],
+      popular: false,
     },
   ];
 
   return (
     <section className="py-16 bg-white">
       <div className="max-w-6xl mx-auto px-6 text-center">
-        <h2 className="text-3xl font-bold">Flexible Packages</h2>
+        <h2 className="text-3xl font-bold text-gray-800">Flexible Packages</h2>
         <p className="text-gray-600 mt-2">
           Choose a plan that suits your journey best.
         </p>
@@ -217,20 +223,90 @@ const Pricing = () => {
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.15 }}
-              className="bg-orange-50 rounded-2xl shadow-lg p-6 flex flex-col hover:shadow-2xl transition"
+              className={`relative rounded-2xl shadow-lg p-6 flex flex-col hover:shadow-2xl transition ${
+                p.popular 
+                  ? "bg-gradient-to-br from-red-50 to-offWhite border-2 border-red-200" 
+                  : "bg-offWhite border border-orange-100"
+              }`}
             >
-              <h3 className="font-bold text-lg">{p.name}</h3>
-              <div className="text-3xl font-extrabold text-orange-600 mt-2">
+              {p.popular && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  Most Popular
+                </div>
+              )}
+              <h3 className="font-bold text-lg text-gray-800">{p.name}</h3>
+              <div className="text-3xl font-extrabold text-red-600 mt-2">
                 {p.price}
               </div>
               <ul className="mt-4 text-sm space-y-2 text-gray-600 flex-1">
                 {p.features.map((f) => (
                   <li key={f} className="flex items-center gap-2">
-                    <FaCheck className="text-orange-500" /> {f}
+                    <FaCheck className="text-red-500 text-xs" /> {f}
                   </li>
                 ))}
               </ul>
               <CTA className="mt-6">Choose Plan</CTA>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ---------- EXPERT TEAM SECTION ---------- */
+const ExpertTeam = () => {
+  const experts = [
+    {
+      name: "Dr. Ananya Sharma",
+      expertise: "Astrology & Vedic Sciences",
+      experience: "15+ years",
+      img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2",
+    },
+    {
+      name: "Prof. Rajiv Mehta",
+      expertise: "Numerology & Vaastu",
+      experience: "12+ years",
+      img: "https://images.unsplash.com/photo-1560250097-0b93528c311a",
+    },
+    {
+      name: "Swati Kapoor",
+      expertise: "Yoga & Wellness Coach",
+      experience: "10+ years",
+      img: "https://images.unsplash.com/photo-1580489944761-15a19d654956",
+    },
+  ];
+
+  return (
+    <section className="py-16 bg-orange-50/50">
+      <div className="max-w-6xl mx-auto px-6 text-center">
+        <h2 className="text-3xl font-bold text-gray-800">Meet Our Experts</h2>
+        <p className="text-gray-600 mt-2 mb-10">
+          Learn from certified professionals with decades of experience.
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {experts.map((expert, i) => (
+            <motion.div
+              key={expert.name}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition border border-orange-100"
+            >
+              <img
+                src={expert.img}
+                alt={expert.name}
+                className="w-full h-56 object-cover"
+              />
+              <div className="p-5">
+                <h3 className="font-bold text-lg text-gray-800">{expert.name}</h3>
+                <p className="text-red-600 text-sm font-medium mt-1">{expert.expertise}</p>
+                <p className="text-gray-500 text-xs mt-1">{expert.experience} experience</p>
+                <button className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition w-full">
+                  Book Session
+                </button>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -255,25 +331,29 @@ const FAQ = () => {
       q: "Can I reschedule?",
       a: "Yes, up to 24 hours before your session without extra charge.",
     },
+    {
+      q: "What payment methods do you accept?",
+      a: "We accept all major credit cards, UPI, and net banking through secure payment gateways.",
+    },
   ];
 
   return (
-    <section className="py-16 bg-orange-50">
+    <section className="py-16 bg-offWhite">
       <div className="max-w-4xl mx-auto px-6">
-        <h2 className="text-2xl font-bold mb-8">Frequently Asked</h2>
+        <h2 className="text-2xl font-bold mb-8 text-gray-800">Frequently Asked</h2>
         <div className="space-y-4">
           {faqs.map((f, i) => (
             <div
               key={i}
-              className="bg-white rounded-xl shadow p-4 cursor-pointer"
+              className="bg-white rounded-xl shadow-sm p-4 cursor-pointer border border-orange-100 hover:shadow-md transition"
             >
               <button
                 onClick={() => setOpen(open === i ? null : i)}
-                className="flex justify-between w-full items-center font-semibold"
+                className="flex justify-between w-full items-center font-semibold text-gray-800"
               >
                 {f.q}
                 <FaChevronDown
-                  className={`transition ${
+                  className={`transition text-red-500 ${
                     open === i ? "rotate-180" : "rotate-0"
                   }`}
                 />
@@ -301,11 +381,12 @@ const FAQ = () => {
 /* ---------- MAIN PAGE ---------- */
 const ServicesPage = () => {
   return (
-    <main>
+    <main className="bg-offWhite">
       <Hero />
       <Categories />
       <ServicesList />
       <Pricing />
+      <ExpertTeam />
       <FAQ />
     </main>
   );

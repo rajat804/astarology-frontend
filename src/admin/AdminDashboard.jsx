@@ -1,6 +1,6 @@
 // src/admin/AdminDashboard.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   HiOutlineMenu,
   HiOutlineSearch,
@@ -10,15 +10,28 @@ import {
   HiOutlinePlus,
   HiOutlinePencilAlt,
   HiOutlineTrash,
+  HiOutlineX,
+  HiOutlineFilter,
+  HiOutlineDownload,
+  HiOutlineChartBar,
+  HiOutlineUsers,
+  HiOutlineShoppingBag,
+  HiOutlineCalendar,
+  HiOutlineDocumentText,
+  HiOutlineCog,
+  HiOutlineEye,
+  HiOutlineChevronDown,
 } from "react-icons/hi";
-import { FaUsers, FaChartLine, FaBoxOpen, FaBook } from "react-icons/fa";
+import {
+  FaChartLine,
+  FaBoxOpen,
+  FaBook,
+  FaStar,
+  FaCheckCircle,
+  FaTimesCircle,
+} from "react-icons/fa";
 import AdminRoute from "./AdminRoute";
 import { useNavigate } from "react-router-dom";
-
-/**
- * Admin dashboard — mock CRUD + reports.
- * Replace mock handlers with API calls to your backend.
- */
 
 function useCount(to = 0, duration = 1200) {
   const [num, setNum] = useState(0);
@@ -37,24 +50,29 @@ function useCount(to = 0, duration = 1200) {
 }
 
 const initialServices = [
-  { id: 1, title: "Natal Chart Reading", price: 2499, category: "Astrology" },
-  { id: 2, title: "Numerology Report", price: 1299, category: "Numerology" },
+  { id: 1, title: "Natal Chart Reading", price: 2499, category: "Astrology", status: "active" },
+  { id: 2, title: "Numerology Report", price: 1299, category: "Numerology", status: "active" },
+  { id: 3, title: "Vastu Consultation", price: 3999, category: "Vastu", status: "active" },
 ];
 const initialProducts = [
-  { id: 1, name: "Premium Rudraksh Mala", price: 1799, stock: 24 },
-  { id: 2, name: "Clear Quartz Cluster", price: 1299, stock: 12 },
+  { id: 1, name: "Premium Rudraksh Mala", price: 1799, stock: 24, sold: 156, rating: 4.8 },
+  { id: 2, name: "Clear Quartz Cluster", price: 1299, stock: 12, sold: 89, rating: 4.7 },
+  { id: 3, name: "Copper Yantra Plate", price: 2199, stock: 8, sold: 67, rating: 4.9 },
 ];
 const initialClasses = [
-  { id: 1, title: "Vedic Numerology - Beginner", seats: 24, enrolled: 10 },
-  { id: 2, title: "Yoga for Balance", seats: 18, enrolled: 14 },
+  { id: 1, title: "Vedic Numerology - Beginner", seats: 24, enrolled: 10, status: "active" },
+  { id: 2, title: "Yoga for Balance", seats: 18, enrolled: 14, status: "active" },
+  { id: 3, title: "Advanced Astrology", seats: 12, enrolled: 8, status: "active" },
 ];
 const initialBookings = [
-  { id: 1, user: "Anjali K", service: "Natal Chart Reading", date: "2025-10-12", status: "Booked" },
-  { id: 2, user: "Rohit S", service: "Numerology Report", date: "2025-10-16", status: "Completed" },
+  { id: 1, user: "Anjali K", service: "Natal Chart Reading", date: "2025-10-12", status: "Booked", amount: 2499 },
+  { id: 2, user: "Rohit S", service: "Numerology Report", date: "2025-10-16", status: "Completed", amount: 1299 },
+  { id: 3, user: "Priya M", service: "Vastu Consultation", date: "2025-10-20", status: "Booked", amount: 3999 },
 ];
 const initialUsers = [
-  { id: 1, name: "Anjali K", email: "anjali@example.com" },
-  { id: 2, name: "Rohit S", email: "rohit@example.com" },
+  { id: 1, name: "Anjali K", email: "anjali@example.com", joined: "2025-01-15", status: "active" },
+  { id: 2, name: "Rohit S", email: "rohit@example.com", joined: "2025-02-20", status: "active" },
+  { id: 3, name: "Priya M", email: "priya@example.com", joined: "2025-03-10", status: "active" },
 ];
 
 export default function AdminDashboardShell() {
@@ -68,574 +86,643 @@ export default function AdminDashboardShell() {
 function AdminDashboard() {
   const nav = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [tab, setTab] = useState("overview"); // overview, services, products, classes, bookings, content, reports, users
+  const [tab, setTab] = useState("overview");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications] = useState([
+    { id: 1, message: "New booking from Anjali K", time: "5 min ago", read: false },
+    { id: 2, message: "Product stock low: Copper Yantra Plate", time: "1 hour ago", read: false },
+    { id: 3, message: "New user registered: Rahul M", time: "2 hours ago", read: true },
+  ]);
+
   const [services, setServices] = useState(initialServices);
   const [products, setProducts] = useState(initialProducts);
   const [classes, setClasses] = useState(initialClasses);
   const [bookings, setBookings] = useState(initialBookings);
   const [users, setUsers] = useState(initialUsers);
-  const [content, setContent] = useState([]); // uploaded content list
+  const [content, setContent] = useState([]);
 
-  // simple stats
-  const totalRevenue = useMemo(() => products.reduce((s, p) => s + (p.price * (p.stock || 0)), 0) + services.reduce((s, svc) => s + svc.price * 5, 0), [products, services]);
+  const totalRevenue = useMemo(() => {
+    return products.reduce((s, p) => s + (p.price * p.sold || 0), 0) + 
+           bookings.reduce((s, b) => s + (b.status === "Completed" ? b.amount : 0), 0);
+  }, [products, bookings]);
+  
   const revenueCount = useCount(Math.round(totalRevenue / 1000));
   const usersCount = useCount(users.length);
   const bookingsCount = useCount(bookings.length);
+  const productsCount = useCount(products.length);
 
-  // Admin actions
   const logout = () => {
     localStorage.removeItem("astro_admin");
     nav("/");
   };
 
-  // Services CRUD
-  const addService = (payload) => {
-    setServices((s) => [{ id: Date.now(), ...payload }, ...s]);
-  };
-  const updateService = (id, payload) => setServices((s) => s.map((it) => (it.id === id ? { ...it, ...payload } : it)));
-  const deleteService = (id) => setServices((s) => s.filter((it) => it.id !== id));
+  // Filtered data based on search
+  const filteredProducts = useMemo(() => {
+    return products.filter(p => 
+      p.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [products, searchQuery]);
 
-  // Products CRUD / inventory
-  const addProduct = (payload) => setProducts((p) => [{ id: Date.now(), ...payload }, ...p]);
-  const updateProduct = (id, payload) => setProducts((p) => p.map((it) => (it.id === id ? { ...it, ...payload } : it)));
-  const deleteProduct = (id) => setProducts((p) => p.filter((it) => it.id !== id));
+  const filteredBookings = useMemo(() => {
+    return bookings.filter(b => 
+      b.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.service.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [bookings, searchQuery]);
 
-  // Classes CRUD
-  const addClass = (payload) => setClasses((c) => [{ id: Date.now(), ...payload }, ...c]);
-  const updateClass = (id, payload) => setClasses((c) => c.map((it) => (it.id === id ? { ...it, ...payload } : it)));
-  const deleteClass = (id) => setClasses((c) => c.filter((it) => it.id !== id));
-
-  // Bookings CRUD
-  const updateBookingStatus = (id, status) => setBookings((b) => b.map((bk) => (bk.id === id ? { ...bk, status } : bk)));
-  const cancelBooking = (id) => setBookings((b) => b.filter((bk) => bk.id !== id));
-
-  // Content upload handler
-  const onUploadContent = (file, title, type, description) => {
-    // For demo we just store metadata
-    const c = { id: Date.now(), title, type, filename: file?.name || "", description, uploadedAt: new Date().toISOString() };
-    setContent((arr) => [c, ...arr]);
-  };
+  const sidebarItems = [
+    { key: "overview", label: "Overview", icon: <FaChartLine />, color: "text-red-500" },
+    { key: "services", label: "Services", icon: <FaBook />, color: "text-red-500" },
+    { key: "products", label: "Products", icon: <FaBoxOpen />, color: "text-red-500" },
+    { key: "classes", label: "Classes", icon: <HiOutlineUserCircle />, color: "text-red-500" },
+    { key: "bookings", label: "Bookings", icon: <HiOutlineCalendar />, color: "text-red-500" },
+    { key: "content", label: "Content", icon: <HiOutlineDocumentText />, color: "text-red-500" },
+    { key: "reports", label: "Reports", icon: <HiOutlineChartBar />, color: "text-red-500" },
+    { key: "users", label: "Users", icon: <HiOutlineUsers />, color: "text-red-500" },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-offWhite flex">
       {/* Sidebar */}
-      <aside className={`bg-white border-r border-orange-50 ${sidebarOpen ? "w-64" : "w-16"} transition-all`}>
-        <div className="p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-orange-100 text-orange-600 rounded-lg p-2">
-              <FaChartLine />
+      <motion.aside 
+        animate={{ width: sidebarOpen ? 280 : 80 }}
+        className="bg-white border-r border-orange-100 shadow-lg relative z-20"
+      >
+        <div className="sticky top-0">
+          <div className="p-5 flex items-center justify-between border-b border-orange-100">
+            <div className="flex items-center gap-3">
+              <div className="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl p-2">
+                <FaChartLine className="w-5 h-5" />
+              </div>
+              <AnimatePresence>
+                {sidebarOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    exit={{ opacity: 0, width: 0 }}
+                  >
+                    <div className="text-lg font-bold text-gray-800">AstroPanel</div>
+                    <div className="text-xs text-gray-500">Admin Dashboard</div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-            <div className={`${sidebarOpen ? "block" : "hidden"}`}>
-              <div className="text-sm font-bold">AstroPanel</div>
-              <div className="text-xs text-gray-500">Admin</div>
-            </div>
-          </div>
-          <button onClick={() => setSidebarOpen((s) => !s)} className="p-2 rounded hover:bg-orange-50">
-            <HiOutlineMenu />
-          </button>
-        </div>
-
-        <nav className="mt-4">
-          {[
-            { key: "overview", label: "Overview", icon: <FaChartLine /> },
-            { key: "services", label: "Services", icon: <FaBook /> },
-            { key: "products", label: "Products", icon: <FaBoxOpen /> },
-            { key: "classes", label: "Classes", icon: <HiOutlineUserCircle /> },
-            { key: "bookings", label: "Bookings", icon: <FaBook /> },
-            { key: "content", label: "Content", icon: <FaBook /> },
-            { key: "reports", label: "Reports", icon: <FaChartLine /> },
-            { key: "users", label: "Users", icon: <FaUsers /> },
-          ].map((it) => (
-            <button
-              key={it.key}
-              onClick={() => setTab(it.key)}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-orange-50 ${tab === it.key ? "bg-orange-50" : ""}`}
+            <button 
+              onClick={() => setSidebarOpen(!sidebarOpen)} 
+              className="p-2 rounded-lg hover:bg-red-50 transition"
             >
-              <div className="w-6 text-orange-500">{it.icon}</div>
-              <div className={`${sidebarOpen ? "block" : "hidden"}`}>{it.label}</div>
+              <HiOutlineMenu className="w-5 h-5 text-gray-600" />
             </button>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Main */}
-      <div className="flex-1">
-        {/* topbar */}
-        <header className="flex items-center justify-between p-4 border-b bg-white">
-          <div className="flex items-center gap-3">
-            <div className="text-lg font-semibold text-gray-900 capitalize">{tab}</div>
-            <div className="hidden md:block text-sm text-gray-500">Admin dashboard</div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative hidden sm:block">
-              <input placeholder="Search..." className="px-3 py-2 rounded-lg border border-gray-200 outline-none w-60" />
-              <HiOutlineSearch className="absolute right-3 top-2.5 text-gray-400" />
+          <nav className="p-3 space-y-1">
+            {sidebarItems.map((item) => (
+              <button
+                key={item.key}
+                onClick={() => setTab(item.key)}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${
+                  tab === item.key
+                    ? "bg-red-50 text-red-600 shadow-sm"
+                    : "text-gray-600 hover:bg-red-50 hover:text-red-600"
+                }`}
+              >
+                <div className={`w-5 h-5 ${tab === item.key ? "text-red-500" : ""}`}>
+                  {item.icon}
+                </div>
+                <AnimatePresence>
+                  {sidebarOpen && (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="text-sm font-medium"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
+            ))}
+          </nav>
+
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-orange-100">
+            <button
+              onClick={logout}
+              className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition"
+            >
+              <HiOutlineLogout className="w-5 h-5" />
+              <AnimatePresence>
+                {sidebarOpen && (
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-sm font-medium"
+                  >
+                    Logout
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
+          </div>
+        </div>
+      </motion.aside>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-x-hidden">
+        {/* Top Bar */}
+        <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-orange-100">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800 capitalize">{tab}</h1>
+              <p className="text-sm text-gray-500">Manage your {tab} settings and data</p>
             </div>
 
-            <button className="p-2 rounded hover:bg-orange-50"><HiOutlineBell /></button>
-            <div className="flex items-center gap-2 border-l pl-3">
-              <div className="text-sm text-gray-700">Admin</div>
-              <button onClick={logout} className="p-2 rounded hover:bg-orange-50 text-gray-600"><HiOutlineLogout /></button>
+            <div className="flex items-center gap-4">
+              <div className="relative hidden md:block">
+                <HiOutlineSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 py-2 rounded-xl border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-500 w-64"
+                />
+              </div>
+
+              <div className="relative">
+                <button
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="p-2 rounded-lg hover:bg-red-50 relative"
+                >
+                  <HiOutlineBell className="w-5 h-5 text-gray-600" />
+                  {notifications.filter(n => !n.read).length > 0 && (
+                    <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                  )}
+                </button>
+                
+                <AnimatePresence>
+                  {showNotifications && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-orange-100 z-50"
+                    >
+                      <div className="p-3 border-b border-orange-100">
+                        <h4 className="font-semibold">Notifications</h4>
+                      </div>
+                      <div className="max-h-96 overflow-y-auto">
+                        {notifications.map(notif => (
+                          <div key={notif.id} className={`p-3 border-b border-orange-50 hover:bg-orange-50 ${!notif.read ? 'bg-red-50' : ''}`}>
+                            <p className="text-sm text-gray-700">{notif.message}</p>
+                            <p className="text-xs text-gray-400 mt-1">{notif.time}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <div className="flex items-center gap-2 border-l pl-4 border-orange-200">
+                <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-white font-semibold">
+                  A
+                </div>
+                <div className="hidden md:block">
+                  <div className="text-sm font-medium text-gray-800">Admin</div>
+                  <div className="text-xs text-gray-500">Administrator</div>
+                </div>
+              </div>
             </div>
           </div>
         </header>
 
-        {/* content area */}
+        {/* Main Content Area */}
         <main className="p-6">
-          {/* Overview */}
-          {tab === "overview" && (
-            <section>
-              <div className="grid md:grid-cols-4 gap-4">
-                <StatCard title="Revenue (k)" value={`${revenueCount}k`} subtitle="Total inventory + services" />
-                <StatCard title="Users" value={usersCount} subtitle="Registered users" />
-                <StatCard title="Bookings" value={bookingsCount} subtitle="Active bookings" />
-                <StatCard title="Products" value={products.length} subtitle="Items in catalog" />
-              </div>
-
-              <div className="mt-6 grid lg:grid-cols-2 gap-6">
-                {/* Simple revenue chart (bar style) */}
-                <div className="bg-white rounded-2xl p-6 shadow">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold">Revenue by month</h4>
-                    <div className="text-sm text-gray-500">Last 6 months</div>
-                  </div>
-                  <SimpleBarChart />
+          <AnimatePresence mode="wait">
+            {/* Overview Tab */}
+            {tab === "overview" && (
+              <motion.section
+                key="overview"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="grid md:grid-cols-4 gap-6 mb-8">
+                  <StatCard title="Revenue" value={`₹${revenueCount}K`} subtitle="Total earnings" icon={<FaChartLine />} color="red" />
+                  <StatCard title="Users" value={usersCount} subtitle="Registered users" icon={<HiOutlineUsers />} color="orange" />
+                  <StatCard title="Bookings" value={bookingsCount} subtitle="Active bookings" icon={<HiOutlineCalendar />} color="red" />
+                  <StatCard title="Products" value={productsCount} subtitle="In catalog" icon={<FaBoxOpen />} color="orange" />
                 </div>
 
-                {/* Recent activity */}
-                <div className="bg-white rounded-2xl p-6 shadow">
-                  <h4 className="font-semibold">Recent Bookings</h4>
-                  <ul className="mt-4 space-y-3">
-                    {bookings.slice(0, 6).map((b) => (
-                      <li key={b.id} className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium">{b.user}</div>
-                          <div className="text-xs text-gray-500">{b.service} • {b.date}</div>
-                        </div>
-                        <div>
-                          <span className={`text-xs px-2 py-1 rounded ${b.status === "Booked" ? "bg-orange-50 text-orange-600" : "bg-green-50 text-green-600"}`}>{b.status}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Services management */}
-          {tab === "services" && (
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Manage Services</h3>
-                <ServiceForm onAdd={addService} />
-              </div>
-
-              <div className="bg-white rounded-2xl p-4 shadow">
-                <table className="w-full text-left">
-                  <thead className="text-xs text-gray-500 uppercase">
-                    <tr>
-                      <th className="py-3">Title</th>
-                      <th className="py-3">Category</th>
-                      <th className="py-3">Price</th>
-                      <th className="py-3">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {services.map((s) => (
-                      <tr key={s.id} className="border-t">
-                        <td className="py-3">{s.title}</td>
-                        <td className="py-3 text-sm text-gray-500">{s.category}</td>
-                        <td className="py-3">₹{s.price}</td>
-                        <td className="py-3">
-                          <button onClick={() => { const title = prompt("Edit title", s.title); if (title) updateService(s.id, { title }); }} className="mr-2 p-2 rounded bg-orange-50 text-orange-600"><HiOutlinePencilAlt /></button>
-                          <button onClick={() => deleteService(s.id)} className="p-2 rounded bg-red-50 text-red-600"><HiOutlineTrash /></button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          )}
-
-          {/* Products / Inventory control */}
-          {tab === "products" && (
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Products & Inventory</h3>
-                <ProductForm onAdd={addProduct} />
-              </div>
-
-              <div className="bg-white rounded-2xl p-4 shadow overflow-x-auto">
-                <table className="w-full text-left min-w-[780px]">
-                  <thead className="text-xs text-gray-500 uppercase">
-                    <tr>
-                      <th className="py-3">Product</th>
-                      <th className="py-3">Price</th>
-                      <th className="py-3">Stock</th>
-                      <th className="py-3">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {products.map((p) => (
-                      <tr key={p.id} className="border-t">
-                        <td className="py-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-orange-50 rounded-md flex items-center justify-center text-orange-600">📿</div>
-                            <div>
-                              <div className="font-medium">{p.name}</div>
-                              <div className="text-xs text-gray-500">SKU: {p.id}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3">₹{p.price}</td>
-                        <td className="py-3">
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="number"
-                              value={p.stock}
-                              onChange={(e) => updateProduct(p.id, { stock: Number(e.target.value) })}
-                              className="w-20 px-2 py-1 border rounded"
-                            />
-                            <button onClick={() => updateProduct(p.id, { stock: p.stock + 1 })} className="px-2 py-1 rounded bg-orange-50">+1</button>
-                          </div>
-                        </td>
-                        <td className="py-3">
-                          <button onClick={() => { const name = prompt("Edit product name", p.name); if (name) updateProduct(p.id, { name }); }} className="mr-2 p-2 rounded bg-orange-50 text-orange-600"><HiOutlinePencilAlt /></button>
-                          <button onClick={() => deleteProduct(p.id)} className="p-2 rounded bg-red-50 text-red-600"><HiOutlineTrash /></button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          )}
-
-          {/* Classes */}
-          {tab === "classes" && (
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Manage Classes</h3>
-                <ClassForm onAdd={addClass} />
-              </div>
-
-              <div className="bg-white rounded-2xl p-4 shadow">
-                <table className="w-full text-left">
-                  <thead className="text-xs text-gray-500 uppercase">
-                    <tr><th className="py-3">Title</th><th className="py-3">Seats</th><th className="py-3">Enrolled</th><th className="py-3">Actions</th></tr>
-                  </thead>
-                  <tbody>
-                    {classes.map((c) => (
-                      <tr key={c.id} className="border-t">
-                        <td className="py-3">{c.title}</td>
-                        <td className="py-3">{c.seats}</td>
-                        <td className="py-3">{c.enrolled}</td>
-                        <td className="py-3">
-                          <button onClick={() => { const title = prompt("Edit title", c.title); if (title) updateClass(c.id, { title }); }} className="mr-2 p-2 rounded bg-orange-50 text-orange-600"><HiOutlinePencilAlt /></button>
-                          <button onClick={() => deleteClass(c.id)} className="p-2 rounded bg-red-50 text-red-600"><HiOutlineTrash /></button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          )}
-
-          {/* Bookings */}
-          {tab === "bookings" && (
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Bookings</h3>
-                <div className="text-sm text-gray-500">Manage upcoming bookings and statuses</div>
-              </div>
-
-              <div className="bg-white rounded-2xl p-4 shadow">
-                <table className="w-full text-left">
-                  <thead className="text-xs text-gray-500 uppercase">
-                    <tr><th className="py-3">User</th><th className="py-3">Service</th><th className="py-3">Date</th><th className="py-3">Status</th><th className="py-3">Actions</th></tr>
-                  </thead>
-                  <tbody>
-                    {bookings.map((b) => (
-                      <tr key={b.id} className="border-t">
-                        <td className="py-3">{b.user}</td>
-                        <td className="py-3">{b.service}</td>
-                        <td className="py-3">{b.date}</td>
-                        <td className="py-3">{b.status}</td>
-                        <td className="py-3">
-                          <button onClick={() => updateBookingStatus(b.id, "Completed")} className="mr-2 p-2 rounded bg-green-50 text-green-600">Complete</button>
-                          <button onClick={() => cancelBooking(b.id)} className="p-2 rounded bg-red-50 text-red-600">Cancel</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          )}
-
-          {/* Content upload (educational) */}
-          {tab === "content" && (
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Educational Content</h3>
-                <div className="text-sm text-gray-500">Upload videos, PDFs, lessons</div>
-              </div>
-
-              <div className="bg-white rounded-2xl p-6 shadow">
-                <ContentUploader onUpload={onUploadContent} />
-                <div className="mt-6">
-                  <h4 className="font-semibold mb-3">Uploaded Items</h4>
-                  <ul className="space-y-3">
-                    {content.length === 0 && <div className="text-sm text-gray-500">No content uploaded yet.</div>}
-                    {content.map((c) => (
-                      <li key={c.id} className="border rounded p-3 flex items-center justify-between">
-                        <div>
-                          <div className="font-medium">{c.title}</div>
-                          <div className="text-xs text-gray-500">{c.type} • {c.filename} • {new Date(c.uploadedAt).toLocaleString()}</div>
-                        </div>
-                        <div className="flex gap-2">
-                          <button className="px-2 py-1 rounded bg-orange-50 text-orange-600">View</button>
-                          <button onClick={() => setContent((arr) => arr.filter((x) => x.id !== c.id))} className="px-2 py-1 rounded bg-red-50 text-red-600">Delete</button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Reports */}
-          {tab === "reports" && (
-            <section>
-              <div className="grid lg:grid-cols-3 gap-6">
-                <div className="bg-white rounded-2xl p-6 shadow">
-                  <h4 className="font-semibold mb-3">Users Growth</h4>
-                  <SimpleLineChart />
-                </div>
-                <div className="bg-white rounded-2xl p-6 shadow">
-                  <h4 className="font-semibold mb-3">Top Services</h4>
-                  <ol className="list-decimal list-inside text-sm text-gray-700">
-                    {services.map((s, i) => <li key={s.id}>{s.title} — ₹{s.price}</li>)}
-                  </ol>
-                </div>
-                <div className="bg-white rounded-2xl p-6 shadow">
-                  <h4 className="font-semibold mb-3">Engagement</h4>
-                  <div className="text-sm text-gray-500">Avg session duration, click-throughs, newsletter signups — (simulated)</div>
-                  <div className="mt-4">
-                    <div className="h-2 bg-orange-100 rounded-full overflow-hidden">
-                      <div className="h-2 bg-orange-500 rounded-full" style={{ width: "62%" }} />
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-orange-100">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="font-semibold text-gray-800">Revenue Overview</h4>
+                      <HiOutlineDownload className="text-gray-400 cursor-pointer hover:text-red-500" />
                     </div>
-                    <div className="text-xs text-gray-500 mt-2">Conversion rate: 6.2%</div>
+                    <RevenueChart />
+                  </div>
+
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-orange-100">
+                    <h4 className="font-semibold text-gray-800 mb-4">Recent Bookings</h4>
+                    <div className="space-y-3">
+                      {bookings.slice(0, 5).map((b) => (
+                        <div key={b.id} className="flex items-center justify-between p-3 bg-orange-50 rounded-xl">
+                          <div>
+                            <div className="font-medium text-gray-800">{b.user}</div>
+                            <div className="text-xs text-gray-500">{b.service} • {b.date}</div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              b.status === "Booked" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"
+                            }`}>
+                              {b.status}
+                            </span>
+                            <span className="text-sm font-semibold text-gray-700">₹{b.amount}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </section>
-          )}
 
-          {/* Users */}
-          {tab === "users" && (
-            <section>
-              <h3 className="text-lg font-semibold mb-4">Users</h3>
-              <div className="bg-white rounded-2xl p-4 shadow">
-                <table className="w-full text-left">
-                  <thead className="text-xs text-gray-500 uppercase"><tr><th className="py-3">Name</th><th className="py-3">Email</th><th className="py-3">Actions</th></tr></thead>
-                  <tbody>
-                    {users.map((u) => (
-                      <tr key={u.id} className="border-t"><td className="py-3">{u.name}</td><td className="py-3">{u.email}</td><td className="py-3"><button className="px-3 py-1 rounded bg-red-50 text-red-600" onClick={() => setUsers((arr) => arr.filter(x => x.id !== u.id))}>Remove</button></td></tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          )}
+                <div className="grid md:grid-cols-3 gap-6 mt-6">
+                  <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-6 border border-orange-100">
+                    <h4 className="font-semibold text-gray-800 mb-3">Top Product</h4>
+                    <div className="text-2xl font-bold text-red-600">Premium Rudraksh Mala</div>
+                    <div className="text-sm text-gray-500 mt-1">156 units sold</div>
+                  </div>
+                  <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-6 border border-orange-100">
+                    <h4 className="font-semibold text-gray-800 mb-3">Popular Service</h4>
+                    <div className="text-2xl font-bold text-red-600">Natal Chart Reading</div>
+                    <div className="text-sm text-gray-500 mt-1">Highest bookings</div>
+                  </div>
+                  <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-6 border border-orange-100">
+                    <h4 className="font-semibold text-gray-800 mb-3">Active Users</h4>
+                    <div className="text-2xl font-bold text-red-600">{users.length}</div>
+                    <div className="text-sm text-gray-500 mt-1">Total registered</div>
+                  </div>
+                </div>
+              </motion.section>
+            )}
+
+            {/* Products Tab */}
+            {tab === "products" && (
+              <motion.section
+                key="products"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-800">Products & Inventory</h3>
+                  <ProductForm onAdd={(p) => setProducts([p, ...products])} />
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-orange-50">
+                        <tr className="text-left text-sm text-gray-600">
+                          <th className="px-6 py-4">Product</th>
+                          <th className="px-6 py-4">Price</th>
+                          <th className="px-6 py-4">Stock</th>
+                          <th className="px-6 py-4">Sold</th>
+                          <th className="px-6 py-4">Rating</th>
+                          <th className="px-6 py-4">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-orange-100">
+                        {filteredProducts.map((p) => (
+                          <tr key={p.id} className="hover:bg-orange-50 transition">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                  <FaBoxOpen className="text-red-500" />
+                                </div>
+                                <div>
+                                  <div className="font-medium text-gray-800">{p.name}</div>
+                                  <div className="text-xs text-gray-500">SKU: {p.id}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 font-semibold text-gray-800">₹{p.price}</td>
+                            <td className="px-6 py-4">
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                p.stock < 10 ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
+                              }`}>
+                                {p.stock} units
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-gray-600">{p.sold}</td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-1">
+                                <FaStar className="text-yellow-500" />
+                                <span className="text-gray-600">{p.rating}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex gap-2">
+                                <button className="p-2 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100">
+                                  <HiOutlinePencilAlt className="w-4 h-4" />
+                                </button>
+                                <button className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100">
+                                  <HiOutlineTrash className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </motion.section>
+            )}
+
+            {/* Bookings Tab */}
+            {tab === "bookings" && (
+              <motion.section
+                key="bookings"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-800">Bookings Management</h3>
+                  <button className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-600 rounded-lg hover:bg-orange-200">
+                    <HiOutlineDownload /> Export
+                  </button>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-orange-50">
+                        <tr className="text-left text-sm text-gray-600">
+                          <th className="px-6 py-4">User</th>
+                          <th className="px-6 py-4">Service</th>
+                          <th className="px-6 py-4">Date</th>
+                          <th className="px-6 py-4">Amount</th>
+                          <th className="px-6 py-4">Status</th>
+                          <th className="px-6 py-4">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-orange-100">
+                        {filteredBookings.map((b) => (
+                          <tr key={b.id} className="hover:bg-orange-50 transition">
+                            <td className="px-6 py-4 font-medium text-gray-800">{b.user}</td>
+                            <td className="px-6 py-4 text-gray-600">{b.service}</td>
+                            <td className="px-6 py-4 text-gray-600">{b.date}</td>
+                            <td className="px-6 py-4 font-semibold text-gray-800">₹{b.amount}</td>
+                            <td className="px-6 py-4">
+                              <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                                b.status === "Booked" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"
+                              }`}>
+                                {b.status === "Booked" ? <HiOutlineCalendar className="w-3 h-3" /> : <FaCheckCircle className="w-3 h-3" />}
+                                {b.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex gap-2">
+                                <button className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100">
+                                  <FaCheckCircle className="w-4 h-4" />
+                                </button>
+                                <button className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100">
+                                  <FaTimesCircle className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </motion.section>
+            )}
+
+            {/* Users Tab */}
+            {tab === "users" && (
+              <motion.section
+                key="users"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-800">User Management</h3>
+                  <div className="flex gap-2">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-600 rounded-lg">
+                      <HiOutlineFilter /> Filter
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-orange-50">
+                        <tr className="text-left text-sm text-gray-600">
+                          <th className="px-6 py-4">Name</th>
+                          <th className="px-6 py-4">Email</th>
+                          <th className="px-6 py-4">Joined</th>
+                          <th className="px-6 py-4">Status</th>
+                          <th className="px-6 py-4">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-orange-100">
+                        {users.map((u) => (
+                          <tr key={u.id} className="hover:bg-orange-50 transition">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                  {u.name.charAt(0)}
+                                </div>
+                                <span className="font-medium text-gray-800">{u.name}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-gray-600">{u.email}</td>
+                            <td className="px-6 py-4 text-gray-600">{u.joined}</td>
+                            <td className="px-6 py-4">
+                              <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                                {u.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex gap-2">
+                                <button className="p-2 rounded-lg bg-orange-50 text-orange-600">
+                                  <HiOutlineEye className="w-4 h-4" />
+                                </button>
+                                <button className="p-2 rounded-lg bg-red-50 text-red-600">
+                                  <HiOutlineTrash className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </motion.section>
+            )}
+
+            {/* Other tabs (Services, Classes, Content, Reports) - Similar structure */}
+            {["services", "classes", "content", "reports"].includes(tab) && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-2xl shadow-lg border border-orange-100 p-12 text-center"
+              >
+                <div className="text-6xl mb-4">🚧</div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">Coming Soon</h3>
+                <p className="text-gray-500">The {tab} management interface is under development.</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
       </div>
     </div>
   );
 }
 
-/* ---------------------- Small helper components ---------------------- */
-
-function StatCard({ title, value, subtitle }) {
+// Helper Components
+function StatCard({ title, value, subtitle, icon, color }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl p-6 shadow">
-      <div className="text-sm text-gray-500">{title}</div>
-      <div className="mt-2 text-2xl font-bold">{value}</div>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-2xl p-6 shadow-lg border border-orange-100 hover:shadow-xl transition"
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className={`p-2 rounded-lg bg-${color}-50 text-${color}-500`}>
+          {icon}
+        </div>
+        <HiOutlineChevronDown className="text-gray-300" />
+      </div>
+      <div className="text-2xl font-bold text-gray-800">{value}</div>
+      <div className="text-sm text-gray-500 mt-1">{title}</div>
       {subtitle && <div className="text-xs text-gray-400 mt-2">{subtitle}</div>}
     </motion.div>
   );
 }
 
-/* Simple bar chart built with divs (mock data) */
-function SimpleBarChart() {
-  const data = [120, 160, 90, 200, 140, 180]; // arbitrary values
+function RevenueChart() {
+  const data = [42, 65, 48, 78, 62, 89, 95, 72, 84, 68, 91, 108];
   const max = Math.max(...data);
+  
   return (
-    <div className="mt-6 flex items-end gap-3 h-40">
+    <div className="h-64 flex items-end gap-2">
       {data.map((d, i) => (
-        <div key={i} className="flex-1">
-          <div className="h-full flex items-end">
-            <div className="bg-orange-500 rounded-t-md" style={{ height: `${(d / max) * 100}%` }} />
+        <div key={i} className="flex-1 flex flex-col items-center">
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: `${(d / max) * 100}%` }}
+            transition={{ duration: 1, delay: i * 0.05 }}
+            className="w-full bg-gradient-to-t from-red-500 to-red-400 rounded-t-lg"
+            style={{ height: `${(d / max) * 100}%`, minHeight: 4 }}
+          />
+          <div className="text-xs text-gray-500 mt-2 rotate-45 origin-left">
+            {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][i]}
           </div>
-          <div className="text-xs text-center text-gray-500 mt-2">{["Apr", "May", "Jun", "Jul", "Aug", "Sep"][i]}</div>
         </div>
       ))}
     </div>
   );
 }
 
-/* Simple line chart (SVG) */
-function SimpleLineChart() {
-  const points = [10, 30, 20, 50, 30, 70].map((v, i) => [i * 20, 100 - v]);
-  const path = `M ${points.map((p) => p.join(" ")).join(" L ")}`;
-  return (
-    <svg viewBox="0 0 120 100" className="w-full h-40">
-      <path d={path} stroke="#F97316" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      {points.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r="2.5" fill="#FB923C" />)}
-    </svg>
-  );
-}
-
-/* Service form modal-ish */
-function ServiceForm({ onAdd }) {
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Astrology");
-  const [price, setPrice] = useState("");
-
-  const submit = () => {
-    if (!title || !price) return alert("Title & price required");
-    onAdd({ title, category, price: Number(price) });
-    setTitle(""); setPrice(""); setCategory("Astrology"); setOpen(false);
-  };
-
-  return (
-    <div>
-      <button onClick={() => setOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg"><HiOutlinePlus /> Add Service</button>
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
-          <div className="bg-white rounded-2xl p-6 relative z-10 w-full max-w-md shadow-lg">
-            <h4 className="font-semibold mb-4">New Service</h4>
-            <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-3 py-2 border rounded mb-2" />
-            <select className="w-full px-3 py-2 border rounded mb-2" value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option>Astrology</option><option>Numerology</option><option>Vastu</option>
-            </select>
-            <input placeholder="Price (INR)" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full px-3 py-2 border rounded mb-2" />
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setOpen(false)} className="px-3 py-2 rounded border">Cancel</button>
-              <button onClick={submit} className="px-4 py-2 rounded bg-orange-500 text-white">Create</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* Product form */
 function ProductForm({ onAdd }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [stock, setStock] = useState(1);
-  const [file, setFile] = useState(null);
+  const [stock, setStock] = useState(10);
 
   const submit = () => {
-    if (!name || !price) return alert("Name & price required");
-    onAdd({ name, price: Number(price), stock: Number(stock), file });
-    setName(""); setPrice(""); setStock(1); setFile(null); setOpen(false);
+    if (!name || !price) return;
+    onAdd({ id: Date.now(), name, price: Number(price), stock: Number(stock), sold: 0, rating: 0 });
+    setName(""); setPrice(""); setStock(10);
+    setOpen(false);
   };
 
   return (
-    <div>
-      <button onClick={() => setOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg"><HiOutlinePlus /> Add Product</button>
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
-          <div className="bg-white rounded-2xl p-6 relative z-10 w-full max-w-md shadow-lg">
-            <h4 className="font-semibold mb-4">New Product</h4>
-            <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 border rounded mb-2" />
-            <input placeholder="Price (INR)" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full px-3 py-2 border rounded mb-2" />
-            <input type="number" placeholder="Stock" value={stock} onChange={(e) => setStock(e.target.value)} className="w-full px-3 py-2 border rounded mb-2" />
-            <input type="file" onChange={(e) => setFile(e.target.files?.[0])} className="w-full mb-2" />
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setOpen(false)} className="px-3 py-2 rounded border">Cancel</button>
-              <button onClick={submit} className="px-4 py-2 rounded bg-orange-500 text-white">Create</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* Class form */
-function ClassForm({ onAdd }) {
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [seats, setSeats] = useState(10);
-
-  const submit = () => {
-    if (!title) return alert("Title required");
-    onAdd({ title, seats: Number(seats), enrolled: 0 });
-    setTitle(""); setSeats(10); setOpen(false);
-  };
-
-  return (
-    <div>
-      <button onClick={() => setOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg"><HiOutlinePlus /> Add Class</button>
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
-          <div className="bg-white rounded-2xl p-6 relative z-10 w-full max-w-md shadow-lg">
-            <h4 className="font-semibold mb-4">New Class</h4>
-            <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-3 py-2 border rounded mb-2" />
-            <input type="number" placeholder="Seats" value={seats} onChange={(e) => setSeats(e.target.value)} className="w-full px-3 py-2 border rounded mb-2" />
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setOpen(false)} className="px-3 py-2 rounded border">Cancel</button>
-              <button onClick={submit} className="px-4 py-2 rounded bg-orange-500 text-white">Create</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* content uploader */
-function ContentUploader({ onUpload }) {
-  const [title, setTitle] = useState("");
-  const [type, setType] = useState("video");
-  const [file, setFile] = useState(null);
-  const [desc, setDesc] = useState("");
-
-  const submit = () => {
-    if (!title || !file) return alert("Title & file required");
-    onUpload(file, title, type, desc);
-    setTitle(""); setType("video"); setFile(null); setDesc("");
-  };
-
-  return (
-    <div className="border rounded p-4">
-      <div className="grid md:grid-cols-3 gap-3">
-        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="px-3 py-2 border rounded" />
-        <select value={type} onChange={(e) => setType(e.target.value)} className="px-3 py-2 border rounded">
-          <option value="video">Video</option>
-          <option value="pdf">PDF</option>
-          <option value="article">Article</option>
-        </select>
-        <input type="file" onChange={(e) => setFile(e.target.files?.[0])} className="px-3 py-2" />
-      </div>
-      <textarea placeholder="Short description" value={desc} onChange={(e) => setDesc(e.target.value)} className="w-full mt-3 px-3 py-2 border rounded" />
-      <div className="flex justify-end mt-3">
-        <button onClick={submit} className="px-4 py-2 rounded bg-orange-500 text-white">Upload</button>
-      </div>
-    </div>
+    <>
+      <button onClick={() => setOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition">
+        <HiOutlinePlus /> Add Product
+      </button>
+      
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+            onClick={() => setOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="text-xl font-bold text-gray-800">Add New Product</h4>
+                <button onClick={() => setOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                  <HiOutlineX className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                  <input
+                    placeholder="e.g., Rudraksh Mala"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-4 py-2 border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+                  <input
+                    type="number"
+                    placeholder="1999"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    className="w-full px-4 py-2 border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
+                  <input
+                    type="number"
+                    value={stock}
+                    onChange={(e) => setStock(e.target.value)}
+                    className="w-full px-4 py-2 border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500"
+                  />
+                </div>
+                
+                <div className="flex gap-3 pt-4">
+                  <button onClick={() => setOpen(false)} className="flex-1 px-4 py-2 border border-orange-200 rounded-xl text-gray-600 hover:bg-gray-50">
+                    Cancel
+                  </button>
+                  <button onClick={submit} className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:shadow-md">
+                    Create Product
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

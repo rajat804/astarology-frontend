@@ -12,20 +12,21 @@ import { GiCrystalBall } from "react-icons/gi";
 import { FaChevronLeft, FaChevronRight, FaCheck, FaStar } from "react-icons/fa";
 
 /**
- * Premium HomePage with Products added.
+ * Premium HomePage with updated color scheme: Red & Off-white with faded orange accents
+ * Hero banner image removed, heading in green, buttons in red.
  * Requires: tailwindcss, framer-motion, react-icons
  */
 
 /* ---------- Helpers ---------- */
 const Accent = ({ children }) => (
-  <span className="text-orange-600">{children}</span>
+  <span className="text-green-600">{children}</span>
 );
 
 const CTA = ({ children, className = "", ...rest }) => (
   <button
     {...rest}
     className={
-      "inline-flex items-center gap-3 px-5 py-2 rounded-2xl font-semibold shadow-md text-white bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 transition " +
+      "inline-flex items-center gap-3 px-5 py-2 rounded-2xl font-semibold shadow-md text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transition " +
       className
     }
   >
@@ -49,11 +50,11 @@ function useCount(to = 0, duration = 1400) {
   return num;
 }
 
-/* ---------- HERO ---------- */
+/* ---------- HERO (Banner Image Removed) ---------- */
 const Hero = () => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white to-orange-50">
-      {/* decorative shapes */}
+    <section className="relative overflow-hidden bg-gradient-to-b from-offWhite to-orange-50/50">
+      {/* decorative shapes - faded orange */}
       <svg
         className="absolute -right-48 -top-32 opacity-20 pointer-events-none"
         width="700"
@@ -78,7 +79,7 @@ const Hero = () => {
             transition={{ duration: 0.7 }}
             className="space-y-6"
           >
-            <div className="inline-flex items-center gap-3 bg-orange-100/60 text-orange-700 px-3 py-1 rounded-full text-sm font-medium w-max shadow-sm">
+            <div className="inline-flex items-center gap-3 bg-orange-100/60 text-red-700 px-3 py-1 rounded-full text-sm font-medium w-max shadow-sm">
               <RiStarSLine /> Featured
             </div>
 
@@ -95,14 +96,14 @@ const Hero = () => {
 
             <div className="flex flex-wrap gap-4 items-center">
               <CTA>Book a Consultation</CTA>
-              <button className="px-5 py-2 rounded-2xl border border-orange-200 text-orange-600 font-semibold hover:bg-orange-50 transition">
+              <button className="px-5 py-2 rounded-2xl border border-red-200 text-red-600 font-semibold hover:bg-red-50 transition">
                 Browse Products
               </button>
             </div>
 
             <div className="flex gap-6 items-center mt-4">
               <div className="flex items-center gap-3 bg-white/70 px-3 py-2 rounded-lg shadow-sm backdrop-blur">
-                <HiOutlineUser className="w-5 h-5 text-orange-600" />
+                <HiOutlineUser className="w-5 h-5 text-red-600" />
                 <div>
                   <div className="text-sm font-semibold">4.9/5</div>
                   <div className="text-xs text-gray-500">Avg. rating</div>
@@ -110,7 +111,7 @@ const Hero = () => {
               </div>
 
               <div className="flex items-center gap-3 bg-white/70 px-3 py-2 rounded-lg shadow-sm backdrop-blur">
-                <GiCrystalBall className="w-5 h-5 text-orange-600" />
+                <GiCrystalBall className="w-5 h-5 text-red-600" />
                 <div>
                   <div className="text-sm font-semibold">2500+</div>
                   <div className="text-xs text-gray-500">Clients served</div>
@@ -118,7 +119,7 @@ const Hero = () => {
               </div>
 
               <div className="hidden md:flex items-center gap-3 bg-white/70 px-3 py-2 rounded-lg shadow-sm backdrop-blur">
-                <HiOutlineShoppingCart className="w-5 h-5 text-orange-600" />
+                <HiOutlineShoppingCart className="w-5 h-5 text-red-600" />
                 <div>
                   <div className="text-sm font-semibold">500+</div>
                   <div className="text-xs text-gray-500">Products</div>
@@ -127,19 +128,45 @@ const Hero = () => {
             </div>
           </motion.div>
 
-          {/* Right: layered cards */}
+          {/* Right side: Decorative content instead of image */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
             <div className="relative">
-              <div className="rounded-3xl overflow-hidden shadow-2xl transform -translate-y-2">
-                <img
-                  src="https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1200&auto=format&fit=crop"
-                  alt="hero"
-                  className="w-full h-[420px] object-cover"
-                />
+              {/* Decorative spiritual symbols card */}
+              <div className="rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-offWhite to-orange-50/80 p-8 border border-orange-100">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/80 rounded-2xl p-4 text-center shadow-sm">
+                    <GiCrystalBall className="w-8 h-8 text-red-500 mx-auto mb-2" />
+                    <div className="font-semibold text-gray-800">Natal Charts</div>
+                    <div className="text-xs text-gray-500">Deep insights</div>
+                  </div>
+                  <div className="bg-white/80 rounded-2xl p-4 text-center shadow-sm">
+                    <RiStarSLine className="w-8 h-8 text-red-500 mx-auto mb-2" />
+                    <div className="font-semibold text-gray-800">Vedic Astrology</div>
+                    <div className="text-xs text-gray-500">Ancient wisdom</div>
+                  </div>
+                  <div className="bg-white/80 rounded-2xl p-4 text-center shadow-sm">
+                    <HiOutlineCalendar className="w-8 h-8 text-red-500 mx-auto mb-2" />
+                    <div className="font-semibold text-gray-800">Workshops</div>
+                    <div className="text-xs text-gray-500">Live sessions</div>
+                  </div>
+                  <div className="bg-white/80 rounded-2xl p-4 text-center shadow-sm">
+                    <HiOutlineMail className="w-8 h-8 text-red-500 mx-auto mb-2" />
+                    <div className="font-semibold text-gray-800">Guidance</div>
+                    <div className="text-xs text-gray-500">Weekly insights</div>
+                  </div>
+                </div>
+                <div className="mt-6 text-center">
+                  <div className="text-sm text-gray-500 mb-2">✨ New Moon Special ✨</div>
+                  <div className="font-semibold text-gray-800">First consultation: 20% off</div>
+                  <div className="text-xs text-gray-500 mt-1">Use code: WELCOME20</div>
+                  <button className="mt-4 px-5 py-2 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition">
+                    Claim Offer
+                  </button>
+                </div>
               </div>
 
               {/* floating card 1 */}
@@ -152,32 +179,13 @@ const Hero = () => {
                 <div className="font-semibold">Moon Rituals • May 8</div>
                 <div className="text-xs text-gray-400 mt-1">Seats left: 8</div>
                 <div className="mt-3">
-                  <button className="w-full px-3 py-2 bg-orange-400 text-white rounded-lg font-semibold">
+                  <button className="w-full px-3 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600">
                     Reserve
                   </button>
                 </div>
               </motion.div>
 
-              {/* floating card 2 (bottom-right) */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className="absolute right-6 bottom-6 bg-gradient-to-tr from-white/70 to-orange-50 backdrop-blur-sm border border-orange-100 rounded-2xl p-4 w-64 shadow-xl"
-              >
-                <div className="text-xs text-gray-500">Intro Offer</div>
-                <div className="font-semibold text-gray-900">
-                  First consult 20% OFF
-                </div>
-                <div className="text-xs text-gray-500 mt-1">
-                  Use code: WELCOME20
-                </div>
-                <div className="mt-3">
-                  <button className="w-full px-3 py-2 bg-orange-500 text-white rounded-lg font-semibold">
-                    Book Now
-                  </button>
-                </div>
-              </motion.div>
+              
             </div>
           </motion.div>
         </div>
@@ -186,12 +194,12 @@ const Hero = () => {
   );
 };
 
-/* ---------- STATS ---------- */
+/* ---------- STATS (Updated colors) ---------- */
 const Stats = () => {
   const clients = useCount(2580, 1600);
   const classes = useCount(120, 1400);
   const products = useCount(520, 1400);
-  const rating = useCount(49, 1400); // shows 4.9
+  const rating = useCount(49, 1400);
 
   return (
     <section className="py-10 -mt-6">
@@ -199,7 +207,7 @@ const Stats = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl p-6 shadow"
+          className="bg-offWhite rounded-2xl p-6 shadow-sm border border-orange-100"
         >
           <div className="text-sm text-gray-500">Happy Clients</div>
           <div className="mt-2 font-bold text-2xl text-gray-900">
@@ -211,7 +219,7 @@ const Stats = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl p-6 shadow"
+          className="bg-offWhite rounded-2xl p-6 shadow-sm border border-orange-100"
         >
           <div className="text-sm text-gray-500">Live Classes</div>
           <div className="mt-2 font-bold text-2xl text-gray-900">
@@ -223,7 +231,7 @@ const Stats = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl p-6 shadow"
+          className="bg-offWhite rounded-2xl p-6 shadow-sm border border-orange-100"
         >
           <div className="text-sm text-gray-500">Authentic Products</div>
           <div className="mt-2 font-bold text-2xl text-gray-900">
@@ -235,7 +243,7 @@ const Stats = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl p-6 shadow"
+          className="bg-offWhite rounded-2xl p-6 shadow-sm border border-orange-100"
         >
           <div className="text-sm text-gray-500">Avg. Rating</div>
           <div className="mt-2 font-bold text-2xl text-gray-900">
@@ -248,7 +256,7 @@ const Stats = () => {
   );
 };
 
-/* ---------- SERVICES ---------- */
+/* ---------- SERVICES (Updated colors) ---------- */
 const Services = () => {
   const services = [
     {
@@ -275,11 +283,11 @@ const Services = () => {
   ];
 
   return (
-    <section className="py-14 bg-gradient-to-b from-white to-orange-50">
+    <section className="py-14 bg-gradient-to-b from-offWhite to-orange-50/50">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h3 className="text-2xl font-bold text-gray-900">
+            <h3 className="text-2xl font-bold text-green-600">
               Premium Consultation Services
             </h3>
             <p className="text-gray-600">
@@ -287,7 +295,7 @@ const Services = () => {
             </p>
           </div>
           <div className="hidden md:flex gap-3">
-            <button className="px-4 py-2 rounded-lg border border-orange-100 text-orange-600">
+            <button className="px-4 py-2 rounded-lg border border-red-200 text-red-600 hover:bg-red-50">
               View all
             </button>
             <CTA>Book a Slot</CTA>
@@ -301,7 +309,7 @@ const Services = () => {
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.12 }}
-              className="bg-white rounded-3xl overflow-hidden shadow-2xl hover:shadow-[0_18px_60px_rgba(255,140,64,0.08)] transform hover:-translate-y-2 transition"
+              className="bg-offWhite rounded-3xl overflow-hidden shadow-lg hover:shadow-[0_18px_60px_rgba(220,38,38,0.08)] transform hover:-translate-y-2 transition border border-orange-100"
             >
               <div className="relative h-48">
                 <img
@@ -323,7 +331,7 @@ const Services = () => {
                 <div className="flex items-center justify-between mt-4">
                   <div className="flex items-center gap-4 text-sm text-gray-500">
                     <div className="inline-flex items-center gap-2">
-                      <HiOutlineCalendar className="w-5 h-5 text-orange-400" />
+                      <HiOutlineCalendar className="w-5 h-5 text-red-500" />
                       <span>{s.duration}</span>
                     </div>
                   </div>
@@ -337,7 +345,7 @@ const Services = () => {
                 </div>
 
                 <div className="flex gap-3 mt-3">
-                  <button className="flex-1 px-4 py-2 rounded-xl border border-orange-100 text-orange-600 font-semibold hover:bg-orange-50">
+                  <button className="flex-1 px-4 py-2 rounded-xl border border-red-200 text-red-600 font-semibold hover:bg-red-50">
                     Details
                   </button>
                   <CTA className="flex-none">Book Now</CTA>
@@ -351,7 +359,7 @@ const Services = () => {
   );
 };
 
-/* ---------- PRODUCTS (NEW, premium cards) ---------- */
+/* ---------- PRODUCTS (Updated colors: red accents, off-white cards) ---------- */
 const Products = () => {
   const items = [
     {
@@ -394,11 +402,11 @@ const Products = () => {
   const addToCart = (p) => setCart((c) => [...c, p]);
 
   return (
-    <section className="py-14 bg-white">
+    <section className="py-14 bg-offWhite">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h3 className="text-2xl font-bold text-gray-900">
+            <h3 className="text-2xl font-bold text-green-600">
               Featured Products
             </h3>
             <p className="text-gray-600">
@@ -406,7 +414,7 @@ const Products = () => {
             </p>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <button className="px-4 py-2 rounded-lg border border-orange-100 text-orange-600">
+            <button className="px-4 py-2 rounded-lg border border-red-200 text-red-600 hover:bg-red-50">
               View catalogue
             </button>
             <CTA>Go to Shop</CTA>
@@ -420,7 +428,7 @@ const Products = () => {
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              className="bg-orange-50 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1"
+              className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 border border-orange-100"
             >
               <div className="relative h-56">
                 <img
@@ -436,7 +444,7 @@ const Products = () => {
               <div className="p-4 space-y-2">
                 <div className="flex items-start justify-between">
                   <h4 className="font-semibold text-gray-900">{p.name}</h4>
-                  <div className="text-orange-600 font-bold">{p.price}</div>
+                  <div className="text-red-600 font-bold">{p.price}</div>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -462,13 +470,13 @@ const Products = () => {
                 <div className="mt-3 flex gap-3">
                   <button
                     onClick={() => setQuick(p)}
-                    className="px-3 py-2 rounded-lg border border-orange-100 text-orange-600 font-semibold hover:bg-orange-50"
+                    className="px-3 py-2 rounded-lg border border-red-200 text-red-600 font-semibold hover:bg-red-50"
                   >
                     Quick view
                   </button>
                   <button
                     onClick={() => addToCart(p)}
-                    className="flex-1 px-4 py-2 rounded-lg bg-orange-500 text-white font-semibold hover:bg-orange-600"
+                    className="flex-1 px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600"
                   >
                     Add to Cart
                   </button>
@@ -504,7 +512,7 @@ const Products = () => {
                   <div className="p-6">
                     <div className="flex items-center justify-between">
                       <h4 className="text-lg font-semibold">{quick.name}</h4>
-                      <div className="text-orange-600 font-bold">
+                      <div className="text-red-600 font-bold">
                         {quick.price}
                       </div>
                     </div>
@@ -518,7 +526,7 @@ const Products = () => {
                           setQuick(null);
                           setCart((c) => [...c, quick]);
                         }}
-                        className="px-4 py-2 rounded-lg bg-orange-500 text-white font-semibold"
+                        className="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold"
                       >
                         Add to Cart
                       </button>
@@ -540,7 +548,7 @@ const Products = () => {
   );
 };
 
-/* ---------- FEATURES LIST ---------- */
+/* ---------- FEATURES LIST (Updated colors) ---------- */
 const FeaturesList = () => {
   const items = [
     "Personalized charts & follow-up notes",
@@ -555,7 +563,7 @@ const FeaturesList = () => {
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
-            <h3 className="text-3xl font-bold">What makes us premium</h3>
+            <h3 className="text-3xl font-bold text-green-600">What makes us premium</h3>
             <p className="text-gray-600 mt-3">
               We blend time-tested systems with modern UX and high quality
               products — so your experience is seamless and meaningful.
@@ -564,7 +572,7 @@ const FeaturesList = () => {
             <ul className="mt-6 space-y-4">
               {items.map((it, idx) => (
                 <li key={it} className="flex items-start gap-3">
-                  <div className="mt-1 text-orange-500">
+                  <div className="mt-1 text-red-500">
                     <FaCheck />
                   </div>
                   <div>
@@ -578,14 +586,14 @@ const FeaturesList = () => {
             </ul>
           </div>
 
-          <div className="rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-orange-50 to-white/80 p-6">
+          <div className="rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-orange-50 to-offWhite/80 p-6 border border-orange-100">
             <img
               src="https://astrala.imgix.net/3GFULF5okVu23twscOo7Fd/7406ee47eac22e71767ea4f4ec1412c7/life-path-number-7-meaning.jpg?w=3840&h=2560&fit=crop&q=60&auto=format,compress"
               alt="premium"
               className="w-full h-64 object-cover rounded-xl shadow"
             />
             <div className="mt-4 text-sm text-gray-600">
-              <strong>Complimentary:</strong> Short follow-up note with every
+              <strong className="text-red-600">Complimentary:</strong> Short follow-up note with every
               consultation to help implement insights.
             </div>
           </div>
@@ -595,7 +603,7 @@ const FeaturesList = () => {
   );
 };
 
-/* ---------- INSTRUCTORS ---------- */
+/* ---------- INSTRUCTORS (Updated colors) ---------- */
 const Instructors = () => {
   const mentors = [
     {
@@ -616,9 +624,9 @@ const Instructors = () => {
   ];
 
   return (
-    <section className="py-14 bg-orange-50">
+    <section className="py-14 bg-orange-50/50">
       <div className="max-w-6xl mx-auto px-6">
-        <h3 className="text-2xl font-bold mb-4">Meet our experts</h3>
+        <h3 className="text-2xl font-bold mb-4 text-green-600">Meet our experts</h3>
         <p className="text-gray-600 mb-6">
           Carefully selected practitioners with deep traditional knowledge.
         </p>
@@ -630,7 +638,7 @@ const Instructors = () => {
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.12 }}
-              className="bg-white rounded-2xl p-4 shadow-lg text-center"
+              className="bg-offWhite rounded-2xl p-4 shadow-lg text-center border border-orange-100"
             >
               <div className="mx-auto w-28 h-28 rounded-full overflow-hidden shadow-md">
                 <img
@@ -642,10 +650,10 @@ const Instructors = () => {
               <div className="mt-4 font-semibold text-lg">{m.name}</div>
               <div className="text-sm text-gray-500">{m.role}</div>
               <div className="mt-4 flex justify-center gap-3">
-                <button className="px-3 py-1 rounded-lg border border-orange-100 text-orange-600">
+                <button className="px-3 py-1 rounded-lg border border-red-200 text-red-600 hover:bg-red-50">
                   View profile
                 </button>
-                <button className="px-3 py-1 rounded-lg bg-orange-400 text-white">
+                <button className="px-3 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600">
                   Book
                 </button>
               </div>
@@ -657,7 +665,7 @@ const Instructors = () => {
   );
 };
 
-/* ---------- TESTIMONIALS (carousel) ---------- */
+/* ---------- TESTIMONIALS (Updated colors) ---------- */
 const Testimonials = () => {
   const reviews = [
     {
@@ -686,7 +694,7 @@ const Testimonials = () => {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-4xl mx-auto px-6 text-center">
-        <h3 className="text-2xl font-bold mb-3">Trusted voices</h3>
+        <h3 className="text-2xl font-bold mb-3 text-green-600">Trusted voices</h3>
         <p className="text-gray-600 mb-8">
           Stories from clients who felt guided and supported.
         </p>
@@ -700,10 +708,10 @@ const Testimonials = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.45 }}
-                className="bg-orange-50 rounded-2xl p-8 shadow-lg"
+                className="bg-orange-50/50 rounded-2xl p-8 shadow-lg border border-orange-100"
               >
                 <p className="italic text-gray-700">“{reviews[idx].text}”</p>
-                <div className="mt-4 font-semibold text-orange-600">
+                <div className="mt-4 font-semibold text-red-600">
                   — {reviews[idx].name}
                 </div>
               </motion.blockquote>
@@ -726,7 +734,7 @@ const Testimonials = () => {
                   key={r.name}
                   onClick={() => setIdx(i)}
                   className={`w-2 h-2 rounded-full ${
-                    i === idx ? "bg-orange-500" : "bg-gray-300"
+                    i === idx ? "bg-red-500" : "bg-gray-300"
                   }`}
                 />
               ))}
@@ -745,7 +753,7 @@ const Testimonials = () => {
   );
 };
 
-/* ---------- FAQ (accordion) ---------- */
+/* ---------- FAQ (Updated colors) ---------- */
 const FAQ = () => {
   const faqs = [
     {
@@ -765,9 +773,9 @@ const FAQ = () => {
   const [open, setOpen] = useState(null);
 
   return (
-    <section className="py-16 bg-orange-50">
+    <section className="py-16 bg-orange-50/50">
       <div className="max-w-4xl mx-auto px-6">
-        <h3 className="text-2xl font-bold mb-4">Frequently asked</h3>
+        <h3 className="text-2xl font-bold mb-4 text-green-600">Frequently asked</h3>
         <div className="space-y-4">
           {faqs.map((f, i) => (
             <motion.div
@@ -776,7 +784,7 @@ const FAQ = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: i * 0.06 }}
               viewport={{ once: true }}
-              className="bg-white rounded-2xl shadow p-4"
+              className="bg-white rounded-2xl shadow p-4 border border-orange-100"
             >
               <button
                 onClick={() => setOpen(open === i ? null : i)}
@@ -825,7 +833,7 @@ const FAQ = () => {
   );
 };
 
-/* ---------- BLOG PREVIEW ---------- */
+/* ---------- BLOG PREVIEW (Updated colors) ---------- */
 const BlogPreview = () => {
   const posts = [
     {
@@ -846,9 +854,9 @@ const BlogPreview = () => {
   ];
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-offWhite">
       <div className="max-w-6xl mx-auto px-6">
-        <h3 className="text-2xl font-bold mb-6">Latest Articles</h3>
+        <h3 className="text-2xl font-bold mb-6 text-green-600">Latest Articles</h3>
         <div className="grid md:grid-cols-3 gap-6">
           {posts.map((p, i) => (
             <motion.article
@@ -857,21 +865,21 @@ const BlogPreview = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
             >
-              <div className="rounded-2xl overflow-hidden shadow-lg">
+              <div className="rounded-2xl overflow-hidden shadow-lg border border-orange-100">
                 <img
                   src={p.img}
                   alt={p.title}
                   className="h-44 w-full object-cover"
                 />
-                <div className="p-4 bg-orange-50">
-                  <div className="text-xs text-orange-600 mb-2 font-semibold">
+                <div className="p-4 bg-white">
+                  <div className="text-xs text-red-600 mb-2 font-semibold">
                     {p.tag}
                   </div>
                   <h4 className="font-semibold text-gray-900">{p.title}</h4>
                   <p className="text-sm text-gray-600 mt-2">
                     A short preview of the article...
                   </p>
-                  <button className="mt-3 text-orange-600 font-semibold hover:underline">
+                  <button className="mt-3 text-red-600 font-semibold hover:underline">
                     Read More →
                   </button>
                 </div>
@@ -884,10 +892,10 @@ const BlogPreview = () => {
   );
 };
 
-/* ---------- NEWSLETTER ---------- */
+/* ---------- NEWSLETTER (Red gradient) ---------- */
 const Newsletter = () => {
   return (
-    <section className="py-16 bg-gradient-to-r from-orange-400 to-orange-500 text-white">
+    <section className="py-16 bg-gradient-to-r from-red-500 to-red-600 text-white">
       <div className="max-w-4xl mx-auto px-6 text-center">
         <h3 className="text-3xl font-bold">Join our inner circle</h3>
         <p className="mt-3 text-white/90">
@@ -905,7 +913,7 @@ const Newsletter = () => {
              focus:outline-none focus:ring-2 focus:ring-white focus:border-white"
           />
 
-          <button className="px-5 py-3 rounded-r-lg bg-white text-orange-600 font-semibold">
+          <button className="px-5 py-3 rounded-r-lg bg-white text-red-600 font-semibold hover:bg-gray-100 transition">
             Subscribe
           </button>
         </div>
@@ -921,11 +929,11 @@ const Newsletter = () => {
 /* ---------- FINAL HOMEPAGE ---------- */
 export default function HomePage() {
   return (
-    <div className="bg-white text-gray-900">
+    <div className="bg-offWhite text-gray-900">
       <Hero />
       <Stats />
       <Services />
-      <Products /> {/* ← NEW section added (keeps everything else) */}
+      <Products />
       <FeaturesList />
       <Instructors />
       <Testimonials />
