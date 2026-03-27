@@ -1,17 +1,17 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-// Simple API URL detection - no extra files needed
+// Simple API URL detection
 const getApiUrl = () => {
-  // Check if we're on Vercel (production) by checking the hostname
+  // Check if we're on Vercel (production)
   const isVercel = window.location.hostname !== 'localhost' && 
                    window.location.hostname !== '127.0.0.1';
   
-  console.log('Is Vercel:', isVercel);
   console.log('Hostname:', window.location.hostname);
+  console.log('Is Vercel:', isVercel);
   
   if (isVercel) {
-    // Use your backend URL directly
+    // Use your backend URL
     return 'https://ashtroplanet-backend.vercel.app/api';
   }
   
@@ -28,6 +28,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 30000,
+  withCredentials: false, // Set to false for now to avoid CORS issues
 });
 
 // Add token to requests
@@ -59,6 +60,7 @@ api.interceptors.response.use(
   },
   (error) => {
     console.error('Response error:', error.response?.status, error.response?.data);
+    console.error('Full error:', error);
     
     if (error.code === 'ECONNABORTED') {
       toast.error('Request timeout. Please check your connection.');
@@ -102,6 +104,7 @@ export const register = async (userData) => {
 };
 
 export const login = async (credentials) => {
+  console.log('Login API called with:', credentials.email);
   const response = await api.post('/auth/login', credentials);
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
