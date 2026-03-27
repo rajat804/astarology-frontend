@@ -1,19 +1,17 @@
-// AuthPage.jsx
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   HiOutlineMail, 
   HiOutlineLockClosed, 
   HiOutlineUser,
   HiOutlineEye,
   HiOutlineEyeOff,
-  HiOutlineCheckCircle,
-  HiOutlineXCircle
-} from "react-icons/hi";
-import { FaGoogle, FaFacebook, FaApple } from "react-icons/fa";
-import assets from "../assets/assets";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+  HiOutlineCheckCircle
+} from 'react-icons/hi';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { login, register } from '../services/api';
+import toast from 'react-hot-toast';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -21,15 +19,14 @@ const AuthPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: ""
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
   
-  const { login } = useAuth();
+  const { login: authLogin } = useAuth();
   const navigate = useNavigate();
 
   const validateEmail = (email) => {
@@ -42,21 +39,21 @@ const AuthPage = () => {
 
   const validateLogin = () => {
     const newErrors = {};
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    else if (!validateEmail(formData.email)) newErrors.email = "Please enter a valid email";
-    if (!formData.password.trim()) newErrors.password = "Password is required";
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    else if (!validateEmail(formData.email)) newErrors.email = 'Please enter a valid email';
+    if (!formData.password.trim()) newErrors.password = 'Password is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const validateSignup = () => {
     const newErrors = {};
-    if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    else if (!validateEmail(formData.email)) newErrors.email = "Please enter a valid email";
-    if (!formData.password.trim()) newErrors.password = "Password is required";
-    else if (!validatePassword(formData.password)) newErrors.password = "Password must be at least 6 characters";
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+    if (!formData.fullName.trim()) newErrors.fullName = 'Full name is required';
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    else if (!validateEmail(formData.email)) newErrors.email = 'Please enter a valid email';
+    if (!formData.password.trim()) newErrors.password = 'Password is required';
+    else if (!validatePassword(formData.password)) newErrors.password = 'Password must be at least 6 characters';
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -69,35 +66,37 @@ const AuthPage = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      if (!isLogin) {
-        setSuccessMessage("Account created successfully! Redirecting...");
-        setTimeout(() => {
-          login();
-          navigate("/");
-        }, 1500);
+    try {
+      if (isLogin) {
+        const response = await login({
+          email: formData.email,
+          password: formData.password,
+        });
+        authLogin(response.user, response.token);
+        toast.success('Login successful!');
+        navigate('/');
       } else {
-        login();
-        navigate("/");
+        const response = await register({
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+        });
+        authLogin(response.user, response.token);
+        toast.success('Account created successfully!');
+        navigate('/');
       }
-    }, 1500);
+    } catch (error) {
+      console.error('Auth error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (errors[e.target.name]) {
-      setErrors({ ...errors, [e.target.name]: "" });
+      setErrors({ ...errors, [e.target.name]: '' });
     }
-  };
-
-  const handleSocialLogin = (provider) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      login();
-      navigate("/");
-    }, 1000);
   };
 
   const fadeInUp = {
@@ -108,16 +107,17 @@ const AuthPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-orange-50 to-offWhite p-6">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-orange-100">
-        {/* Left illustration - Enhanced */}
+        {/* Left illustration */}
         <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-red-600 to-red-700 items-center justify-center p-10 relative overflow-hidden">
-          {/* Animated Background Elements */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full filter blur-3xl"></div>
             <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-300/20 rounded-full filter blur-3xl"></div>
           </div>
           
           <div className="relative z-10 text-center">
-            <img src={assets.logo} alt="Astro Illustration" className="w-72 h-auto drop-shadow-2xl mx-auto mb-6" />
+            <div className="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-5xl">🔮</span>
+            </div>
             <h3 className="text-white text-2xl font-bold mb-2">Welcome to AstroPlanets</h3>
             <p className="text-white/80 text-sm">Your journey to cosmic wisdom begins here</p>
             
@@ -138,7 +138,7 @@ const AuthPage = () => {
           </div>
         </div>
 
-        {/* Right form - Enhanced */}
+        {/* Right form */}
         <div className="w-full md:w-1/2 p-8 lg:p-10 flex flex-col justify-center bg-white">
           <AnimatePresence mode="wait">
             {isLogin ? (
@@ -154,17 +154,6 @@ const AuthPage = () => {
                   <h2 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back 👋</h2>
                   <p className="text-gray-500 text-sm">Sign in to continue your cosmic journey</p>
                 </div>
-
-                {successMessage && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2"
-                  >
-                    <HiOutlineCheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="text-green-700 text-sm">{successMessage}</span>
-                  </motion.div>
-                )}
 
                 <form className="space-y-5" onSubmit={handleSubmit}>
                   <div>
@@ -190,7 +179,7 @@ const AuthPage = () => {
                     <div className="relative">
                       <HiOutlineLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       <input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
@@ -211,9 +200,9 @@ const AuthPage = () => {
                   </div>
 
                   <div className="flex justify-end">
-                    <button type="button" className="text-sm text-red-600 hover:text-red-700 hover:underline">
+                    <Link to="/forgot-password" className="text-sm text-red-600 hover:text-red-700 hover:underline">
                       Forgot Password?
-                    </button>
+                    </Link>
                   </div>
 
                   <motion.button
@@ -229,14 +218,13 @@ const AuthPage = () => {
                         Signing in...
                       </div>
                     ) : (
-                      "Sign In"
+                      'Sign In'
                     )}
                   </motion.button>
                 </form>
 
-               
                 <p className="text-center text-gray-600 text-sm">
-                  Don't have an account?{" "}
+                  Don't have an account?{' '}
                   <button onClick={() => setIsLogin(false)} className="text-red-600 font-semibold hover:underline">
                     Sign up
                   </button>
@@ -255,17 +243,6 @@ const AuthPage = () => {
                   <h2 className="text-3xl font-bold text-gray-800 mb-2">Create Account ✨</h2>
                   <p className="text-gray-500 text-sm">Join our cosmic community today</p>
                 </div>
-
-                {successMessage && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2"
-                  >
-                    <HiOutlineCheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="text-green-700 text-sm">{successMessage}</span>
-                  </motion.div>
-                )}
 
                 <form className="space-y-5" onSubmit={handleSubmit}>
                   <div>
@@ -309,7 +286,7 @@ const AuthPage = () => {
                     <div className="relative">
                       <HiOutlineLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       <input
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword ? 'text' : 'password'}
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
@@ -327,9 +304,6 @@ const AuthPage = () => {
                       </button>
                     </div>
                     {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
-                    {!errors.password && formData.password && (
-                      <p className="mt-1 text-xs text-green-600">✓ Strong password</p>
-                    )}
                   </div>
 
                   <div>
@@ -337,7 +311,7 @@ const AuthPage = () => {
                     <div className="relative">
                       <HiOutlineLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       <input
-                        type={showConfirmPassword ? "text" : "password"}
+                        type={showConfirmPassword ? 'text' : 'password'}
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleChange}
@@ -360,9 +334,9 @@ const AuthPage = () => {
                   <div className="flex items-start gap-2">
                     <input type="checkbox" id="terms" className="mt-1 w-4 h-4 text-red-500 rounded border-orange-300 focus:ring-red-500" />
                     <label htmlFor="terms" className="text-xs text-gray-500">
-                      I agree to the{" "}
-                      <button type="button" className="text-red-600 hover:underline">Terms of Service</button>{" "}
-                      and{" "}
+                      I agree to the{' '}
+                      <button type="button" className="text-red-600 hover:underline">Terms of Service</button>{' '}
+                      and{' '}
                       <button type="button" className="text-red-600 hover:underline">Privacy Policy</button>
                     </label>
                   </div>
@@ -380,15 +354,13 @@ const AuthPage = () => {
                         Creating Account...
                       </div>
                     ) : (
-                      "Create Account"
+                      'Create Account'
                     )}
                   </motion.button>
                 </form>
 
-                
-
                 <p className="text-center text-gray-600 text-sm">
-                  Already have an account?{" "}
+                  Already have an account?{' '}
                   <button onClick={() => setIsLogin(true)} className="text-red-600 font-semibold hover:underline">
                     Sign in
                   </button>

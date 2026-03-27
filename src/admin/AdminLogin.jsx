@@ -1,6 +1,5 @@
-// src/admin/AdminLogin.jsx
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   HiOutlineLockClosed, 
   HiOutlineMail, 
@@ -10,38 +9,85 @@ import {
   HiOutlineUserGroup,
   HiOutlineChartBar,
   HiOutlineCog
-} from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+} from 'react-icons/hi';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { adminLogin } from '../services/api';
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const nav = useNavigate();
+  const navigate = useNavigate();
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    setErr("");
+    e.stopPropagation();
+    
+    console.log('Admin login attempt with email:', email);
+    
+    // Clear previous error
+    setErr('');
+    
+    // Validate inputs
+    if (!email.trim()) {
+      setErr('Email is required');
+      return;
+    }
+    if (!password.trim()) {
+      setErr('Password is required');
+      return;
+    }
+    
     setLoading(true);
-
-    // Mock auth - replace with real API
-    setTimeout(() => {
-      setLoading(false);
-      if (email === "admin@astro.com" && password === "password") {
-        if (rememberMe) {
-          localStorage.setItem("astro_admin", "true");
-          localStorage.setItem("admin_remembered", "true");
+    
+    try {
+      const response = await adminLogin({ 
+        email: email.trim(), 
+        password: password.trim() 
+      });
+      
+      console.log('Login successful:', response);
+      
+      toast.success('Admin login successful!');
+      
+      // Small delay to ensure toast is shown
+      setTimeout(() => {
+        navigate('/admin/dashboard');
+      }, 500);
+      
+    } catch (error) {
+      console.error('Login error details:', error);
+      
+      // Handle different error scenarios
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log('Error response data:', error.response.data);
+        console.log('Error response status:', error.response.status);
+        
+        if (error.response.status === 401) {
+          setErr('Invalid email or password');
+        } else if (error.response.status === 404) {
+          setErr('Admin account not found');
         } else {
-          sessionStorage.setItem("astro_admin", "true");
+          setErr(error.response.data?.msg || 'Login failed. Please try again.');
         }
-        nav("/admin/dashboard");
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log('No response received:', error.request);
+        setErr('Cannot connect to server. Please check if backend is running on port 5000');
       } else {
-        setErr("Invalid credentials. Try admin@astro.com / password");
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error message:', error.message);
+        setErr('An error occurred. Please try again.');
       }
-    }, 800);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const adminFeatures = [
@@ -64,9 +110,8 @@ export default function AdminLogin() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 border border-orange-100"
       >
-        {/* Left - Branding Section - Enhanced */}
+        {/* Left - Branding Section */}
         <div className="hidden md:flex flex-col items-center justify-center gap-6 p-10 bg-gradient-to-br from-red-600 to-red-700 text-white relative overflow-hidden">
-          {/* Animated Background Elements */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full filter blur-3xl"></div>
             <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-300/20 rounded-full filter blur-3xl"></div>
@@ -105,7 +150,7 @@ export default function AdminLogin() {
           </div>
         </div>
 
-        {/* Right - Form Section - Enhanced */}
+        {/* Right - Form Section */}
         <div className="p-8 md:p-10 bg-white">
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-800">Admin Sign In</h2>
@@ -114,141 +159,128 @@ export default function AdminLogin() {
             </p>
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.form
-              key="admin-login-form"
-              initial="hidden"
-              animate="visible"
-              variants={fadeInUp}
-              onSubmit={onSubmit}
-              className="space-y-5"
+          <form onSubmit={onSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <HiOutlineMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (err) setErr('');
+                  }}
+                  placeholder="admin@astroplanet.com"
+                  required
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <HiOutlineLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (err) setErr('');
+                  }}
+                  placeholder="Enter your password"
+                  required
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  disabled={loading}
+                >
+                  {showPassword ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 text-red-500 rounded border-orange-300 focus:ring-red-500"
+                  disabled={loading}
+                />
+                <span className="text-sm text-gray-600">Remember me</span>
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {/* Email Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <HiOutlineMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@astro.com"
-                    required
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-                  />
-                </div>
-              </div>
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <HiOutlineShieldCheck className="w-5 h-5" />
+                  Sign In
+                </>
+              )}
+            </button>
 
-              {/* Password Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <HiOutlineLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    required
-                    className="w-full pl-10 pr-12 py-3 rounded-xl border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Remember Me & Forgot Password */}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 text-red-500 rounded border-orange-300 focus:ring-red-500"
-                  />
-                  <span className="text-sm text-gray-600">Remember me</span>
-                </label>
-                <button
-                  type="button"
-                  className="text-sm text-red-600 hover:text-red-700 hover:underline"
-                >
-                  Forgot password?
-                </button>
-              </div>
-
-              {/* Submit Button */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            {/* Error Message */}
+            {err && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-3 bg-red-50 border border-red-200 rounded-lg"
               >
-                {loading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <HiOutlineShieldCheck className="w-5 h-5" />
-                    Sign In
-                  </>
-                )}
-              </motion.button>
+                <p className="text-sm text-red-600 flex items-center gap-2">
+                  <span className="text-lg">⚠️</span>
+                  {err}
+                </p>
+              </motion.div>
+            )}
 
-              {/* Error Message */}
-              <AnimatePresence>
-                {err && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="p-3 bg-red-50 border border-red-200 rounded-lg"
-                  >
-                    <p className="text-sm text-red-600 flex items-center gap-2">
-                      <span className="text-lg">⚠️</span>
-                      {err}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Demo Credentials */}
-              <div className="mt-6 pt-4 border-t border-orange-100">
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                  <span>Demo Credentials:</span>
-                </div>
-                <div className="mt-2 p-3 bg-orange-50 rounded-lg">
-                  <code className="text-xs text-gray-700">
-                    Email: admin@astro.com<br />
-                    Password: password
-                  </code>
-                </div>
+            {/* Admin Credentials Info */}
+            <div className="mt-6 pt-4 border-t border-orange-100">
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                <span>Default Admin Credentials:</span>
               </div>
-
-              {/* Back to Home */}
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={() => nav("/")}
-                  className="text-sm text-gray-500 hover:text-red-600 transition"
-                >
-                  ← Back to Homepage
-                </button>
+              <div className="mt-2 p-3 bg-orange-50 rounded-lg">
+                <code className="text-xs text-gray-700">
+                  Email: admin@astroplanet.com<br />
+                  Password: ashtro#admin@123
+                </code>
               </div>
-            </motion.form>
-          </AnimatePresence>
+            </div>
+
+            {/* Back to Home */}
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="text-sm text-gray-500 hover:text-red-600 transition"
+                disabled={loading}
+              >
+                ← Back to Homepage
+              </button>
+            </div>
+          </form>
         </div>
       </motion.div>
 

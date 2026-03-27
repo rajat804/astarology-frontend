@@ -1,9 +1,16 @@
-// Navbar.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiOutlineMenu, HiOutlineX, HiOutlineShoppingCart } from "react-icons/hi";
+import { 
+  HiOutlineMenu, 
+  HiOutlineX, 
+  HiOutlineShoppingCart,
+  HiOutlineUser,
+  HiOutlineLogout,
+  HiOutlineUserCircle,
+  HiOutlineChevronDown
+} from "react-icons/hi";
 import assets from "../assets/assets";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 // CTA Button - Updated to red gradient
@@ -19,7 +26,33 @@ const CTAButton = ({ children, onClick, to }) => (
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const { isAuthenticated, logout, user } = useAuth();
+  const navigate = useNavigate();
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuOpen && !event.target.closest('.user-menu')) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [userMenuOpen]);
+
+  const handleLogout = () => {
+    logout();
+    setOpen(false);
+    setUserMenuOpen(false);
+    navigate('/');
+  };
+
+  // Get user's display name (first name or full name)
+  const getUserDisplayName = () => {
+    if (!user) return 'User';
+    return user.fullName?.split(' ')[0] || user.fullName || 'User';
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-offWhite/80 backdrop-blur-md border-b border-orange-100">
@@ -45,19 +78,67 @@ const Navbar = () => {
               <HiOutlineShoppingCart className="w-5 h-5 text-gray-600" />
             </button>
 
-            {/* Auth buttons */}
-            <div className="hidden sm:flex gap-3">
+            {/* Auth buttons - Updated to show user name when logged in */}
+            <div className="hidden sm:flex gap-3 items-center">
               {isAuthenticated ? (
-                <button
-                  onClick={logout}
-                  className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition"
-                >
-                  Logout
-                </button>
+                <div className="relative user-menu">
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:from-red-600 hover:to-red-700 transition group"
+                  >
+                    <HiOutlineUserCircle className="w-5 h-5" />
+                    <span>{getUserDisplayName()}</span>
+                    <HiOutlineChevronDown className={`w-4 h-4 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {/* User Dropdown Menu */}
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-orange-100 overflow-hidden z-50"
+                      >
+                        <div className="px-4 py-3 border-b border-orange-100 bg-gradient-to-r from-red-50 to-orange-50">
+                          <p className="text-sm font-semibold text-gray-800">{user?.fullName}</p>
+                          <p className="text-xs text-gray-500 mt-1">{user?.email}</p>
+                        </div>
+                        <div className="py-2">
+                          <Link
+                            to="/profile"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition"
+                          >
+                            <HiOutlineUser className="w-4 h-4" />
+                            My Profile
+                          </Link>
+                          <Link
+                            to="/my-bookings"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition"
+                          >
+                            <HiOutlineShoppingCart className="w-4 h-4" />
+                            My Bookings
+                          </Link>
+                          <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition border-t border-orange-100 mt-1"
+                          >
+                            <HiOutlineLogout className="w-4 h-4" />
+                            Logout
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ) : (
-                <CTAButton to="/auth">Sign Up</CTAButton>
+                <>
+                  <CTAButton to="/auth">Sign In</CTAButton>
+                  <CTAButton to="/contact">Book Now</CTAButton>
+                </>
               )}
-              <CTAButton to="/contact">Book Now</CTAButton>
             </div>
 
             {/* Mobile menu button - Updated hover color */}
@@ -83,7 +164,7 @@ const Navbar = () => {
             className="md:hidden bg-offWhite border-t border-orange-100"
           >
             <div className="px-4 py-4 space-y-2">
-              {["Services","courses","Products","About","Contact"].map((label) => (
+              {["Services","Courses","Products","About","Contact"].map((label) => (
                 <Link
                   key={label}
                   to={`/${label.toLowerCase()}`}
@@ -93,18 +174,51 @@ const Navbar = () => {
                   {label}
                 </Link>
               ))}
+              
+              {/* User Info in Mobile Menu */}
+              {isAuthenticated && user && (
+                <div className="pt-4 pb-2 border-t border-orange-100 mt-2">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center">
+                      <HiOutlineUserCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">{user.fullName}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+                  </div>
+                  <Link
+                    to="/profile"
+                    onClick={() => setOpen(false)}
+                    className="block py-2 text-gray-700 hover:text-red-600 transition"
+                  >
+                    My Profile
+                  </Link>
+                  <Link
+                    to="/my-bookings"
+                    onClick={() => setOpen(false)}
+                    className="block py-2 text-gray-700 hover:text-red-600 transition"
+                  >
+                    My Bookings
+                  </Link>
+                </div>
+              )}
+              
               <div className="pt-2 flex flex-col gap-2">
                 {isAuthenticated ? (
                   <button
-                    onClick={() => { logout(); setOpen(false); }}
-                    className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition"
+                    onClick={handleLogout}
+                    className="inline-flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition"
                   >
+                    <HiOutlineLogout className="w-4 h-4" />
                     Logout
                   </button>
                 ) : (
-                  <CTAButton to="/auth" onClick={() => setOpen(false)}>Sign Up</CTAButton>
+                  <>
+                    <CTAButton to="/auth" onClick={() => setOpen(false)}>Sign In</CTAButton>
+                    <CTAButton to="/contact" onClick={() => setOpen(false)}>Book Now</CTAButton>
+                  </>
                 )}
-                <CTAButton to="/contact" onClick={() => setOpen(false)}>Book Now</CTAButton>
               </div>
             </div>
           </motion.nav>
