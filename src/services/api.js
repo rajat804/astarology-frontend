@@ -1,43 +1,52 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Simple API URL detection - no extra files needed
+const getApiUrl = () => {
+  // Check if we're on Vercel (production) by checking the hostname
+  const isVercel = window.location.hostname !== 'localhost' && 
+                   window.location.hostname !== '127.0.0.1';
+  
+  console.log('Is Vercel:', isVercel);
+  console.log('Hostname:', window.location.hostname);
+  
+  if (isVercel) {
+    // Use your backend URL directly
+    return 'https://ashtroplanet-backend.vercel.app/api';
+  }
+  
+  // Local development
+  return 'http://localhost:5000/api';
+};
+
+const API_URL = getApiUrl();
+console.log('API URL:', API_URL);
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // Add timeout
+  timeout: 30000,
 });
 
-// Add token to requests if it exists (for both user and admin)
+// Add token to requests
 api.interceptors.request.use(
   (config) => {
-    // Check for user token first
     let token = localStorage.getItem('token');
-    
-    // If no user token, check for admin token
     if (!token) {
-      token = localStorage.getItem('adminToken');
-    }
-    
-    // If still no token, check session storage
-    if (!token) {
-      token = sessionStorage.getItem('adminToken');
+      token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
     }
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     
-    // Log request for debugging
     console.log(`${config.method.toUpperCase()} ${config.url}`, config.data);
-    
     return config;
   },
   (error) => {
-    console.error('Request interceptor error:', error);
+    console.error('Request error:', error);
     return Promise.reject(error);
   }
 );
@@ -45,24 +54,20 @@ api.interceptors.request.use(
 // Handle response errors
 api.interceptors.response.use(
   (response) => {
-    // Log response for debugging
     console.log(`Response: ${response.status}`, response.data);
     return response;
   },
   (error) => {
     console.error('Response error:', error.response?.status, error.response?.data);
     
-    // Handle different error scenarios
     if (error.code === 'ECONNABORTED') {
       toast.error('Request timeout. Please check your connection.');
     } else if (!error.response) {
-      toast.error('Cannot connect to server. Please make sure the backend is running.');
+      toast.error('Cannot connect to server. Please check if backend is running.');
     } else {
       const message = error.response?.data?.msg || error.response?.data?.message || 'An error occurred';
       
-      // Handle 401 Unauthorized
       if (error.response?.status === 401) {
-        // Check if it's an admin route
         if (error.config.url?.includes('/admin/')) {
           localStorage.removeItem('adminToken');
           sessionStorage.removeItem('adminToken');
@@ -91,7 +96,6 @@ export const register = async (userData) => {
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
     localStorage.setItem('user', JSON.stringify(response.data.user));
-    // Store login time for session management
     localStorage.setItem('loginTime', Date.now().toString());
   }
   return response.data;
@@ -102,7 +106,6 @@ export const login = async (credentials) => {
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
     localStorage.setItem('user', JSON.stringify(response.data.user));
-    // Store login time for session management
     localStorage.setItem('loginTime', Date.now().toString());
   }
   return response.data;
@@ -132,7 +135,6 @@ export const adminLogin = async (credentials) => {
     console.log('Admin login response:', response.data);
     
     if (response.data.token) {
-      // Store admin token and data
       localStorage.setItem('adminToken', response.data.token);
       localStorage.setItem('admin', JSON.stringify(response.data.admin));
       console.log('Admin token stored successfully');
@@ -169,14 +171,12 @@ export const getCurrentAdmin = async () => {
   return response.data;
 };
 
-// Utility function to check if admin is logged in
 export const isAdminLoggedIn = () => {
   const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
   const admin = localStorage.getItem('admin') || sessionStorage.getItem('admin');
   return !!(token && admin);
 };
 
-// Utility function to logout admin
 export const adminLogout = () => {
   localStorage.removeItem('adminToken');
   localStorage.removeItem('admin');
