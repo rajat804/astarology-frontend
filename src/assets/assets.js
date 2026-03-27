@@ -9,7 +9,9 @@ import fiveFaceNepali from "./5facenepali.jpeg";
 import sixFace from "./6face.jpeg";
 import sevenFace from "./7face.jpeg";
 import ganesh from "./ganesh.jpeg";
-
+import hemant from "./Himesh A Kumar.png";
+import shravya from "./Shravya Saxena.jpeg";
+import anuja from "./Anuja S Chavaan.jpeg";
 
 const assets = {
     logo,
@@ -22,7 +24,10 @@ const assets = {
     fiveFaceNepali,
     sixFace,
     sevenFace,
-    ganesh
+    ganesh,
+    hemant,
+    shravya,
+    anuja,
 };
 
 export default assets;

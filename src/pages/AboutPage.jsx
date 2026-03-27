@@ -1,472 +1,355 @@
-// AboutPage.jsx
-import React, { useState, useEffect } from "react";
-import { motion, useAnimation, useInView } from "framer-motion";
-import { 
-  Globe, 
-  Rocket, 
-  Users, 
-  Award, 
-  Star, 
-  Sparkles, 
-  ChevronRight,
+// AboutPage.jsx - Optimized for Performance
+import React, { useEffect, useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import {
+  Star,
+  Sparkles,
   Heart,
-  Mail,
-  MapPin,
-  Phone,
+  ChevronRight,
+  Quote,
+  Award,
+  Users,
+  Calendar,
+  Instagram,
   Facebook,
   Twitter,
-  Instagram,
-  Linkedin
+  Linkedin,
+  Compass,
+  Activity,
+  Hand
 } from "lucide-react";
-
+import assets from "../assets/assets";
 const AboutPage = () => {
-  const [counters, setCounters] = useState({
-    customers: 0,
-    products: 0,
-    countries: 0,
-    awards: 0
+  // Track which sections are visible
+  const [visibleSections, setVisibleSections] = useState({
+    hero: true,
+    shrivya: false,
+    anuja: false,
+    himesh: false,
+    stats: false,
+    philosophy: false,
+    testimonials: false,
+    cta: false
   });
 
-  // Counter animation
-  useEffect(() => {
-    const targetCustomers = 12500;
-    const targetProducts = 85;
-    const targetCountries = 32;
-    const targetAwards = 12;
-    
-    const duration = 2000;
-    const stepTime = 20;
-    const steps = duration / stepTime;
-    
-    let currentStep = 0;
-    
-    const interval = setInterval(() => {
-      currentStep++;
-      if (currentStep <= steps) {
-        setCounters({
-          customers: Math.floor((targetCustomers * currentStep) / steps),
-          products: Math.floor((targetProducts * currentStep) / steps),
-          countries: Math.floor((targetCountries * currentStep) / steps),
-          awards: Math.floor((targetAwards * currentStep) / steps)
-        });
-      } else {
-        clearInterval(interval);
-      }
-    }, stepTime);
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  // Refs for each section
+  const sectionRefs = {
+    shrivya: useRef(null),
+    anuja: useRef(null),
+    himesh: useRef(null),
+    stats: useRef(null),
+    philosophy: useRef(null),
+    testimonials: useRef(null),
+    cta: useRef(null)
   };
 
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
+  // Check visibility using Intersection Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleSections((prev) => ({
+              ...prev,
+              [entry.target.id]: true
+            }));
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "100px" } // Reduced threshold and added margin
+    );
+
+    // Observe each section
+    Object.entries(sectionRefs).forEach(([key, ref]) => {
+      if (ref.current) {
+        ref.current.id = key;
+        observer.observe(ref.current);
       }
-    }
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Simple fade animation
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
 
   const teamMembers = [
-    { 
-      name: "Ava Johnson", 
-      role: "Founder & CEO", 
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop",
-      bio: "Visionary leader with 15+ years in spiritual wellness",
-      social: { linkedin: "#", twitter: "#" }
+    {
+      id: "shrivya",
+      name: "Shrivya",
+      role: "Yoga & Wellness Instructor",
+      expertise: "Hatha Yoga | Pranayama | Meditation",
+      image: assets.shravya,
+      icon: Activity,
+      intro: `A journey of balance, healing, and self-discovery awaits. Yoga is not just a physical practice; it is a lifestyle that cultivates the body, soothes the mind, and liberates the soul.
+
+As a dedicated and passionate yoga instructor, I will lead you through a series of exercises and movements that will empower and uplift your body, as well as bring peace and tranquility to your mind and soul. Whether a beginner or a seasoned yogi, every session is carefully crafted to address your needs and assist you in your personal growth and development. Through breathing exercises, movements, and meditation, you will learn to reconnect with yourself and find balance and harmony within your life. Step onto the mat and begin your journey to a healthier, more peaceful, and balanced you.`,
+      color: "from-green-500 to-emerald-600",
+      bgColor: "bg-green-50",
+      iconColor: "text-green-600",
+      delay: 0
     },
-    { 
-      name: "Ethan Clark", 
-      role: "Lead Designer", 
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop",
-      bio: "Creative mind behind our unique product designs",
-      social: { linkedin: "#", instagram: "#" }
+    {
+      id: "anuja",
+      name: "Anuja Chavan",
+      role: "Vastu & Numerology Expert",
+      expertise: "Vastu Shastra | Numerology | Space Healing",
+      image: assets.anuja,
+      icon: Compass,
+      intro: `Welcome to a space where ancient wisdom meets modern living. We specialize in the powerful sciences of Vastu Shastra and Numerology. Our goal is to bring harmony, balance, and success into every area of your life.
+
+Your home, your workplace, and even your name carry unique energies. These energies impact your health, relationships, and financial success. By fine-tuning these energies through Vastu and discovering the secrets of numbers, we can bring a more positive and successful life into being.
+
+Are you planning a new home? Do you face difficulties and need solutions? Do you need a clearer and more successful life? Our personal consultations are here to bring clarity, stability, and prosperity into your life.
+
+Join us on a journey of transformation—where your space and numbers work for you, not against you.`,
+      color: "from-orange-500 to-red-600",
+      bgColor: "bg-orange-50",
+      iconColor: "text-orange-600",
+      delay: 0.1
     },
-    { 
-      name: "Sophia Lee", 
-      role: "Marketing Head", 
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop",
-      bio: "Digital strategist & community builder",
-      social: { linkedin: "#", twitter: "#" }
-    },
-    { 
-      name: "Liam Smith", 
-      role: "Tech Lead", 
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop",
-      bio: "Building seamless digital experiences",
-      social: { linkedin: "#", github: "#" }
+    {
+      id: "himesh",
+      name: "Himesh",
+      role: "Palmistry & Life Path Guide",
+      expertise: "Palmistry | Hand Analysis | Life Guidance",
+      image: assets.hemant,
+      icon: Hand,
+      intro: `Welcome to the ancient art of Palmistry—where the lines on your hands tell the story of your life. Every palm bears unique markings that reveal your personality, your strengths and weaknesses, as well as your future prospects.
+
+By interpreting the lines, mounts, and formations of your hands, we provide profound and meaningful insights into your life. Palmistry is not merely a method of fortune-telling; it is also a medium for self-discovery and for making informed, sound decisions.
+
+Are you seeking clarity, true guidance, or peace of mind in your life? Our palmistry readings will help you understand the hidden patterns within yourself and fully unlock your true potential.`,
+      color: "from-purple-500 to-pink-600",
+      bgColor: "bg-purple-50",
+      iconColor: "text-purple-600",
+      delay: 0.2
     }
   ];
 
-  const values = [
-    {
-      icon: <Globe className="w-10 h-10 text-red-500" />,
-      title: "Global Reach",
-      desc: "Inspiring stargazers across 32+ countries with our premium cosmic products.",
-      color: "from-red-50 to-orange-50"
-    },
-    {
-      icon: <Rocket className="w-10 h-10 text-red-500" />,
-      title: "Innovation",
-      desc: "Pioneering creative designs that merge ancient wisdom with modern science.",
-      color: "from-orange-50 to-red-50"
-    },
-    {
-      icon: <Users className="w-10 h-10 text-red-500" />,
-      title: "Community",
-      desc: "Building a global family of 12,500+ dreamers, learners, and explorers.",
-      color: "from-red-50 to-orange-50"
-    },
-    {
-      icon: <Award className="w-10 h-10 text-red-500" />,
-      title: "Excellence",
-      desc: "Committed to delivering premium quality, authenticity, and value every time.",
-      color: "from-orange-50 to-red-50"
-    }
+  const stats = [
+    { icon: Users, value: "10,000+", label: "Happy Clients" },
+    { icon: Calendar, value: "15+", label: "Years Experience" },
+    { icon: Star, value: "4.9", label: "Average Rating", suffix: "/5" },
+    { icon: Award, value: "25+", label: "Awards Won" }
   ];
 
   return (
-    <div className="bg-offWhite text-gray-900">
-      {/* Hero Section - Enhanced */}
-      <section className="relative overflow-hidden py-24 px-6 text-center bg-gradient-to-br from-red-50 via-orange-50 to-offWhite">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-200 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-200 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
+    <div className="bg-offWhite">
+      {/* Hero Section - Always visible */}
+      <section className="relative overflow-hidden py-20 md:py-24 px-6 text-center bg-gradient-to-br from-red-50 via-orange-50 to-offWhite">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-200 rounded-full filter blur-3xl opacity-30"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-200 rounded-full filter blur-3xl opacity-30"></div>
         </div>
         
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="relative z-10"
-        >
+        <div className="relative z-10">
           <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
-            Welcome to Our Cosmos
+            Meet Our Masters
           </div>
-          <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-            About Us
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+            Guiding You to Your <br />
+            <span className="text-gray-800">Highest Self</span>
           </h1>
           <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            We are passionate explorers, dreamers, and creators—bringing the magic of the cosmos closer to you. 
-            Founded with a vision to inspire and transform lives through ancient wisdom and modern innovation.
+            Three masters, three ancient sciences, one mission — to help you discover balance, 
+            harmony, and purpose in every aspect of your life.
           </p>
-          <div className="mt-8 flex flex-wrap gap-4 justify-center">
-            <button className="px-6 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition shadow-lg hover:shadow-xl transform hover:scale-105">
-              Our Journey
-            </button>
-            <button className="px-6 py-3 border-2 border-red-500 text-red-600 rounded-xl font-semibold hover:bg-red-50 transition">
-              Meet the Team
-            </button>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Our Story - Enhanced */}
-      <section className="py-20 px-6 max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row items-center gap-12">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="md:w-1/2"
-          >
-            <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-red-200 to-orange-200 rounded-2xl blur-xl opacity-50"></div>
-              <img
-                src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&h=400&fit=crop"
-                alt="Our Story"
-                className="relative rounded-2xl shadow-2xl w-full object-cover h-[400px]"
-              />
-            </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="md:w-1/2"
-          >
-            <span className="text-red-600 font-semibold text-sm uppercase tracking-wider">Our Story</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-6">
-              A Journey of <span className="text-red-600">Cosmic Discovery</span>
-            </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
-              Founded in 2015 with a simple yet profound vision — to connect people with the wonders of the universe. 
-              What started as a small community of spiritual seekers has now grown into a global movement of 12,500+ 
-              passionate individuals exploring the depths of astrology, numerology, and holistic wellness.
-            </p>
-            <p className="text-gray-600 leading-relaxed">
-              We've dedicated ourselves to crafting authentic products and transformative experiences that ignite 
-              curiosity, inspire imagination, and bring the stars a little closer to your everyday life.
-            </p>
-            <div className="mt-6 flex items-center gap-2 text-red-600 group cursor-pointer">
-              <span className="font-semibold">Read our full story</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition" />
-            </div>
-          </motion.div>
         </div>
       </section>
 
-      {/* Mission & Vision - Enhanced */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+      {/* Team Members Section - Optimized with Intersection Observer */}
+      <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
+        {teamMembers.map((member, index) => (
+          <div
+            key={member.id}
+            ref={sectionRefs[member.id]}
+            className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-8 md:gap-12 items-center mb-20 last:mb-0`}
           >
-            <span className="text-red-600 font-semibold text-sm uppercase tracking-wider">Our Core Values</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-4">
-              What Drives <span className="text-red-600">Us Forward</span>
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Guided by ancient wisdom and modern innovation, we're committed to making a positive impact.
-            </p>
-          </motion.div>
+            {/* Image Section - Preserving Original Aspect Ratio */}
+<div className="lg:w-1/2 relative group">
+  <div className={`absolute -inset-2 bg-gradient-to-r ${member.color} rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500`}></div>
+  <div className="relative overflow-hidden rounded-2xl shadow-xl">
+    <img
+      src={member.image}
+      alt={member.name}
+      className="w-full h-auto object-contain group-hover:scale-105 transition duration-500"
+      loading={index === 0 ? "eager" : "lazy"}
+    />
+  </div>
+</div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {values.map((item, idx) => (
-              <motion.div
-                key={idx}
-                variants={fadeInUp}
-                whileHover={{ y: -8 }}
-                className={`bg-gradient-to-br ${item.color} p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-orange-100`}
-              >
-                <div className="flex justify-center mb-4">{item.icon}</div>
-                <h3 className="font-bold text-lg text-gray-800 text-center mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-center text-sm leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Stats / Achievements - Enhanced with Counter Animation */}
-      <section className="py-20 px-6 bg-gradient-to-r from-red-600 to-red-700 text-white">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Impact</h2>
-            <p className="text-white/90 max-w-2xl mx-auto">
-              Numbers that reflect our dedication to excellence and global reach
-            </p>
-          </motion.div>
-
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { number: counters.customers.toLocaleString(), label: "Happy Customers", suffix: "+" },
-              { number: counters.products, label: "Cosmic Products", suffix: "+" },
-              { number: counters.countries, label: "Countries Reached", suffix: "+" },
-              { number: counters.awards, label: "Awards Won", suffix: "" },
-            ].map((stat, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20"
-              >
-                <h3 className="text-4xl md:text-5xl font-extrabold">
-                  {stat.number}{stat.suffix}
-                </h3>
-                <p className="mt-2 text-white/90 text-lg">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Team Section - Enhanced */}
-      <section className="py-20 px-6 bg-offWhite">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
-          >
-            <span className="text-red-600 font-semibold text-sm uppercase tracking-wider">Our People</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-4">
-              Meet the <span className="text-red-600">Visionaries</span>
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Passionate experts dedicated to bringing you the best of ancient wisdom and modern innovation
-            </p>
-          </motion.div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {teamMembers.map((member, idx) => (
-              <motion.div
-                key={idx}
-                variants={fadeInUp}
-                whileHover={{ y: -10 }}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden text-center border border-orange-100 group"
-              >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-64 object-cover group-hover:scale-110 transition duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end justify-center pb-4">
-                    <div className="flex gap-3">
-                      {member.social.linkedin && (
-                        <a href={member.social.linkedin} className="bg-white rounded-full p-2 hover:bg-red-500 hover:text-white transition">
-                          <Linkedin className="w-4 h-4" />
-                        </a>
-                      )}
-                      {member.social.twitter && (
-                        <a href={member.social.twitter} className="bg-white rounded-full p-2 hover:bg-red-500 hover:text-white transition">
-                          <Twitter className="w-4 h-4" />
-                        </a>
-                      )}
-                      {member.social.instagram && (
-                        <a href={member.social.instagram} className="bg-white rounded-full p-2 hover:bg-red-500 hover:text-white transition">
-                          <Instagram className="w-4 h-4" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-bold text-gray-800">{member.name}</h3>
-                  <p className="text-red-600 text-sm font-medium mt-1">{member.role}</p>
-                  <p className="text-gray-500 text-sm mt-2">{member.bio}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Testimonials Section - New */}
-      <section className="py-20 px-6 bg-gradient-to-br from-red-50 to-orange-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <span className="text-red-600 font-semibold text-sm uppercase tracking-wider">Testimonials</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-4">
-              What Our <span className="text-red-600">Community Says</span>
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6 mt-10">
-              {[
-                { name: "Priya Sharma", text: "The most authentic spiritual products I've ever purchased. Highly recommended!", rating: 5 },
-                { name: "Rahul Mehta", text: "Their courses transformed my understanding of numerology. Life-changing!", rating: 5 },
-                { name: "Anjali Kapoor", text: "Amazing customer service and genuine products. Will shop again!", rating: 5 }
-              ].map((testimonial, idx) => (
-                <motion.div
-                  key={idx}
-                  whileHover={{ y: -5 }}
-                  className="bg-white p-6 rounded-2xl shadow-md border border-orange-100"
-                >
-                  <div className="flex text-yellow-500 mb-3">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-gray-600 text-sm italic">"{testimonial.text}"</p>
-                  <p className="mt-4 font-semibold text-gray-800">— {testimonial.name}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Contact & CTA Section - Enhanced */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Content Section - Fade in when visible */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
+              initial="hidden"
+              animate={visibleSections[member.id] ? "visible" : "hidden"}
+              variants={fadeIn}
+              transition={{ delay: member.delay }}
+              className="lg:w-1/2 space-y-5"
             >
-              <span className="text-red-600 font-semibold text-sm uppercase tracking-wider">Get In Touch</span>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-4">
-                Join Our <span className="text-red-600">Cosmic Journey</span>
+              {/* Badge */}
+              <div className={`inline-flex items-center gap-2 ${member.bgColor} rounded-full px-3 py-1.5 md:px-4 md:py-2`}>
+                <member.icon className={`w-3.5 h-3.5 md:w-4 md:h-4 ${member.iconColor}`} />
+                <span className={`text-xs md:text-sm font-medium ${member.iconColor}`}>{member.role}</span>
+              </div>
+
+              {/* Name */}
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">
+                {member.name}
+                <div className={`w-12 md:w-16 h-1 bg-gradient-to-r ${member.color} mt-2 rounded-full`}></div>
               </h2>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Together, we can inspire the world to look up and dream beyond the stars. 
-                Have questions? We'd love to hear from you!
-              </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-gray-600">
-                  <Mail className="w-5 h-5 text-red-500" />
-                  <span>hello@cosmicjourney.com</span>
-                </div>
-                <div className="flex items-center gap-3 text-gray-600">
-                  <Phone className="w-5 h-5 text-red-500" />
-                  <span>+91 98765 43210</span>
-                </div>
-                <div className="flex items-center gap-3 text-gray-600">
-                  <MapPin className="w-5 h-5 text-red-500" />
-                  <span>Mumbai, India</span>
-                </div>
-              </div>
-              <div className="flex gap-4 mt-6">
-                <a href="#" className="p-2 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition">
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a href="#" className="p-2 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition">
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a href="#" className="p-2 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition">
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a href="#" className="p-2 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition">
-                  <Linkedin className="w-5 h-5" />
-                </a>
-              </div>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-gradient-to-br from-red-50 to-orange-50 p-8 rounded-2xl shadow-xl"
-            >
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Stay Connected</h3>
-              <p className="text-gray-600 mb-6">Subscribe to our newsletter for cosmic insights and exclusive offers</p>
-              <div className="flex gap-3">
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className="flex-1 px-4 py-3 rounded-xl border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-500"
-                />
-                <button className="px-6 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition">
-                  Subscribe
-                </button>
+              {/* Expertise */}
+              <p className="text-red-600 font-semibold text-sm md:text-base">{member.expertise}</p>
+
+              {/* Quote Icon */}
+              <Quote className="w-6 h-6 text-gray-300" />
+
+              {/* Intro Text - Truncated on mobile */}
+              <div className="text-gray-600 leading-relaxed text-sm md:text-base space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                {member.intro.split('\n\n').slice(0, 2).map((paragraph, idx) => (
+                  <p key={idx}>{paragraph}</p>
+                ))}
               </div>
-              <p className="text-xs text-gray-500 mt-4">No spam. Unsubscribe anytime.</p>
+
+              {/* Connect Button */}
+              <button className={`mt-4 inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-semibold transition-all transform hover:scale-105 ${member.bgColor} ${member.iconColor} hover:shadow-lg group text-sm md:text-base`}>
+                Book a Consultation
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+              </button>
+
+              {/* Social Links */}
+              <div className="flex gap-2 pt-2">
+                <a href="#" className={`p-1.5 md:p-2 rounded-full ${member.bgColor} ${member.iconColor} hover:scale-110 transition`}>
+                  <Instagram className="w-4 h-4 md:w-5 md:h-5" />
+                </a>
+                <a href="#" className={`p-1.5 md:p-2 rounded-full ${member.bgColor} ${member.iconColor} hover:scale-110 transition`}>
+                  <Facebook className="w-4 h-4 md:w-5 md:h-5" />
+                </a>
+                <a href="#" className={`p-1.5 md:p-2 rounded-full ${member.bgColor} ${member.iconColor} hover:scale-110 transition`}>
+                  <Twitter className="w-4 h-4 md:w-5 md:h-5" />
+                </a>
+                <a href="#" className={`p-1.5 md:p-2 rounded-full ${member.bgColor} ${member.iconColor} hover:scale-110 transition`}>
+                  <Linkedin className="w-4 h-4 md:w-5 md:h-5" />
+                </a>
+              </div>
             </motion.div>
           </div>
+        ))}
+      </div>
+
+      {/* Stats Section - Simplified */}
+      <section ref={sectionRefs.stats} className="py-16 md:py-20 px-6 bg-gradient-to-r from-red-600 to-red-700 text-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3">Our Impact in Numbers</h2>
+            <p className="text-white/90 text-sm md:text-base max-w-2xl mx-auto">
+              Thousands of lives transformed through ancient wisdom and modern guidance
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            {stats.map((stat, idx) => (
+              <div
+                key={idx}
+                className="text-center p-4 md:p-6 bg-white/10 backdrop-blur-sm rounded-xl md:rounded-2xl"
+              >
+                <stat.icon className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 md:mb-3" />
+                <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold">{stat.value}</h3>
+                <p className="mt-1 text-white/90 text-xs md:text-sm">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Philosophy Section - Simplified */}
+      <section ref={sectionRefs.philosophy} className="py-16 md:py-20 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium mb-4">
+              <Heart className="w-3.5 h-3.5 md:w-4 md:h-4" />
+              Our Philosophy
+            </div>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-3">
+              Ancient Wisdom for <span className="text-red-600">Modern Living</span>
+            </h2>
+            <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
+              Combining time-tested practices with contemporary understanding for lasting transformation.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: Activity, title: "Holistic Healing", desc: "Integrating body, mind, and spirit for complete wellness" },
+              { icon: Compass, title: "Space Harmony", desc: "Creating balanced environments that nurture success" },
+              { icon: Hand, title: "Self Discovery", desc: "Unlocking your true potential through ancient arts" }
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="bg-offWhite rounded-xl md:rounded-2xl p-6 text-center border border-orange-100 shadow-md hover:shadow-lg transition"
+              >
+                <div className="w-12 h-12 md:w-14 md:h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                  <item.icon className="w-6 h-6 md:w-7 md:h-7 text-red-500" />
+                </div>
+                <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-2">{item.title}</h3>
+                <p className="text-gray-600 text-xs md:text-sm">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonial Section - Simplified */}
+      <section ref={sectionRefs.testimonials} className="py-16 md:py-20 px-6 bg-gradient-to-br from-red-50 to-orange-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium mb-4">
+            <Star className="w-3.5 h-3.5 md:w-4 md:h-4 fill-current" />
+            Client Stories
+          </div>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-8 md:mb-10">
+            What Our Clients Say
+          </h2>
+          <div className="grid md:grid-cols-3 gap-5 md:gap-6">
+            {[
+              { name: "Priya Sharma", text: "Shrivya's yoga classes transformed my life. I feel more balanced and at peace.", rating: 5 },
+              { name: "Rahul Mehta", text: "Anuja's Vastu consultation brought incredible positive energy to my home.", rating: 5 },
+              { name: "Neha Gupta", text: "Himesh's palmistry reading gave me clarity about my life path.", rating: 5 }
+            ].map((testimonial, idx) => (
+              <div
+                key={idx}
+                className="bg-white p-5 md:p-6 rounded-xl md:rounded-2xl shadow-md border border-orange-100"
+              >
+                <div className="flex text-yellow-500 mb-2 md:mb-3 justify-center">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 md:w-4 md:h-4 fill-current" />
+                  ))}
+                </div>
+                <p className="text-gray-600 text-xs md:text-sm italic">"{testimonial.text}"</p>
+                <p className="mt-3 md:mt-4 font-semibold text-gray-800 text-sm md:text-base">— {testimonial.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section - Simplified */}
+      <section ref={sectionRefs.cta} className="py-16 md:py-20 px-6 text-center bg-gradient-to-r from-red-600 to-red-700 text-white">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4">Begin Your Journey Today 🌟</h2>
+        <p className="mb-5 md:mb-6 text-white/90 text-sm md:text-base max-w-2xl mx-auto">
+          Connect with our experts and take the first step toward a more balanced, harmonious, and purposeful life.
+        </p>
+        <div className="flex flex-wrap gap-3 md:gap-4 justify-center">
+          <button className="px-6 py-2.5 md:px-8 md:py-3 bg-white text-red-600 font-semibold rounded-xl shadow-lg hover:bg-orange-50 transition text-sm md:text-base">
+            Book a Consultation
+          </button>
+          <button className="px-6 py-2.5 md:px-8 md:py-3 border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition text-sm md:text-base">
+            Learn More
+          </button>
         </div>
       </section>
     </div>
