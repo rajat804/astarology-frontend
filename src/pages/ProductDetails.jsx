@@ -1,5 +1,4 @@
-// ProductDetails.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   Star,
@@ -14,28 +13,55 @@ import {
   Heart,
   Share2,
 } from "lucide-react";
-import PRODUCTS from "../data/products";
+import { getProductById } from "../services/api";
+import toast from "react-hot-toast";
 
 export default function ProductDetails() {
   const { id } = useParams();
-  const product = PRODUCTS.find((p) => p.id === Number(id));
-
-  const [activeImage, setActiveImage] = useState(product?.images?.[0] || "");
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [activeImage, setActiveImage] = useState("");
   const [qty, setQty] = useState(1);
-  const [showDesc, setShowDesc] = useState(true);
   const [activeTab, setActiveTab] = useState("description");
 
-  if (!product) return (
-    <div className="min-h-screen bg-offWhite flex items-center justify-center">
-      <p className="text-gray-500 text-lg">Product not found</p>
-    </div>
-  );
+  useEffect(() => {
+    fetchProduct();
+  }, [id]);
+
+  const fetchProduct = async () => {
+    try {
+      const data = await getProductById(id);
+      setProduct(data);
+      setActiveImage(data.image);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      toast.error('Failed to load product');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-offWhite flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-offWhite flex items-center justify-center">
+        <p className="text-gray-500 text-lg">Product not found</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-offWhite">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid lg:grid-cols-2 gap-12">
-          {/* ================= LEFT IMAGE SECTION ================= */}
+          {/* Left Image Section */}
           <div>
             <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg border border-orange-100 mb-4">
               {product.discount && (
@@ -57,24 +83,26 @@ export default function ProductDetails() {
             </div>
 
             {/* Thumbnails */}
-            <div className="flex gap-3 overflow-x-auto pb-2">
-              {product.images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveImage(img)}
-                  className={`border-2 rounded-lg overflow-hidden transition ${
-                    activeImage === img
-                      ? "border-red-500 shadow-md"
-                      : "border-orange-200 hover:border-red-300"
-                  }`}
-                >
-                  <img src={img} alt="" className="w-20 h-20 object-cover" />
-                </button>
-              ))}
-            </div>
+            {product.images && product.images.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {product.images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveImage(img)}
+                    className={`border-2 rounded-lg overflow-hidden transition ${
+                      activeImage === img
+                        ? "border-red-500 shadow-md"
+                        : "border-orange-200 hover:border-red-300"
+                    }`}
+                  >
+                    <img src={img} alt="" className="w-20 h-20 object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* ================= RIGHT INFO SECTION ================= */}
+          {/* Right Info Section */}
           <div className="bg-white rounded-2xl p-8 shadow-lg border border-orange-100">
             <h1 className="text-3xl font-bold text-gray-800 leading-tight">
               {product.name}
@@ -188,7 +216,7 @@ export default function ProductDetails() {
           </div>
         </div>
 
-        {/* ================= TABS SECTION ================= */}
+        {/* Tabs Section */}
         <div className="mt-12 bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
           <div className="flex border-b border-orange-100">
             <button
@@ -296,7 +324,7 @@ export default function ProductDetails() {
           </div>
         </div>
 
-        {/* ================= EXCLUSIVE OFFERS ================= */}
+        {/* Exclusive Offers */}
         <div className="mt-8 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 border border-orange-200">
           <p className="text-sm font-semibold text-red-600 mb-4">🎁 EXCLUSIVE OFFERS</p>
           <div className="grid grid-cols-3 gap-4 text-center">

@@ -1,5 +1,4 @@
-// ShopPage.jsx
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -9,11 +8,9 @@ import {
   ChevronDown,
 } from "lucide-react";
 import assets from "../assets/assets";
-import PRODUCTS from "../data/products";
+import { getProducts } from "../services/api";
+import toast from "react-hot-toast";
 
-/* =========================================================
-   SHOP BY CATEGORY DATA
-========================================================= */
 const SHOP_CATEGORIES = [
   {
     label: "Pyrite bracelet with magnetic closure",
@@ -25,9 +22,6 @@ const SHOP_CATEGORIES = [
   { label: "Shiva", image: "https://justwowfactory.com/cdn/shop/files/Divine_Shelter_Mahadev_Pendant_Rudraksha_Tiger_Eye_Mala_Mala.webp?v=1764667541&width=200" },
 ];
 
-/* =========================================================
-   TRENDING DATA
-========================================================= */
 const TRENDING = [
   {
     tag: "2026 (Calm)",
@@ -41,16 +35,31 @@ const TRENDING = [
   },
 ];
 
-/* =========================================================
-   SHOP PAGE
-========================================================= */
 export default function ShopPage() {
   const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [price, setPrice] = useState(2799);
   const [inStock, setInStock] = useState(false);
   const [types, setTypes] = useState([]);
   const [gems, setGems] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const data = await getProducts();
+      setProducts(data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      toast.error('Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggle = (value, state, setState) => {
     setState(
@@ -61,22 +70,30 @@ export default function ShopPage() {
   };
 
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((p) => {
+    return products.filter((p) => {
       if (p.price > price) return false;
       if (inStock && !p.inStock) return false;
       if (types.length && !types.includes(p.type)) return false;
       if (gems.length && !gems.includes(p.gemstone)) return false;
       return true;
     });
-  }, [price, inStock, types, gems]);
+  }, [products, price, inStock, types, gems]);
 
   const handleProductClick = (id) => {
     navigate(`/product/${id}`);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-offWhite flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-offWhite text-gray-800">
-      {/* ================= SHOP BY CATEGORY ================= */}
+      {/* Shop By Category */}
       <section className="py-16 text-center bg-white">
         <h2 className="tracking-widest text-sm text-red-600 mb-10 font-semibold">Shop By Category</h2>
         <div className="flex justify-center gap-12 flex-wrap max-w-6xl mx-auto px-6">
@@ -95,7 +112,7 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* ================= CATEGORY STRIP ================= */}
+      {/* Category Strip */}
       <div className="bg-gradient-to-r from-red-500 to-red-600 text-white py-3 text-sm font-medium flex justify-center gap-6 flex-wrap">
         {["Top Sellers", "New", "Numerology", "Zodiac", "Planetary", "Citrine", "Rudraksha"].map(
           (t) => (
@@ -106,7 +123,7 @@ export default function ShopPage() {
         )}
       </div>
 
-      {/* ================= TRENDING ================= */}
+      {/* Trending */}
       <section className="py-20 text-center bg-orange-50/30">
         <h2 className="text-xl mb-10 text-gray-800">
           2026 The Most <span className="text-red-600">TRENDING</span>
@@ -130,7 +147,7 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* ================= MAIN SHOP ================= */}
+      {/* Main Shop */}
       <section className="max-w-7xl mx-auto px-6 py-16">
         {/* Mobile Filter Button */}
         <div className="lg:hidden mb-6">
@@ -145,15 +162,15 @@ export default function ShopPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-12">
-          {/* ================= PRODUCTS ================= */}
+          {/* Products */}
           <div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProducts.map((p) => (
                 <motion.div
-                  key={p.id}
+                  key={p._id}
                   whileHover={{ y: -8 }}
                   className="relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all cursor-pointer border border-orange-100"
-                  onClick={() => handleProductClick(p.id)}
+                  onClick={() => handleProductClick(p._id)}
                 >
                   {p.discount && (
                     <span className="absolute top-3 left-3 bg-red-500 text-white text-xs px-2 py-1 rounded-full z-10">
@@ -171,7 +188,6 @@ export default function ShopPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          // Add to cart logic
                         }}
                         className="absolute bottom-3 right-3 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition shadow-lg hover:bg-red-600"
                       >
@@ -186,8 +202,8 @@ export default function ShopPage() {
                     </h3>
 
                     <div className="flex text-yellow-500 my-2">
-                      {[...Array(p.rating || 4)].map((_, i) => (
-                        <Star key={i} size={14} fill="currentColor" />
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={14} fill={i < (p.rating || 4) ? "currentColor" : "none"} />
                       ))}
                     </div>
 
@@ -213,7 +229,7 @@ export default function ShopPage() {
             )}
           </div>
 
-          {/* ================= FILTERS ================= */}
+          {/* Filters */}
           <aside className={`space-y-8 text-sm ${showFilters ? "block" : "hidden lg:block"}`}>
             <div className="bg-white rounded-2xl p-6 shadow-md border border-orange-100">
               <h3 className="font-semibold text-lg mb-4 text-gray-800 border-b border-orange-100 pb-2">
@@ -236,7 +252,7 @@ export default function ShopPage() {
 
                 <div>
                   <h4 className="font-semibold mb-3 text-gray-700">Product Type</h4>
-                  {["108 Mala", "Mala", "Necklace"].map((t) => (
+                  {["Rudraksha", "Mala", "Necklace", "Bracelet", "108 Mala", "Rare"].map((t) => (
                     <label key={t} className="flex items-center gap-2 mb-2 cursor-pointer">
                       <input
                         checked={types.includes(t)}

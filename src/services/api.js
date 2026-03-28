@@ -189,4 +189,60 @@ export const adminLogout = () => {
   window.location.href = '/admin/login';
 };
 
+// Product APIs
+export const getProducts = async (filters = {}) => {
+  const params = new URLSearchParams(filters).toString();
+  const response = await api.get(`/products${params ? `?${params}` : ''}`);
+  return response.data;
+};
+
+export const getProductById = async (id) => {
+  const response = await api.get(`/products/${id}`);
+  return response.data;
+};
+
+export const createProduct = async (productData) => {
+  const response = await api.post('/products', productData);
+  return response.data;
+};
+
+export const updateProduct = async (id, productData) => {
+  const response = await api.put(`/products/${id}`, productData);
+  return response.data;
+};
+
+export const deleteProduct = async (id) => {
+  const response = await api.delete(`/products/${id}`);
+  return response.data;
+};
+
+export const getProductStats = async () => {
+  const response = await api.get('/products/stats/admin');
+  return response.data;
+};
+
+// Image Upload APIs
+export const uploadImage = async (formData) => {
+  const response = await api.post('/upload/single', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+export const uploadMultipleImages = async (formData) => {
+  const response = await api.post('/upload/multiple', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+export const deleteImage = async (publicId) => {
+  const response = await api.delete('/upload/image', { data: { publicId } });
+  return response.data;
+};
+
 export default api;
