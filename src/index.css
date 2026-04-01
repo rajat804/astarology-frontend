@@ -4,3 +4,13 @@
 body{
     font-family: 'Outfit', sans-serif;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optional: better scroll performance */
+body {
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}

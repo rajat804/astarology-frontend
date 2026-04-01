@@ -1,5 +1,5 @@
 // components/home/Hero.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   HiOutlineShoppingCart,
@@ -22,39 +22,105 @@ import Accent from "../common/Accent";
 import CTA from "../common/CTA";
 
 const Hero = () => {
-  // Floating icons data with different positions, sizes, and animation delays
-  const floatingIcons = [
-    { Icon: FaSun, size: 32, top: "10%", left: "5%", delay: 0, duration: 20, color: "#f59e0b" },
-    { Icon: FaMoon, size: 28, top: "15%", right: "8%", delay: 2, duration: 22, color: "#94a3b8" },
-    { Icon: GiCrystalBall, size: 40, bottom: "20%", left: "3%", delay: 1, duration: 18, color: "#a855f7" },
-    { Icon: RiStarSLine, size: 24, top: "50%", right: "12%", delay: 3, duration: 24, color: "#f97316" },
-    { Icon: FaStar, size: 20, top: "70%", left: "15%", delay: 1.5, duration: 16, color: "#eab308" },
-    { Icon: GiEarthAmerica, size: 36, bottom: "30%", right: "5%", delay: 2.5, duration: 21, color: "#3b82f6" },
-    { Icon: FaGlobe, size: 30, top: "80%", right: "20%", delay: 0.5, duration: 19, color: "#06b6d4" },
-    { Icon: GiAstronautHelmet, size: 35, top: "25%", left: "20%", delay: 1.8, duration: 23, color: "#8b5cf6" },
-    { Icon: GiPlanetCore, size: 28, bottom: "40%", left: "25%", delay: 2.2, duration: 17, color: "#ec489a" },
-    { Icon: FaRing, size: 26, top: "60%", right: "25%", delay: 0.8, duration: 20, color: "#f43f5e" },
-    { Icon: FaFeatherAlt, size: 22, bottom: "15%", right: "15%", delay: 3.2, duration: 25, color: "#d946ef" },
-    { Icon: RiStarSLine, size: 18, top: "35%", left: "35%", delay: 2.7, duration: 18, color: "#facc15" },
-  ];
+  const [isMobile, setIsMobile] = useState(false);
+  const [isLowEndDevice, setIsLowEndDevice] = useState(false);
+
+  // Detect device performance
+  useEffect(() => {
+    const checkDevice = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      
+      // Check for low-end devices (older phones, tablets)
+      const isSlow = navigator.deviceMemory ? navigator.deviceMemory < 4 : false;
+      const isLowEnd = mobile && isSlow;
+      setIsLowEndDevice(isLowEnd);
+    };
+    
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    return () => window.removeEventListener('resize', checkDevice);
+  }, []);
+
+  // Reduce floating icons on mobile and low-end devices
+  const floatingIcons = isLowEndDevice 
+    ? [
+        { Icon: FaSun, size: 28, top: "10%", left: "5%", color: "#f59e0b" },
+        { Icon: GiCrystalBall, size: 32, bottom: "20%", left: "3%", color: "#a855f7" },
+        { Icon: FaStar, size: 20, top: "70%", left: "15%", color: "#eab308" },
+      ]
+    : isMobile
+    ? [
+        { Icon: FaSun, size: 28, top: "10%", left: "5%", delay: 0, duration: 20, color: "#f59e0b" },
+        { Icon: FaMoon, size: 24, top: "15%", right: "8%", delay: 2, duration: 22, color: "#94a3b8" },
+        { Icon: GiCrystalBall, size: 32, bottom: "20%", left: "3%", delay: 1, duration: 18, color: "#a855f7" },
+        { Icon: RiStarSLine, size: 20, top: "50%", right: "12%", delay: 3, duration: 24, color: "#f97316" },
+        { Icon: FaStar, size: 18, top: "70%", left: "15%", delay: 1.5, duration: 16, color: "#eab308" },
+        { Icon: FaRing, size: 22, top: "60%", right: "25%", delay: 0.8, duration: 20, color: "#f43f5e" },
+      ]
+    : [
+        { Icon: FaSun, size: 32, top: "10%", left: "5%", delay: 0, duration: 20, color: "#f59e0b" },
+        { Icon: FaMoon, size: 28, top: "15%", right: "8%", delay: 2, duration: 22, color: "#94a3b8" },
+        { Icon: GiCrystalBall, size: 40, bottom: "20%", left: "3%", delay: 1, duration: 18, color: "#a855f7" },
+        { Icon: RiStarSLine, size: 24, top: "50%", right: "12%", delay: 3, duration: 24, color: "#f97316" },
+        { Icon: FaStar, size: 20, top: "70%", left: "15%", delay: 1.5, duration: 16, color: "#eab308" },
+        { Icon: GiEarthAmerica, size: 36, bottom: "30%", right: "5%", delay: 2.5, duration: 21, color: "#3b82f6" },
+        { Icon: FaGlobe, size: 30, top: "80%", right: "20%", delay: 0.5, duration: 19, color: "#06b6d4" },
+        { Icon: GiAstronautHelmet, size: 35, top: "25%", left: "20%", delay: 1.8, duration: 23, color: "#8b5cf6" },
+        { Icon: GiPlanetCore, size: 28, bottom: "40%", left: "25%", delay: 2.2, duration: 17, color: "#ec489a" },
+        { Icon: FaRing, size: 26, top: "60%", right: "25%", delay: 0.8, duration: 20, color: "#f43f5e" },
+        { Icon: FaFeatherAlt, size: 22, bottom: "15%", right: "15%", delay: 3.2, duration: 25, color: "#d946ef" },
+        { Icon: RiStarSLine, size: 18, top: "35%", left: "35%", delay: 2.7, duration: 18, color: "#facc15" },
+      ];
+
+  // Reduce stars count on mobile
+  const starCount = isLowEndDevice ? 10 : isMobile ? 20 : 30;
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-offWhite to-orange-50/50">
-      {/* Background Gradient Orbs */}
+      {/* Background Gradient Orbs - Static, no animation needed */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-200/30 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-orange-200/30 rounded-full blur-3xl"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-yellow-100/20 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Floating Icons Container */}
+      {/* Floating Icons Container - Using CSS animations for better performance */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {floatingIcons.map((item, index) => {
           const IconComponent = item.Icon;
+          // Use CSS animations on low-end devices for better performance
+          if (isLowEndDevice) {
+            return (
+              <div
+                key={index}
+                className="absolute animate-float-simple"
+                style={{
+                  top: item.top,
+                  left: item.left,
+                  right: item.right,
+                  bottom: item.bottom,
+                  animation: `float-simple 15s ease-in-out infinite`,
+                  animationDelay: `${index * 0.5}s`,
+                }}
+              >
+                <IconComponent
+                  size={item.size}
+                  color={item.color}
+                  className="opacity-20 transition-opacity duration-300"
+                  style={{
+                    filter: "drop-shadow(0 0 8px rgba(0,0,0,0.1))",
+                  }}
+                />
+              </div>
+            );
+          }
+          
+          // Use Framer Motion for desktop with reduced complexity
           return (
             <motion.div
               key={index}
-              className="absolute"
+              className="absolute will-change-transform"
               style={{
                 top: item.top,
                 left: item.left,
@@ -62,15 +128,16 @@ const Hero = () => {
                 bottom: item.bottom,
               }}
               animate={{
-                y: [0, -30, 0, 30, 0],
-                x: [0, 20, 0, -20, 0],
-                rotate: [0, 10, 0, -10, 0],
+                y: [0, -20, 0, 20, 0],
+                x: [0, 15, 0, -15, 0],
+                rotate: [0, 8, 0, -8, 0],
               }}
               transition={{
                 duration: item.duration,
                 delay: item.delay,
                 repeat: Infinity,
                 ease: "easeInOut",
+                repeatDelay: 0,
               }}
             >
               <IconComponent
@@ -86,25 +153,17 @@ const Hero = () => {
         })}
       </div>
 
-      {/* Additional Small Stars/Meteors */}
+      {/* Stars/Meteors - Reduced count and using CSS animations */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(30)].map((_, i) => (
-          <motion.div
+        {[...Array(starCount)].map((_, i) => (
+          <div
             key={`star-${i}`}
-            className="absolute w-1 h-1 bg-yellow-300 rounded-full"
+            className="absolute w-0.5 h-0.5 bg-yellow-300 rounded-full animate-twinkle"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              opacity: [0, 0.5, 0],
-              scale: [0, 1, 0],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 4,
-              delay: Math.random() * 5,
-              repeat: Infinity,
-              ease: "easeInOut",
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${2 + Math.random() * 3}s`,
             }}
           />
         ))}
@@ -112,7 +171,7 @@ const Hero = () => {
 
       {/* Original decorative SVG - kept for compatibility */}
       <svg
-        className="absolute -right-48 -top-32 opacity-20 pointer-events-none"
+        className="absolute -right-48 -top-32 opacity-20 pointer-events-none hidden md:block"
         width="700"
         height="700"
         viewBox="0 0 700 700"
@@ -132,8 +191,8 @@ const Hero = () => {
           <motion.div
             initial={{ opacity: 0, x: -28 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
-            className="space-y-5 sm:space-y-6"
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="space-y-5 sm:space-y-6 will-change-transform"
           >
             <div className="inline-flex items-center gap-3 bg-orange-100/60 text-red-700 px-3 py-1 rounded-full text-sm font-medium w-max shadow-sm backdrop-blur-sm">
               <RiStarSLine /> Featured
@@ -187,8 +246,8 @@ const Hero = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-6 lg:mt-0"
+            transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+            className="mt-6 lg:mt-0 will-change-transform"
           >
             <div className="relative">
               <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-offWhite to-orange-50/80 p-6 sm:p-8 border border-orange-100 backdrop-blur-sm">
@@ -227,6 +286,43 @@ const Hero = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* CSS Animations for better performance */}
+      <style jsx>{`
+        @keyframes float-simple {
+          0%, 100% {
+            transform: translateY(0px) translateX(0px);
+          }
+          50% {
+            transform: translateY(-15px) translateX(10px);
+          }
+        }
+        
+        @keyframes twinkle {
+          0%, 100% {
+            opacity: 0;
+            transform: scale(0);
+          }
+          50% {
+            opacity: 0.5;
+            transform: scale(1);
+          }
+        }
+        
+        .animate-float-simple {
+          animation: float-simple 15s ease-in-out infinite;
+          will-change: transform;
+        }
+        
+        .animate-twinkle {
+          animation: twinkle ease-in-out infinite;
+          will-change: opacity, transform;
+        }
+        
+        .will-change-transform {
+          will-change: transform;
+        }
+      `}</style>
     </section>
   );
 };
