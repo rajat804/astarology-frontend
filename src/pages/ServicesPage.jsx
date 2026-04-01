@@ -103,77 +103,7 @@ const Categories = () => {
   );
 };
 
-/* ---------- SERVICE LISTINGS ---------- */
-const ServicesList = () => {
-  const services = [
-    {
-      title: "Natal Chart Reading",
-      duration: "60 min",
-      price: "₹2,499",
-      rating: 4.9,
-      desc: "Personalized birth chart interpretation with future insights.",
-    },
-    {
-      title: "Numerology Report",
-      duration: "45 min",
-      price: "₹1,299",
-      rating: 4.7,
-      desc: "Decode your life path numbers and learn about opportunities.",
-    },
-    {
-      title: "Vastu Consultation",
-      duration: "90 min",
-      price: "₹3,999",
-      rating: 4.8,
-      desc: "Enhance energy flow at home or office with practical remedies.",
-    },
-  ];
 
-  return (
-    <section className="py-14 bg-gradient-to-b from-orange-50/50 to-offWhite">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-2xl font-bold mb-8 text-gray-800">Popular Services</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          {services.map((s, i) => (
-            <motion.div
-              key={s.title}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.12 }}
-              className="bg-white rounded-2xl shadow-lg p-6 hover:-translate-y-1 hover:shadow-2xl transition border border-orange-100"
-            >
-              <h3 className="font-semibold text-lg text-gray-800">{s.title}</h3>
-              <p className="text-gray-600 text-sm mt-2">{s.desc}</p>
-              <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
-                <span className="flex items-center gap-2">
-                  <HiOutlineClock className="text-red-500" /> {s.duration}
-                </span>
-                <span className="flex items-center gap-1 text-yellow-500">
-                  {Array.from({ length: 5 }).map((_, idx) => (
-                    <FaStar
-                      key={idx}
-                      className={`w-3 h-3 ${
-                        idx < Math.round(s.rating) ? "" : "opacity-30"
-                      }`}
-                    />
-                  ))}
-                  {s.rating}
-                </span>
-              </div>
-              <div className="mt-4 font-bold text-red-600">{s.price}</div>
-              <div className="mt-4 flex gap-3">
-                <button className="flex-1 px-4 py-2 rounded-xl border border-red-200 text-red-600 font-semibold hover:bg-red-50 transition">
-                  Details
-                </button>
-                <CTA>Book</CTA>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
 
 /* ---------- PRICING PACKAGES ---------- */
 const Pricing = () => {
@@ -254,66 +184,6 @@ const Pricing = () => {
   );
 };
 
-/* ---------- EXPERT TEAM SECTION ---------- */
-const ExpertTeam = () => {
-  const experts = [
-    {
-      name: "Dr. Ananya Sharma",
-      expertise: "Astrology & Vedic Sciences",
-      experience: "15+ years",
-      img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2",
-    },
-    {
-      name: "Prof. Rajiv Mehta",
-      expertise: "Numerology & Vaastu",
-      experience: "12+ years",
-      img: "https://images.unsplash.com/photo-1560250097-0b93528c311a",
-    },
-    {
-      name: "Swati Kapoor",
-      expertise: "Yoga & Wellness Coach",
-      experience: "10+ years",
-      img: "https://images.unsplash.com/photo-1580489944761-15a19d654956",
-    },
-  ];
-
-  return (
-    <section className="py-16 bg-orange-50/50">
-      <div className="max-w-6xl mx-auto px-6 text-center">
-        <h2 className="text-3xl font-bold text-gray-800">Meet Our Experts</h2>
-        <p className="text-gray-600 mt-2 mb-10">
-          Learn from certified professionals with decades of experience.
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {experts.map((expert, i) => (
-            <motion.div
-              key={expert.name}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition border border-orange-100"
-            >
-              <img
-                src={expert.img}
-                alt={expert.name}
-                className="w-full h-56 object-cover"
-              />
-              <div className="p-5">
-                <h3 className="font-bold text-lg text-gray-800">{expert.name}</h3>
-                <p className="text-red-600 text-sm font-medium mt-1">{expert.expertise}</p>
-                <p className="text-gray-500 text-xs mt-1">{expert.experience} experience</p>
-                <button className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition w-full">
-                  Book Session
-                </button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
 
 /* ---------- FAQ ---------- */
 const FAQ = () => {
@@ -384,9 +254,7 @@ const ServicesPage = () => {
     <main className="bg-offWhite">
       <Hero />
       <Categories />
-      <ServicesList />
       <Pricing />
-      <ExpertTeam />
       <FAQ />
     </main>
   );

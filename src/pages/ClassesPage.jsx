@@ -59,9 +59,6 @@ const Hero = () => (
         </p>
         <div className="mt-8 flex flex-wrap gap-4 justify-center">
           <CTA>Explore All Courses</CTA>
-          <button className="px-6 py-3 rounded-xl border-2 border-red-200 text-red-600 font-semibold hover:bg-red-50 transition">
-            View Curriculum
-          </button>
         </div>
       </motion.div>
     </div>

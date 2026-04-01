@@ -78,23 +78,8 @@ const AboutPage = () => {
 
   const teamMembers = [
     {
-      id: "shrivya",
-      name: "Shrivya",
-      role: "Yoga & Wellness Instructor",
-      expertise: "Hatha Yoga | Pranayama | Meditation",
-      image: assets.shravya,
-      icon: Activity,
-      intro: `A journey of balance, healing, and self-discovery awaits. Yoga is not just a physical practice; it is a lifestyle that cultivates the body, soothes the mind, and liberates the soul.
-
-As a dedicated and passionate yoga instructor, I will lead you through a series of exercises and movements that will empower and uplift your body, as well as bring peace and tranquility to your mind and soul. Whether a beginner or a seasoned yogi, every session is carefully crafted to address your needs and assist you in your personal growth and development. Through breathing exercises, movements, and meditation, you will learn to reconnect with yourself and find balance and harmony within your life. Step onto the mat and begin your journey to a healthier, more peaceful, and balanced you.`,
-      color: "from-green-500 to-emerald-600",
-      bgColor: "bg-green-50",
-      iconColor: "text-green-600",
-      delay: 0
-    },
-    {
       id: "anuja",
-      name: "Anuja Chavan",
+      name: "Anuja S Chavaan",
       role: "Vastu & Numerology Expert",
       expertise: "Vastu Shastra | Numerology | Space Healing",
       image: assets.anuja,
@@ -113,7 +98,7 @@ Join us on a journey of transformation—where your space and numbers work for y
     },
     {
       id: "himesh",
-      name: "Himesh",
+      name: "Himesh A Kumar",
       role: "Palmistry & Life Path Guide",
       expertise: "Palmistry | Hand Analysis | Life Guidance",
       image: assets.hemant,

@@ -136,7 +136,6 @@ const Navbar = () => {
               ) : (
                 <>
                   <CTAButton to="/auth">Sign In</CTAButton>
-                  <CTAButton to="/contact">Book Now</CTAButton>
                 </>
               )}
             </div>
