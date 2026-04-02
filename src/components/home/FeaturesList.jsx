@@ -12,9 +12,10 @@ import {
   Orbit
 } from "lucide-react";
 
+// Import your Dharma wheel image - update the path accordingly
+import assets from "../../assets/assets";
+
 const FeaturesList = () => {
-  const [activePlanet, setActivePlanet] = useState(0);
-  const [rotation, setRotation] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isLowEndDevice, setIsLowEndDevice] = useState(false);
 
@@ -43,81 +44,24 @@ const FeaturesList = () => {
     "Global delivery of products with tracking",
   ];
 
-  // Reduce planets on mobile/low-end
-  const planets = isLowEndDevice 
-    ? [
-        { name: "Sun", icon: Sun, color: "text-yellow-500", size: 36, orbit: 0, glow: "rgba(255,200,0,0.3)" },
-        { name: "Moon", icon: Moon, color: "text-gray-400", size: 32, orbit: 120, glow: "rgba(200,200,255,0.3)" },
-      ]
-    : isMobile
-    ? [
-        { name: "Sun", icon: Sun, color: "text-yellow-500", size: 40, orbit: 0, glow: "rgba(255,200,0,0.3)" },
-        { name: "Moon", icon: Moon, color: "text-gray-400", size: 36, orbit: 120, glow: "rgba(200,200,255,0.3)" },
-        { name: "Sparkles", icon: Sparkles, color: "text-blue-400", size: 32, orbit: 240, glow: "rgba(100,150,255,0.3)" },
-      ]
-    : [
-        { name: "Sun", icon: Sun, color: "text-yellow-500", size: 48, orbit: 0, glow: "rgba(255,200,0,0.3)" },
-        { name: "Moon", icon: Moon, color: "text-gray-400", size: 42, orbit: 72, glow: "rgba(200,200,255,0.3)" },
-        { name: "Star", icon: Sparkles, color: "text-blue-400", size: 36, orbit: 144, glow: "rgba(100,150,255,0.3)" },
-        { name: "Flower", icon: Flower2, color: "text-pink-400", size: 44, orbit: 216, glow: "rgba(255,150,200,0.3)" },
-        { name: "Orbit", icon: Orbit, color: "text-red-500", size: 40, orbit: 288, glow: "rgba(255,100,100,0.3)" },
-      ];
+  // Planet data for floating planets (only for the Dharma wheel card)
+  const planets = [
+    { name: "Mercury", size: 20, left: "5%", top: "10%", delay: 0, duration: 20, color: "#c4a35a" },
+    { name: "Venus", size: 25, left: "85%", top: "15%", delay: 2, duration: 25, color: "#e8b4b4" },
+    { name: "Earth", size: 28, left: "10%", top: "80%", delay: 4, duration: 22, color: "#4a90e2" },
+    { name: "Mars", size: 22, left: "80%", top: "75%", delay: 1, duration: 18, color: "#e74c3c" },
+    { name: "Jupiter", size: 35, left: "90%", top: "85%", delay: 3, duration: 30, color: "#d4a574" },
+    { name: "Saturn", size: 30, left: "2%", top: "50%", delay: 5, duration: 28, color: "#e8c9a0" },
+  ];
 
-  // Slower rotation on mobile for better performance
-  useEffect(() => {
-    const intervalTime = isLowEndDevice ? 100 : isMobile ? 80 : 50;
-    const interval = setInterval(() => {
-      setRotation(prev => (prev + 1) % 360);
-      setActivePlanet(prev => (prev + 1) % planets.length);
-    }, intervalTime);
-    return () => clearInterval(interval);
-  }, [planets.length, isMobile, isLowEndDevice]);
-
-  // Reduce background stars on mobile
-  const starCount = isLowEndDevice ? 30 : isMobile ? 50 : 100;
+  // Reduce stars count on mobile
+  const starCount = isLowEndDevice ? 30 : isMobile ? 60 : 100;
 
   return (
     <section className="relative py-12 md:py-20 overflow-hidden bg-gradient-to-b from-white to-orange-50/30">
-      {/* Animated Background Stars - Using CSS animations on low-end */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(starCount)].map((_, i) => (
-          isLowEndDevice ? (
-            <div
-              key={`star-${i}`}
-              className="absolute w-0.5 h-0.5 bg-yellow-300 rounded-full animate-twinkle"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${2 + Math.random() * 3}s`,
-              }}
-            />
-          ) : (
-            <motion.div
-              key={`star-${i}`}
-              className="absolute w-0.5 h-0.5 bg-yellow-300 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                opacity: [0, 0.5, 0],
-                scale: [0, 1, 0],
-              }}
-              transition={{
-                duration: 2 + Math.random() * 3,
-                delay: Math.random() * 5,
-                repeat: Infinity,
-                repeatDelay: Math.random() * 2,
-              }}
-            />
-          )
-        ))}
-      </div>
-
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-          {/* Left Side - Features */}
+          {/* Left Side - Features (Light theme) */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -179,7 +123,7 @@ const FeaturesList = () => {
             </motion.div>
           </motion.div>
 
-          {/* Right Side - Animated Astrology Visualization */}
+          {/* Right Side - Dharma Wheel Visualization with Space Background */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -187,154 +131,163 @@ const FeaturesList = () => {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="relative"
           >
-            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-orange-50/80 to-purple-50/80 p-4 md:p-8 border border-orange-100 shadow-xl backdrop-blur-sm">
-              {/* Main Circle */}
-              <div className="relative w-full aspect-square max-w-sm md:max-w-md mx-auto">
-                {/* Outer Ring */}
-                <div className="absolute inset-0 rounded-full border-2 border-orange-200 animate-spin-slow" />
-                
-                {/* Middle Ring */}
-                <div className="absolute inset-4 rounded-full border border-purple-200 animate-spin-reverse-slow" />
-                
-                {/* Inner Ring */}
-                <div className="absolute inset-8 rounded-full border border-red-200 animate-spin-slower" />
-
-                {/* Center Lotus - Simplified animation on mobile */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {isLowEndDevice ? (
-                    <Flower2 className="w-12 h-12 md:w-20 md:h-20 text-purple-500 opacity-80" />
-                  ) : (
-                    <motion.div
-                      animate={{
-                        scale: [1, 1.05, 1],
-                        rotate: [0, 360],
-                      }}
-                      transition={{
-                        scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                        rotate: { duration: 20, repeat: Infinity, ease: "linear" }
-                      }}
-                    >
-                      <Flower2 className="w-12 h-12 md:w-20 md:h-20 text-purple-500 opacity-80" />
-                    </motion.div>
-                  )}
-                </div>
-
-                {/* Orbiting Planets */}
-                {planets.map((planet, index) => {
-                  const IconComponent = planet.icon;
-                  const angle = (rotation + planet.orbit) * (Math.PI / 180);
-                  const radius = isMobile ? 100 : 140;
-                  const x = Math.cos(angle) * radius;
-                  const y = Math.sin(angle) * radius;
-                  
-                  return (
-                    <div
-                      key={planet.name}
-                      className="absolute top-1/2 left-1/2"
-                      style={{
-                        transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
-                      }}
-                    >
-                      <div className={`relative ${!isLowEndDevice ? 'hover:scale-110 transition-transform' : ''}`}>
-                        <IconComponent 
-                          size={planet.size}
-                          className={`${planet.color}`}
-                          strokeWidth={1.5}
-                        />
-                        {/* Glow Effect - Disabled on low-end */}
-                        {!isLowEndDevice && (
-                          <div
-                            className="absolute inset-0 rounded-full blur-xl animate-pulse-glow"
-                            style={{
-                              background: planet.glow,
-                            }}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Floating Zodiac Signs - Reduced on mobile */}
-                {!isLowEndDevice && (
-                  ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"].map((sign, idx) => {
-                    const angle = (rotation * 2 + idx * 30) * (Math.PI / 180);
-                    const radius = isMobile ? 75 : 100;
-                    const x = Math.cos(angle) * radius;
-                    const y = Math.sin(angle) * radius;
-                    
-                    return (
-                      <div
-                        key={sign}
-                        className="absolute top-1/2 left-1/2"
-                        style={{
-                          transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
-                        }}
-                      >
-                        <span
-                          className="text-[8px] md:text-xs font-bold text-gray-400 animate-pulse-opacity"
-                          style={{
-                            animationDelay: `${idx * 0.25}s`,
-                          }}
-                        >
-                          {sign}
-                        </span>
-                      </div>
-                    );
-                  })
-                )}
+            {/* Space Background Container */}
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden">
+              {/* Dark Space Background - Only for this card */}
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900" />
+              
+              {/* Stars Background - Only for this card */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {[...Array(starCount)].map((_, i) => (
+                  <div
+                    key={`star-${i}`}
+                    className="absolute bg-white rounded-full animate-twinkle"
+                    style={{
+                      width: `${Math.random() * 2 + 1}px`,
+                      height: `${Math.random() * 2 + 1}px`,
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      animationDelay: `${Math.random() * 5}s`,
+                      animationDuration: `${2 + Math.random() * 3}s`,
+                      opacity: Math.random() * 0.7 + 0.3,
+                    }}
+                  />
+                ))}
               </div>
 
-              {/* Decorative Elements - Hidden on mobile */}
-              {!isMobile && (
+              {/* Floating Planets - Only for this card */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {planets.map((planet, index) => (
+                  <div
+                    key={planet.name}
+                    className="absolute rounded-full animate-float-planet"
+                    style={{
+                      width: `${planet.size}px`,
+                      height: `${planet.size}px`,
+                      left: planet.left,
+                      top: planet.top,
+                      backgroundColor: planet.color,
+                      boxShadow: `0 0 ${planet.size / 3}px ${planet.color}`,
+                      animationDelay: `${planet.delay}s`,
+                      animationDuration: `${planet.duration}s`,
+                      opacity: isLowEndDevice ? 0.3 : 0.4,
+                    }}
+                  >
+                    <div 
+                      className="absolute inset-0 rounded-full blur-md"
+                      style={{
+                        backgroundColor: planet.color,
+                        opacity: 0.5,
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Nebula Effects - Only for this card */}
+              {!isLowEndDevice && (
                 <>
-                  <div className="absolute -top-4 -right-4 w-12 h-12 md:w-16 md:h-16 bg-purple-200 rounded-full blur-2xl opacity-50 animate-pulse-scale" />
-                  <div className="absolute -bottom-4 -left-4 w-16 h-16 md:w-20 md:h-20 bg-orange-200 rounded-full blur-2xl opacity-50 animate-pulse-scale-slow" />
+                  <div className="absolute top-10 left-5 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl animate-pulse-slow" />
+                  <div className="absolute bottom-10 right-5 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl animate-pulse-slower" />
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-indigo-500/10 rounded-full blur-3xl animate-pulse" />
                 </>
               )}
 
-              {/* Complimentary Note */}
-              <motion.div 
-                className="mt-6 md:mt-8 p-3 md:p-4 bg-white/60 backdrop-blur rounded-xl md:rounded-2xl border border-orange-100"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.4 }}
-              >
-                <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-2">
-                  <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
-                  <strong className="text-red-600 text-xs md:text-sm">Complimentary:</strong>
+              {/* Card Content */}
+              <div className="relative p-4 md:p-8 backdrop-blur-sm">
+                {/* Glowing aura behind the wheel */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-40 h-40 md:w-64 md:h-64 rounded-full bg-gradient-to-r from-purple-500/20 to-red-500/20 blur-3xl animate-pulse" />
                 </div>
-                <p className="text-xs md:text-sm text-gray-600">
-                  Short follow-up note with every consultation to help implement insights.
-                  {!isMobile && " Plus, receive a personalized mantra based on your birth chart!"}
-                </p>
-              </motion.div>
+                
+                {/* Dharma Wheel Container */}
+                <div className="relative w-full aspect-square max-w-sm md:max-w-md mx-auto">
+                  {/* Outer decorative rings */}
+                  <div className="absolute inset-0 rounded-full border-2 border-purple-500/30 animate-spin-slow" />
+                  <div className="absolute inset-4 rounded-full border border-purple-500/20 animate-spin-reverse-slow" />
+                  <div className="absolute inset-8 rounded-full border border-red-500/20 animate-spin-slower" />
+                  
+                
 
-              {/* Animated Energy Lines - Hidden on low-end */}
-              {!isLowEndDevice && (
-                <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                  <circle
-                    cx="50%"
-                    cy="50%"
-                    r={isMobile ? "80" : "120"}
-                    fill="none"
-                    stroke="rgba(249,115,22,0.1)"
-                    strokeWidth="2"
-                    strokeDasharray="5 5"
-                    className="animate-spin-slow"
-                  />
-                  <circle
-                    cx="50%"
-                    cy="50%"
-                    r={isMobile ? "55" : "80"}
-                    fill="none"
-                    stroke="rgba(168,85,247,0.1)"
-                    strokeWidth="1.5"
-                    className="animate-spin-reverse-slow"
-                  />
-                </svg>
-              )}
+                  {/* Dharma Wheel Image - Continuously Rotating */}
+                  <motion.div
+                    className="absolute inset-0 flex items-center justify-center"
+                    animate={{
+                      rotate: 360,
+                    }}
+                    transition={{
+                      duration: isLowEndDevice ? 30 : 20,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  >
+                    <img
+                      src={assets.dharmawheel}
+                      alt="Dharma Wheel"
+                      className="w-60 h-60 md:w-96 md:h-96 object-contain drop-shadow-2xl"
+                      loading="lazy"
+                    />
+                  </motion.div>
+
+                  {/* Inner decorative elements */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-20 h-20 md:w-32 md:h-32 rounded-full border border-yellow-500/20 animate-pulse-slow" />
+                    <div className="absolute w-12 h-12 md:w-20 md:h-20 rounded-full border border-red-500/20 animate-pulse-slower" />
+                  </div>
+                </div>
+
+                {/* Floating energy orbs */}
+                {!isLowEndDevice && (
+                  <>
+                    <div className="absolute top-0 left-0 w-6 h-6 md:w-10 md:h-10 bg-purple-500/30 rounded-full blur-xl animate-float-orb" />
+                    <div className="absolute bottom-0 right-0 w-8 h-8 md:w-12 md:h-12 bg-red-500/30 rounded-full blur-xl animate-float-orb-delayed" />
+                    <div className="absolute top-1/2 right-0 w-5 h-5 md:w-6 md:h-6 bg-blue-500/30 rounded-full blur-lg animate-float-orb-slow" />
+                  </>
+                )}
+
+                {/* Complimentary Note */}
+                <motion.div 
+                  className="mt-6 md:mt-8 p-3 md:p-4 bg-white/5 backdrop-blur rounded-xl md:rounded-2xl border border-purple-500/30"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2, duration: 0.4 }}
+                >
+                  <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-2">
+                    <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
+                    <strong className="text-yellow-400 text-xs md:text-sm">Complimentary:</strong>
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-300">
+                    Short follow-up note with every consultation to help implement insights.
+                    {!isMobile && " Plus, receive a personalized mantra based on your birth chart!"}
+                  </p>
+                </motion.div>
+
+                {/* Energy rings SVG */}
+                {!isLowEndDevice && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                    <circle
+                      cx="50%"
+                      cy="50%"
+                      r="100"
+                      fill="none"
+                      stroke="rgba(168,85,247,0.15)"
+                      strokeWidth="1"
+                      strokeDasharray="3 3"
+                      className="animate-spin-slow"
+                    />
+                    <circle
+                      cx="50%"
+                      cy="50%"
+                      r="80"
+                      fill="none"
+                      stroke="rgba(236,72,153,0.1)"
+                      strokeWidth="1"
+                      className="animate-spin-reverse-slow"
+                    />
+                  </svg>
+                )}
+              </div>
             </div>
           </motion.div>
         </div>
@@ -366,39 +319,63 @@ const FeaturesList = () => {
             transform: scale(0);
           }
           50% {
-            opacity: 0.5;
+            opacity: 1;
             transform: scale(1);
           }
         }
         
-        @keyframes pulse-glow {
+        @keyframes float-planet {
           0%, 100% {
-            transform: scale(1);
-            opacity: 0.5;
+            transform: translate(0, 0);
+          }
+          25% {
+            transform: translate(10px, -10px);
           }
           50% {
-            transform: scale(1.5);
-            opacity: 0.8;
+            transform: translate(0, -15px);
+          }
+          75% {
+            transform: translate(-10px, -5px);
           }
         }
         
-        @keyframes pulse-opacity {
+        @keyframes pulse {
           0%, 100% {
-            opacity: 0.3;
-            transform: scale(0.8);
+            opacity: 0.1;
+            transform: scale(1);
           }
           50% {
-            opacity: 0.8;
-            transform: scale(1);
+            opacity: 0.2;
+            transform: scale(1.1);
           }
         }
         
-        @keyframes pulse-scale {
+        @keyframes pulse-slow {
           0%, 100% {
+            opacity: 0.15;
             transform: scale(1);
           }
           50% {
-            transform: scale(1.2);
+            opacity: 0.25;
+            transform: scale(1.05);
+          }
+        }
+        
+        @keyframes float-orb {
+          0%, 100% {
+            transform: translate(0, 0);
+          }
+          50% {
+            transform: translate(8px, -8px);
+          }
+        }
+        
+        @keyframes orbit-particle {
+          0% {
+            transform: rotate(0deg) translateX(60px) rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg) translateX(60px) rotate(-360deg);
           }
         }
         
@@ -419,24 +396,60 @@ const FeaturesList = () => {
           will-change: opacity, transform;
         }
         
-        .animate-pulse-glow {
-          animation: pulse-glow 2s ease-in-out infinite;
-          will-change: transform, opacity;
+        .animate-float-planet {
+          animation: float-planet ease-in-out infinite;
+          will-change: transform;
         }
         
-        .animate-pulse-opacity {
-          animation: pulse-opacity 3s ease-in-out infinite;
+        .animate-pulse {
+          animation: pulse 4s ease-in-out infinite;
           will-change: opacity, transform;
         }
         
-        .animate-pulse-scale {
-          animation: pulse-scale 4s ease-in-out infinite;
+        .animate-pulse-slow {
+          animation: pulse-slow 6s ease-in-out infinite;
+          will-change: opacity, transform;
+        }
+        
+        .animate-pulse-slower {
+          animation: pulse-slow 8s ease-in-out infinite;
+          will-change: opacity, transform;
+        }
+        
+        .animate-float-orb {
+          animation: float-orb 5s ease-in-out infinite;
           will-change: transform;
         }
         
-        .animate-pulse-scale-slow {
-          animation: pulse-scale 5s ease-in-out infinite;
+        .animate-float-orb-delayed {
+          animation: float-orb 6s ease-in-out infinite 1s;
           will-change: transform;
+        }
+        
+        .animate-float-orb-slow {
+          animation: float-orb 8s ease-in-out infinite 2s;
+          will-change: transform;
+        }
+        
+        .animate-orbit-particle {
+          animation: orbit-particle 8s linear infinite;
+          will-change: transform;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+          .animate-orbit-particle {
+            animation: orbit-particle 8s linear infinite;
+          }
+          
+          @keyframes orbit-particle {
+            0% {
+              transform: rotate(0deg) translateX(40px) rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg) translateX(40px) rotate(-360deg);
+            }
+          }
         }
       `}</style>
     </section>

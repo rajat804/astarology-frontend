@@ -12,7 +12,7 @@ import ganesh from "./ganesh.jpeg";
 import hemant from "./Himesh A Kumar.png";
 import shravya from "./Shravya Saxena.jpeg";
 import anuja from "./Anuja S Chavaan.jpeg";
-
+import dharmawheel from "./dharmawheel.png";
 const assets = {
     logo,
     oneFace,
@@ -28,6 +28,7 @@ const assets = {
     hemant,
     shravya,
     anuja,
+    dharmawheel,
 };
 
 export default assets;
