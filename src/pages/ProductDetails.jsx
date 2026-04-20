@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Star,
   ShoppingCart,
@@ -14,10 +14,13 @@ import {
   Share2,
 } from "lucide-react";
 import { getProductById } from "../services/api";
+import { useCart } from "../context/CartContext";
 import toast from "react-hot-toast";
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { addItem } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState("");
@@ -38,6 +41,31 @@ export default function ProductDetails() {
       toast.error('Failed to load product');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    if (!product.inStock) {
+      toast.error('Product is out of stock');
+      return;
+    }
+    try {
+      await addItem(product._id, qty);
+    } catch (error) {
+      console.error('Add to cart error:', error);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!product.inStock) {
+      toast.error('Product is out of stock');
+      return;
+    }
+    try {
+      await addItem(product._id, qty);
+      navigate('/checkout');
+    } catch (error) {
+      console.error('Buy now error:', error);
     }
   };
 
@@ -139,6 +167,21 @@ export default function ProductDetails() {
               )}
             </div>
 
+            {/* Stock Status */}
+            <div className="mt-4">
+              {product.inStock ? (
+                <span className="text-green-600 text-sm flex items-center gap-1">
+                  <span className="w-2 h-2 bg-green-600 rounded-full"></span>
+                  In Stock ({product.stock} items available)
+                </span>
+              ) : (
+                <span className="text-red-600 text-sm flex items-center gap-1">
+                  <span className="w-2 h-2 bg-red-600 rounded-full"></span>
+                  Out of Stock
+                </span>
+              )}
+            </div>
+
             {/* Color/Material */}
             {product.color && (
               <div className="mt-6">
@@ -157,7 +200,8 @@ export default function ProductDetails() {
                 <div className="flex border border-orange-200 rounded-lg overflow-hidden">
                   <button
                     onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="px-4 py-2 hover:bg-orange-50 transition"
+                    className="px-4 py-2 hover:bg-orange-50 transition disabled:opacity-50"
+                    disabled={!product.inStock}
                   >
                     <Minus size={16} />
                   </button>
@@ -166,19 +210,28 @@ export default function ProductDetails() {
                   </span>
                   <button
                     onClick={() => setQty(qty + 1)}
-                    className="px-4 py-2 hover:bg-orange-50 transition"
+                    className="px-4 py-2 hover:bg-orange-50 transition disabled:opacity-50"
+                    disabled={!product.inStock || qty >= product.stock}
                   >
                     <Plus size={16} />
                   </button>
                 </div>
 
-                <button className="flex-1 bg-red-500 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-red-600 transition shadow-md">
+                <button 
+                  onClick={handleAddToCart}
+                  disabled={!product.inStock}
+                  className="flex-1 bg-red-500 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-red-600 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <ShoppingCart size={18} />
                   ADD TO CART
                 </button>
               </div>
 
-              <button className="w-full border-2 border-red-500 text-red-600 py-3 rounded-lg font-semibold hover:bg-red-50 transition">
+              <button 
+                onClick={handleBuyNow}
+                disabled={!product.inStock}
+                className="w-full border-2 border-red-500 text-red-600 py-3 rounded-lg font-semibold hover:bg-red-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 BUY IT NOW
               </button>
 

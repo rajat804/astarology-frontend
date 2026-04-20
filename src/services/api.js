@@ -245,4 +245,51 @@ export const deleteImage = async (publicId) => {
   return response.data;
 };
 
+// Cart APIs
+export const getCart = async () => {
+  const response = await api.get('/cart');
+  return response.data;
+};
+
+export const addToCart = async (productId, quantity) => {
+  const response = await api.post('/cart/add', { productId, quantity });
+  return response.data;
+};
+
+export const updateCartItem = async (productId, quantity) => {
+  const response = await api.put(`/cart/update/${productId}`, { quantity });
+  return response.data;
+};
+
+export const removeFromCart = async (productId) => {
+  const response = await api.delete(`/cart/remove/${productId}`);
+  return response.data;
+};
+
+export const clearCart = async () => {
+  const response = await api.delete('/cart/clear');
+  return response.data;
+};
+
+// Payment APIs
+export const createOrder = async (orderData) => {
+  const response = await api.post('/payment/create-order', orderData);
+  return response.data;
+};
+
+export const verifyPayment = async (paymentData) => {
+  const response = await api.post('/payment/verify-payment', paymentData);
+  return response.data;
+};
+
+export const getUserOrders = async () => {
+  const response = await api.get('/payment/orders');
+  return response.data;
+};
+
+export const getOrderById = async (orderId) => {
+  const response = await api.get(`/payment/order/${orderId}`);
+  return response.data;
+};
+
 export default api;
