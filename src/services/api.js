@@ -28,7 +28,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 30000,
-  withCredentials: false, // Set to false for now to avoid CORS issues
+  withCredentials: false,
 });
 
 // Add token to requests
@@ -92,7 +92,7 @@ api.interceptors.response.use(
   }
 );
 
-// Auth APIs
+// ==================== AUTH APIs ====================
 export const register = async (userData) => {
   const response = await api.post('/auth/register', userData);
   if (response.data.token) {
@@ -129,7 +129,7 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
-// Admin APIs
+// ==================== ADMIN APIs ====================
 export const adminLogin = async (credentials) => {
   console.log('Admin login API called with:', credentials.email);
   
@@ -189,7 +189,7 @@ export const adminLogout = () => {
   window.location.href = '/admin/login';
 };
 
-// Product APIs
+// ==================== PRODUCT APIs ====================
 export const getProducts = async (filters = {}) => {
   const params = new URLSearchParams(filters).toString();
   const response = await api.get(`/products${params ? `?${params}` : ''}`);
@@ -221,7 +221,7 @@ export const getProductStats = async () => {
   return response.data;
 };
 
-// Image Upload APIs
+// ==================== IMAGE UPLOAD APIs ====================
 export const uploadImage = async (formData) => {
   const response = await api.post('/upload/single', formData, {
     headers: {
@@ -245,7 +245,7 @@ export const deleteImage = async (publicId) => {
   return response.data;
 };
 
-// Cart APIs
+// ==================== CART APIs ====================
 export const getCart = async () => {
   const response = await api.get('/cart');
   return response.data;
@@ -271,7 +271,7 @@ export const clearCart = async () => {
   return response.data;
 };
 
-// Payment APIs
+// ==================== PAYMENT APIs ====================
 export const createOrder = async (orderData) => {
   const response = await api.post('/payment/create-order', orderData);
   return response.data;
@@ -289,6 +289,79 @@ export const getUserOrders = async () => {
 
 export const getOrderById = async (orderId) => {
   const response = await api.get(`/payment/order/${orderId}`);
+  return response.data;
+};
+
+// ==================== ORDER APIs (Admin) ====================
+export const getAllOrders = async () => {
+  const response = await api.get('/orders/admin');
+  return response.data;
+};
+
+export const getOrderStats = async () => {
+  const response = await api.get('/orders/admin/stats/dashboard');
+  return response.data;
+};
+
+export const updateOrderStatus = async (orderId, orderStatus) => {
+  const response = await api.put(`/orders/admin/${orderId}/status`, { orderStatus });
+  return response.data;
+};
+
+export const updatePaymentStatus = async (orderId, paymentStatus) => {
+  const response = await api.put(`/orders/admin/${orderId}/payment`, { paymentStatus });
+  return response.data;
+};
+
+export const deleteOrder = async (orderId) => {
+  const response = await api.delete(`/orders/admin/${orderId}`);
+  return response.data;
+};
+
+export const getAdminOrderById = async (orderId) => {
+  const response = await api.get(`/orders/admin/${orderId}`);
+  return response.data;
+};
+
+// ==================== BOOKING APIs ====================
+export const getAllBookings = async (filters = {}) => {
+  const params = new URLSearchParams(filters).toString();
+  const response = await api.get(`/bookings/admin${params ? `?${params}` : ''}`);
+  return response.data;
+};
+
+export const getBookingById = async (id) => {
+  const response = await api.get(`/bookings/admin/${id}`);
+  return response.data;
+};
+
+export const createBooking = async (bookingData) => {
+  const response = await api.post('/bookings', bookingData);
+  return response.data;
+};
+
+export const updateBookingStatus = async (id, bookingStatus) => {
+  const response = await api.put(`/bookings/admin/${id}/status`, { bookingStatus });
+  return response.data;
+};
+
+export const updateBookingPaymentStatus = async (id, paymentStatus) => {
+  const response = await api.put(`/bookings/admin/${id}/payment`, { paymentStatus });
+  return response.data;
+};
+
+export const deleteBooking = async (id) => {
+  const response = await api.delete(`/bookings/admin/${id}`);
+  return response.data;
+};
+
+export const getMyBookings = async () => {
+  const response = await api.get('/bookings/my-bookings');
+  return response.data;
+};
+
+export const getBookingStats = async () => {
+  const response = await api.get('/bookings/admin/stats/dashboard');
   return response.data;
 };
 

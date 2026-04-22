@@ -10,6 +10,10 @@ import RevenueChart from "./components/RevenueChart";
 import RecentBookings from "./components/RecentBookings";
 import ProductsTable from "./components/ProductsTable";
 import ProductFormModal from "./components/ProductFormModal";
+import BookingsTable from "./components/BookingsTable";
+import BookingStatsCards from "./components/BookingStatsCards";
+import OrdersTable from "./components/OrdersTable";
+import OrderStatsCards from "./components/OrderStatsCards";
 import { 
   getProducts, 
   createProduct, 
@@ -17,28 +21,18 @@ import {
   deleteProduct,
   getProductStats 
 } from "../services/api";
-
-// Static data for other tabs
-const initialServices = [
-  { id: 1, title: "Natal Chart Reading", price: 2499, category: "Astrology", status: "active" },
-  { id: 2, title: "Numerology Report", price: 1299, category: "Numerology", status: "active" },
-  { id: 3, title: "Vastu Consultation", price: 3999, category: "Vastu", status: "active" },
-];
-const initialClasses = [
-  { id: 1, title: "Vedic Numerology - Beginner", seats: 24, enrolled: 10, status: "active" },
-  { id: 2, title: "Yoga for Balance", seats: 18, enrolled: 14, status: "active" },
-  { id: 3, title: "Advanced Astrology", seats: 12, enrolled: 8, status: "active" },
-];
-const initialBookings = [
-  { id: 1, user: "Anjali K", service: "Natal Chart Reading", date: "2025-10-12", status: "Booked", amount: 2499 },
-  { id: 2, user: "Rohit S", service: "Numerology Report", date: "2025-10-16", status: "Completed", amount: 1299 },
-  { id: 3, user: "Priya M", service: "Vastu Consultation", date: "2025-10-20", status: "Booked", amount: 3999 },
-];
-const initialUsers = [
-  { id: 1, name: "Anjali K", email: "anjali@example.com", joined: "2025-01-15", status: "active" },
-  { id: 2, name: "Rohit S", email: "rohit@example.com", joined: "2025-02-20", status: "active" },
-  { id: 3, name: "Priya M", email: "priya@example.com", joined: "2025-03-10", status: "active" },
-];
+import { 
+  getAllBookings, 
+  updateBookingStatus, 
+  deleteBooking,
+  getBookingStats 
+} from "../services/api";
+import { 
+  getAllOrders, 
+  updateOrderStatus, 
+  deleteOrder,
+  getOrderStats 
+} from "../services/api";
 
 function useCount(to = 0, duration = 1200) {
   const [num, setNum] = useState(0);
@@ -69,27 +63,61 @@ function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [tab, setTab] = useState("overview");
   const [searchQuery, setSearchQuery] = useState("");
-  const [notifications] = useState([
-    { id: 1, message: "New booking from Anjali K", time: "5 min ago", read: false },
-    { id: 2, message: "Product stock low: Copper Yantra Plate", time: "1 hour ago", read: false },
-    { id: 3, message: "New user registered: Rahul M", time: "2 hours ago", read: true },
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
-  const [services] = useState(initialServices);
+  // Products State
   const [products, setProducts] = useState([]);
   const [productStats, setProductStats] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showProductModal, setShowProductModal] = useState(false);
-  const [classes] = useState(initialClasses);
-  const [bookings] = useState(initialBookings);
-  const [users] = useState(initialUsers);
 
+  // Bookings State
+  const [bookingsData, setBookingsData] = useState([]);
+  const [bookingStats, setBookingStats] = useState(null);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+
+  // Orders State
+  const [orders, setOrders] = useState([]);
+  const [orderStats, setOrderStats] = useState(null);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  // Services & Classes State (will be fetched from API later)
+  const [services, setServices] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  // Fetch Products
   useEffect(() => {
     fetchProducts();
     fetchProductStats();
+    fetchBookings();
+    fetchOrders();
+    fetchUsers();
+    fetchServices();
+    fetchClasses();
   }, []);
 
+  // Fetch data when tab changes
+  useEffect(() => {
+    if (tab === 'bookings') {
+      fetchBookings();
+    }
+    if (tab === 'orders') {
+      fetchOrders();
+    }
+    if (tab === 'users') {
+      fetchUsers();
+    }
+    if (tab === 'services') {
+      fetchServices();
+    }
+    if (tab === 'classes') {
+      fetchClasses();
+    }
+  }, [tab]);
+
+  // Product Functions
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
@@ -108,7 +136,7 @@ function AdminDashboard() {
       const stats = await getProductStats();
       setProductStats(stats);
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error('Error fetching product stats:', error);
     }
   };
 
@@ -160,12 +188,136 @@ function AdminDashboard() {
     setShowProductModal(true);
   };
 
+  // Booking Functions
+  const fetchBookings = async () => {
+    setBookingsLoading(true);
+    try {
+      const data = await getAllBookings();
+      setBookingsData(data.bookings || []);
+      setBookingStats(data.stats);
+      
+      // Update notifications for new bookings
+      const newBookings = data.bookings?.filter(b => b.bookingStatus === 'pending') || [];
+      if (newBookings.length > 0) {
+        setNotifications(prev => [
+          ...prev,
+          { id: Date.now(), message: `${newBookings.length} new pending bookings`, time: 'Just now', read: false }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+      toast.error('Failed to fetch bookings');
+    } finally {
+      setBookingsLoading(false);
+    }
+  };
+
+  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
+    try {
+      await updateBookingStatus(bookingId, newStatus);
+      toast.success('Booking status updated');
+      fetchBookings();
+    } catch (error) {
+      console.error('Error updating booking:', error);
+      toast.error('Failed to update booking status');
+    }
+  };
+
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to delete this booking?')) return;
+    
+    try {
+      await deleteBooking(bookingId);
+      toast.success('Booking deleted successfully');
+      fetchBookings();
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      toast.error('Failed to delete booking');
+    }
+  };
+
+  // Order Functions
+  const fetchOrders = async () => {
+    setOrdersLoading(true);
+    try {
+      const data = await getAllOrders();
+      setOrders(data.orders || []);
+      setOrderStats(data.stats);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      toast.error('Failed to fetch orders');
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    try {
+      await updateOrderStatus(orderId, newStatus);
+      toast.success('Order status updated');
+      fetchOrders();
+    } catch (error) {
+      console.error('Error updating order:', error);
+      toast.error('Failed to update order status');
+    }
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm('Are you sure you want to delete this order?')) return;
+    
+    try {
+      await deleteOrder(orderId);
+      toast.success('Order deleted successfully');
+      fetchOrders();
+    } catch (error) {
+      console.error('Error deleting order:', error);
+      toast.error('Failed to delete order');
+    }
+  };
+
+  // User Functions (placeholder - will be implemented with actual API)
+  const fetchUsers = async () => {
+    try {
+      // TODO: Implement getUsers API call
+      // const data = await getUsers();
+      // setUsers(data);
+      setUsers([]);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  // Services Functions (placeholder - will be implemented with actual API)
+  const fetchServices = async () => {
+    try {
+      // TODO: Implement getServices API call
+      // const data = await getServices();
+      // setServices(data);
+      setServices([]);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    }
+  };
+
+  // Classes Functions (placeholder - will be implemented with actual API)
+  const fetchClasses = async () => {
+    try {
+      // TODO: Implement getClasses API call
+      // const data = await getClasses();
+      // setClasses(data);
+      setClasses([]);
+    } catch (error) {
+      console.error('Error fetching classes:', error);
+    }
+  };
+
+  // Calculate totals for overview
   const totalRevenue = products.reduce((s, p) => s + (p.price * p.sold || 0), 0) + 
-           bookings.reduce((s, b) => s + (b.status === "Completed" ? b.amount : 0), 0);
+           bookingsData.reduce((s, b) => s + (b.bookingStatus === "completed" ? b.amount : 0), 0);
   
   const revenueCount = useCount(Math.round(totalRevenue / 1000));
   const usersCount = useCount(users.length);
-  const bookingsCount = useCount(bookings.length);
+  const bookingsCount = useCount(bookingsData.length);
   const productsCount = useCount(products.length);
 
   const logout = () => {
@@ -176,6 +328,16 @@ function AdminDashboard() {
     toast.success('Logged out successfully');
     nav("/admin/login");
   };
+
+  // Prepare recent bookings for overview widget
+  const recentBookingsForWidget = bookingsData.slice(0, 5).map(booking => ({
+    id: booking._id,
+    user: booking.customerName,
+    service: booking.serviceType,
+    date: new Date(booking.bookingDate).toLocaleDateString(),
+    status: booking.bookingStatus === 'completed' ? 'Completed' : 'Booked',
+    amount: booking.amount
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-offWhite flex">
@@ -218,14 +380,14 @@ function AdminDashboard() {
                     <h4 className="font-semibold text-gray-800 mb-4">Revenue Overview</h4>
                     <RevenueChart />
                   </div>
-                  <RecentBookings bookings={bookings} />
+                  <RecentBookings bookings={recentBookingsForWidget} />
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6 mt-6">
                   <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-6 border border-orange-100">
                     <h4 className="font-semibold text-gray-800 mb-3">Top Product</h4>
                     <div className="text-2xl font-bold text-red-600">
-                      {productStats?.topProducts?.[0]?.name || 'Loading...'}
+                      {productStats?.topProducts?.[0]?.name || 'No data'}
                     </div>
                     <div className="text-sm text-gray-500 mt-1">
                       {productStats?.topProducts?.[0]?.sold || 0} units sold
@@ -233,7 +395,9 @@ function AdminDashboard() {
                   </div>
                   <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-6 border border-orange-100">
                     <h4 className="font-semibold text-gray-800 mb-3">Popular Service</h4>
-                    <div className="text-2xl font-bold text-red-600">Natal Chart Reading</div>
+                    <div className="text-2xl font-bold text-red-600">
+                      {bookingStats?.mostPopularService || 'No data'}
+                    </div>
                     <div className="text-sm text-gray-500 mt-1">Highest bookings</div>
                   </div>
                   <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-6 border border-orange-100">
@@ -293,49 +457,53 @@ function AdminDashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
               >
-                <div className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead className="bg-orange-50">
-                        <tr className="text-left text-sm text-gray-600">
-                          <th className="px-6 py-4">User</th>
-                          <th className="px-6 py-4">Service</th>
-                          <th className="px-6 py-4">Date</th>
-                          <th className="px-6 py-4">Amount</th>
-                          <th className="px-6 py-4">Status</th>
-                          <th className="px-6 py-4">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-orange-100">
-                        {bookings.map((b) => (
-                          <tr key={b.id} className="hover:bg-orange-50 transition">
-                            <td className="px-6 py-4 font-medium text-gray-800">{b.user}</td>
-                            <td className="px-6 py-4 text-gray-600">{b.service}</td>
-                            <td className="px-6 py-4 text-gray-600">{b.date}</td>
-                            <td className="px-6 py-4 font-semibold text-gray-800">₹{b.amount}</td>
-                            <td className="px-6 py-4">
-                              <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                                b.status === "Booked" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"
-                              }`}>
-                                {b.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex gap-2">
-                                <button className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100">
-                                  Complete
-                                </button>
-                                <button className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100">
-                                  Cancel
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold text-gray-800">Booking Management</h3>
+                  <p className="text-sm text-gray-500 mt-1">Manage customer service bookings</p>
                 </div>
+
+                <BookingStatsCards stats={bookingStats} />
+
+                {bookingsLoading ? (
+                  <div className="flex justify-center py-12">
+                    <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : (
+                  <BookingsTable 
+                    bookings={bookingsData}
+                    onUpdateStatus={handleUpdateBookingStatus}
+                    onDelete={handleDeleteBooking}
+                  />
+                )}
+              </motion.section>
+            )}
+
+            {/* Orders Tab */}
+            {tab === "orders" && (
+              <motion.section
+                key="orders"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold text-gray-800">Order Management</h3>
+                  <p className="text-sm text-gray-500 mt-1">Manage and track customer orders</p>
+                </div>
+
+                <OrderStatsCards stats={orderStats} />
+
+                {ordersLoading ? (
+                  <div className="flex justify-center py-12">
+                    <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : (
+                  <OrdersTable 
+                    orders={orders}
+                    onUpdateStatus={handleUpdateOrderStatus}
+                    onDelete={handleDeleteOrder}
+                  />
+                )}
               </motion.section>
             )}
 
@@ -360,35 +528,43 @@ function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-orange-100">
-                        {users.map((u) => (
-                          <tr key={u.id} className="hover:bg-orange-50 transition">
-                            <td className="px-6 py-4">
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                                  {u.name.charAt(0)}
-                                </div>
-                                <span className="font-medium text-gray-800">{u.name}</span>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 text-gray-600">{u.email}</td>
-                            <td className="px-6 py-4 text-gray-600">{u.joined}</td>
-                            <td className="px-6 py-4">
-                              <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                                {u.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex gap-2">
-                                <button className="p-2 rounded-lg bg-orange-50 text-orange-600">
-                                  View
-                                </button>
-                                <button className="p-2 rounded-lg bg-red-50 text-red-600">
-                                  Block
-                                </button>
-                              </div>
+                        {users.length === 0 ? (
+                          <tr>
+                            <td colSpan="5" className="px-6 py-12 text-center text-gray-500">
+                              No users found
                             </td>
                           </tr>
-                        ))}
+                        ) : (
+                          users.map((u) => (
+                            <tr key={u._id} className="hover:bg-orange-50 transition">
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                    {u.fullName?.charAt(0) || 'U'}
+                                  </div>
+                                  <span className="font-medium text-gray-800">{u.fullName}</span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 text-gray-600">{u.email}</td>
+                              <td className="px-6 py-4 text-gray-600">{new Date(u.createdAt).toLocaleDateString()}</td>
+                              <td className="px-6 py-4">
+                                <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                                  {u.isActive ? 'Active' : 'Inactive'}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="flex gap-2">
+                                  <button className="p-2 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition">
+                                    View
+                                  </button>
+                                  <button className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition">
+                                    {u.isActive ? 'Block' : 'Unblock'}
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -396,8 +572,126 @@ function AdminDashboard() {
               </motion.section>
             )}
 
-            {/* Other tabs placeholder */}
-            {["services", "classes", "content", "reports"].includes(tab) && (
+            {/* Services Tab */}
+            {tab === "services" && (
+              <motion.section
+                key="services"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <div className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-orange-50">
+                        <tr className="text-left text-sm text-gray-600">
+                          <th className="px-6 py-4">Service</th>
+                          <th className="px-6 py-4">Category</th>
+                          <th className="px-6 py-4">Price</th>
+                          <th className="px-6 py-4">Status</th>
+                          <th className="px-6 py-4">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {services.length === 0 ? (
+                          <tr>
+                            <td colSpan="5" className="px-6 py-12 text-center text-gray-500">
+                              No services found
+                            </td>
+                          </tr>
+                        ) : (
+                          services.map((s) => (
+                            <tr key={s._id} className="hover:bg-orange-50 transition border-b border-orange-100">
+                              <td className="px-6 py-4 font-medium text-gray-800">{s.title}</td>
+                              <td className="px-6 py-4 text-gray-600">{s.category}</td>
+                              <td className="px-6 py-4 font-semibold text-gray-800">₹{s.price}</td>
+                              <td className="px-6 py-4">
+                                <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                                  {s.status}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="flex gap-2">
+                                  <button className="p-2 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition">
+                                    Edit
+                                  </button>
+                                  <button className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition">
+                                    Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </motion.section>
+            )}
+
+            {/* Classes Tab */}
+            {tab === "classes" && (
+              <motion.section
+                key="classes"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <div className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-orange-50">
+                        <tr className="text-left text-sm text-gray-600">
+                          <th className="px-6 py-4">Class</th>
+                          <th className="px-6 py-4">Seats</th>
+                          <th className="px-6 py-4">Enrolled</th>
+                          <th className="px-6 py-4">Available</th>
+                          <th className="px-6 py-4">Status</th>
+                          <th className="px-6 py-4">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {classes.length === 0 ? (
+                          <tr>
+                            <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                              No classes found
+                            </td>
+                          </tr>
+                        ) : (
+                          classes.map((c) => (
+                            <tr key={c._id} className="hover:bg-orange-50 transition border-b border-orange-100">
+                              <td className="px-6 py-4 font-medium text-gray-800">{c.title}</td>
+                              <td className="px-6 py-4 text-gray-600">{c.seats}</td>
+                              <td className="px-6 py-4 text-gray-600">{c.enrolled}</td>
+                              <td className="px-6 py-4 text-gray-600">{c.seats - c.enrolled}</td>
+                              <td className="px-6 py-4">
+                                <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                                  {c.status}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="flex gap-2">
+                                  <button className="p-2 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition">
+                                    Edit
+                                  </button>
+                                  <button className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition">
+                                    Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </motion.section>
+            )}
+
+            {/* Content & Reports Tabs - Placeholder */}
+            {["content", "reports"].includes(tab) && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
