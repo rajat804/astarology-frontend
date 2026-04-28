@@ -49,8 +49,9 @@ const Services = () => {
       price: "₹2,499",
       img: "https://media.istockphoto.com/id/1935644904/photo/zodiac-wheel-natal-chart-astrology-dices-and-stones-on-grey-table-flat-lay.jpg?s=612x612&w=0&k=20&c=128i99Orc9Y_RU3nSYKNLjf-INw5inM6q_H9FDCi_JE=",
       icon: GiCrystalBall,
-      gradient: "from-purple-500/10 to-pink-500/10",
-      iconColor: "text-purple-500",
+      gradient: "from-purple-900/20 to-pink-900/20",
+      iconColor: "text-purple-400",
+      borderColor: "border-purple-500/30",
       benefits: ["Birth Chart Analysis", "Career Guidance", "Relationship Insights"],
       symbols: ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"],
       symbolType: "zodiac"
@@ -62,8 +63,9 @@ const Services = () => {
       price: "₹1,299",
       img: "https://astrala.imgix.net/3GFULF5okVu23twscOo7Fd/7406ee47eac22e71767ea4f4ec1412c7/life-path-number-7-meaning.jpg?w=3840&h=2560&fit=crop&q=60&auto=format,compress",
       icon: GiStarsStack,
-      gradient: "from-blue-500/10 to-cyan-500/10",
-      iconColor: "text-blue-500",
+      gradient: "from-blue-900/20 to-cyan-900/20",
+      iconColor: "text-cyan-400",
+      borderColor: "border-cyan-500/30",
       benefits: ["Life Path Number", "Destiny Matrix", "Cycle Analysis"],
       symbols: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
       symbolType: "numbers"
@@ -75,8 +77,9 @@ const Services = () => {
       price: "₹3,999",
       img: "https://images.unsplash.com/photo-1493809842364-78817add7ffb",
       icon: GiVibratingShield,
-      gradient: "from-green-500/10 to-emerald-500/10",
-      iconColor: "text-green-500",
+      gradient: "from-green-900/20 to-emerald-900/20",
+      iconColor: "text-emerald-400",
+      borderColor: "border-emerald-500/30",
       benefits: ["Space Analysis", "Energy Balancing", "Remedial Solutions"],
       symbols: ["N", "S", "E", "W", "NE", "NW", "SE", "SW"],
       symbolType: "directions"
@@ -89,7 +92,7 @@ const Services = () => {
   const starCount = isLowEndDevice ? 15 : isMobile ? 25 : 50;
 
   return (
-    <section className="relative py-12 md:py-20 overflow-hidden bg-gradient-to-b from-offWhite to-orange-50/50">
+    <section className="relative py-12 md:py-20 overflow-hidden bg-gradient-to-b from-gray-900 to-gray-800">
       {/* Animated Background Elements - Reduced on mobile */}
       {showBackgroundAnimations && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -97,11 +100,11 @@ const Services = () => {
           {[...Array(orbCount)].map((_, i) => (
             <div
               key={`orb-${i}`}
-              className="absolute rounded-full blur-3xl opacity-20 animate-float-orb"
+              className="absolute rounded-full blur-3xl opacity-10 animate-float-orb"
               style={{
                 width: `${100 + Math.random() * 150}px`,
                 height: `${100 + Math.random() * 150}px`,
-                background: `radial-gradient(circle, rgba(168,85,247,0.2) 0%, rgba(249,115,22,0.2) 100%)`,
+                background: `radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(245,158,11,0.15) 100%)`,
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
                 animationDelay: `${i * 2}s`,
@@ -114,7 +117,7 @@ const Services = () => {
           {[...Array(starCount)].map((_, i) => (
             <div
               key={`star-${i}`}
-              className="absolute w-0.5 h-0.5 bg-yellow-300 rounded-full animate-twinkle"
+              className="absolute w-0.5 h-0.5 bg-amber-300 rounded-full animate-twinkle"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -136,20 +139,20 @@ const Services = () => {
           className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 md:mb-12"
         >
           <div className="mb-4 md:mb-0">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-100 to-orange-100 px-3 md:px-4 py-1.5 md:py-2 rounded-full mb-3 md:mb-4">
-              <GiMagicSwirl className="text-red-500 w-3 h-3 md:w-4 md:h-4" />
-              <span className="text-xs md:text-sm font-semibold text-red-600">Divine Guidance</span>
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-sm px-3 md:px-4 py-1.5 md:py-2 rounded-full mb-3 md:mb-4 border border-amber-500/30">
+              <GiMagicSwirl className="text-amber-400 w-3 h-3 md:w-4 md:h-4" />
+              <span className="text-xs md:text-sm font-semibold text-amber-400">Divine Guidance</span>
             </div>
-            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">
+            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
               Premium Consultation Services
             </h3>
-            <p className="text-sm md:text-base text-gray-600 mt-1 md:mt-2">
+            <p className="text-sm md:text-base text-gray-400 mt-1 md:mt-2">
               Book curated sessions crafted by senior practitioners
             </p>
           </div>
           {!isMobile && (
             <div className="hidden md:flex gap-3">
-              <button className="px-4 md:px-5 py-2 md:py-2.5 rounded-xl border-2 border-red-200 text-red-600 font-semibold hover:bg-red-50 transition-all duration-300 text-sm md:text-base">
+              <button className="px-4 md:px-5 py-2 md:py-2.5 rounded-xl border-2 border-amber-500/30 text-amber-400 font-semibold hover:bg-amber-500/10 transition-all duration-300 text-sm md:text-base">
                 View all
               </button>
               <CTA>Book a Slot</CTA>
@@ -181,10 +184,10 @@ const Services = () => {
               >
                 {/* Glow Effect - Disabled on mobile */}
                 {!isMobile && (
-                  <div className={`absolute -inset-0.5 bg-gradient-to-r from-red-500 to-purple-500 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl ${isHovered ? 'opacity-30' : ''}`} />
+                  <div className={`absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-purple-500 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl ${isHovered ? 'opacity-30' : ''}`} />
                 )}
                 
-                <div className={`relative bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-orange-100 ${s.gradient}`}>
+                <div className={`relative bg-gray-800 rounded-2xl md:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border ${s.borderColor} ${s.gradient}`}>
                   {/* Image Section */}
                   <div className="relative h-44 md:h-52 overflow-hidden">
                     <img
@@ -193,26 +196,26 @@ const Services = () => {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />
                     
                     {/* Badge */}
-                    <div className="absolute left-3 md:left-4 top-3 md:top-4 bg-white/90 backdrop-blur px-2 md:px-3 py-1 rounded-lg md:rounded-xl text-[10px] md:text-xs font-semibold shadow-lg">
+                    <div className="absolute left-3 md:left-4 top-3 md:top-4 bg-gray-900/90 backdrop-blur px-2 md:px-3 py-1 rounded-lg md:rounded-xl text-[10px] md:text-xs font-semibold shadow-lg border border-amber-500/30 text-amber-400">
                       ✨ Expert Session
                     </div>
 
                     {/* Floating Icon - Simplified animation */}
-                    <div className="absolute right-3 md:right-4 bottom-3 md:bottom-4 bg-white/90 backdrop-blur rounded-full p-1.5 md:p-2 shadow-lg">
+                    <div className="absolute right-3 md:right-4 bottom-3 md:bottom-4 bg-gray-900/90 backdrop-blur rounded-full p-1.5 md:p-2 shadow-lg border border-white/10">
                       <IconComponent className={`w-4 h-4 md:w-5 md:h-5 ${s.iconColor}`} />
                     </div>
                   </div>
 
                   {/* Content Section */}
                   <div className="p-4 md:p-6 space-y-3 md:space-y-4">
-                    <h4 className={`text-base md:text-xl font-semibold text-gray-900 transition-colors duration-300 ${isHovered && !isMobile ? 'text-red-600' : ''}`}>
+                    <h4 className={`text-base md:text-xl font-semibold text-white transition-colors duration-300 ${isHovered && !isMobile ? 'text-amber-400' : ''}`}>
                       {s.title}
                     </h4>
                     
-                    <p className="text-gray-600 text-xs md:text-sm leading-relaxed">
+                    <p className="text-gray-400 text-xs md:text-sm leading-relaxed">
                       {s.desc}
                     </p>
 
@@ -221,29 +224,29 @@ const Services = () => {
                       {s.benefits.map((benefit, idx) => (
                         <div
                           key={benefit}
-                          className="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs text-gray-500"
+                          className="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs text-gray-400"
                         >
-                          <HiOutlineSparkles className="w-2 h-2 md:w-3 md:h-3 text-red-500" />
+                          <HiOutlineSparkles className="w-2 h-2 md:w-3 md:h-3 text-amber-400" />
                           <span>{benefit}</span>
                         </div>
                       ))}
                     </div>
 
                     {/* Divider */}
-                    <div className="h-px bg-gradient-to-r from-transparent via-orange-200 to-transparent" />
+                    <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
 
                     {/* Duration & Price Section */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-gray-500">
-                        <HiOutlineClock className="w-3 h-3 md:w-4 md:h-4 text-red-500" />
+                      <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-gray-400">
+                        <HiOutlineClock className="w-3 h-3 md:w-4 md:h-4 text-amber-400" />
                         <span>{s.duration}</span>
                       </div>
 
                       <div className="text-right">
-                        <div className="text-[10px] md:text-xs text-gray-400">Starting from</div>
-                        <div className="text-lg md:text-2xl font-bold text-gray-900">
+                        <div className="text-[10px] md:text-xs text-gray-500">Starting from</div>
+                        <div className="text-lg md:text-2xl font-bold text-white">
                           {s.price}
-                          <span className="text-xs md:text-sm font-normal text-gray-500">/session</span>
+                          <span className="text-xs md:text-sm font-normal text-gray-400">/session</span>
                         </div>
                       </div>
                     </div>
@@ -251,7 +254,7 @@ const Services = () => {
                     {/* Action Buttons */}
                     <div className="flex gap-2 md:gap-3 mt-3 md:mt-4">
                       <button 
-                        className="flex-1 px-2 md:px-4 py-1.5 md:py-2.5 rounded-lg md:rounded-xl border border-red-200 text-red-600 font-semibold hover:bg-red-50 transition-all duration-300 text-[10px] md:text-sm"
+                        className="flex-1 px-2 md:px-4 py-1.5 md:py-2.5 rounded-lg md:rounded-xl border border-amber-500/30 text-amber-400 font-semibold hover:bg-amber-500/10 transition-all duration-300 text-[10px] md:text-sm"
                       >
                         View Details
                       </button>
@@ -269,7 +272,7 @@ const Services = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
                             transition={{ duration: 0.2 }}
-                            className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-orange-100"
+                            className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-gray-700"
                           >
                             <div className="flex items-center justify-center gap-0.5 md:gap-1 flex-wrap">
                               {s.symbols.slice(0, isMobile ? 6 : 12).map((symbol, idx) => (
@@ -279,8 +282,8 @@ const Services = () => {
                                     s.symbolType === 'zodiac' 
                                       ? 'text-purple-400' 
                                       : s.symbolType === 'numbers'
-                                      ? 'text-blue-400 font-mono'
-                                      : 'text-green-400'
+                                      ? 'text-cyan-400 font-mono'
+                                      : 'text-emerald-400'
                                   } transition-colors`}
                                   title={
                                     s.symbolType === 'zodiac' 
@@ -308,16 +311,16 @@ const Services = () => {
         {/* Decorative Floating Elements - Hidden on mobile */}
         {!isMobile && (
           <>
-            <div className="absolute -left-20 top-1/3 opacity-10 hidden xl:block animate-float-slow">
-              <GiLotus size={150} className="text-purple-600" />
+            <div className="absolute -left-20 top-1/3 opacity-5 hidden xl:block animate-float-slow">
+              <GiLotus size={150} className="text-amber-400" />
             </div>
 
-            <div className="absolute -right-20 bottom-1/3 opacity-10 hidden xl:block animate-float-reverse">
-              <FaMoon size={120} className="text-orange-600" />
+            <div className="absolute -right-20 bottom-1/3 opacity-5 hidden xl:block animate-float-reverse">
+              <FaMoon size={120} className="text-purple-400" />
             </div>
 
-            <div className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 opacity-20 animate-pulse-slow">
-              <FaInfinity size={80} className="text-red-500" />
+            <div className="absolute left-1/2 -bottom-10 transform -translate-x-1/2 opacity-10 animate-pulse-slow">
+              <FaInfinity size={80} className="text-amber-400" />
             </div>
           </>
         )}
@@ -369,11 +372,11 @@ const Services = () => {
         @keyframes pulse-slow {
           0%, 100% {
             transform: scale(1);
-            opacity: 0.2;
+            opacity: 0.1;
           }
           50% {
             transform: scale(1.1);
-            opacity: 0.3;
+            opacity: 0.15;
           }
         }
         

@@ -44,10 +44,11 @@ const Stats = () => {
       suffix: "",
       subtitle: "and growing",
       icon: HiOutlineUsers,
-      iconColor: "text-red-500",
-      gradient: "from-red-50 to-orange-50",
-      iconBg: "bg-gradient-to-br from-red-100 to-orange-100",
+      iconColor: "text-amber-400",
+      gradient: "from-gray-800 to-gray-900",
+      iconBg: "bg-gradient-to-br from-amber-500/20 to-amber-600/20",
       decorativeIcon: FaSmile,
+      borderColor: "border-amber-500/30",
     },
     {
       label: "Live Classes",
@@ -55,10 +56,11 @@ const Stats = () => {
       suffix: "+",
       subtitle: "recorded & live",
       icon: HiOutlineVideoCamera,
-      iconColor: "text-purple-500",
-      gradient: "from-purple-50 to-pink-50",
-      iconBg: "bg-gradient-to-br from-purple-100 to-pink-100",
+      iconColor: "text-purple-400",
+      gradient: "from-gray-800 to-gray-900",
+      iconBg: "bg-gradient-to-br from-purple-500/20 to-pink-500/20",
       decorativeIcon: GiYinYang,
+      borderColor: "border-purple-500/30",
     },
     {
       label: "Authentic Products",
@@ -66,10 +68,11 @@ const Stats = () => {
       suffix: "+",
       subtitle: "certified & sourced",
       icon: HiOutlineShoppingBag,
-      iconColor: "text-blue-500",
-      gradient: "from-blue-50 to-cyan-50",
-      iconBg: "bg-gradient-to-br from-blue-100 to-cyan-100",
+      iconColor: "text-cyan-400",
+      gradient: "from-gray-800 to-gray-900",
+      iconBg: "bg-gradient-to-br from-cyan-500/20 to-blue-500/20",
       decorativeIcon: GiLotus,
+      borderColor: "border-cyan-500/30",
     },
     {
       label: "Avg. Rating",
@@ -77,10 +80,11 @@ const Stats = () => {
       suffix: " / 5",
       subtitle: "based on reviews",
       icon: HiOutlineStar,
-      iconColor: "text-yellow-500",
-      gradient: "from-yellow-50 to-amber-50",
-      iconBg: "bg-gradient-to-br from-yellow-100 to-amber-100",
+      iconColor: "text-yellow-400",
+      gradient: "from-gray-800 to-gray-900",
+      iconBg: "bg-gradient-to-br from-yellow-500/20 to-amber-500/20",
       decorativeIcon: FaStarHalfAlt,
+      borderColor: "border-yellow-500/30",
     },
   ];
 
@@ -88,18 +92,18 @@ const Stats = () => {
   const showWaveAnimation = !isMobile && !isLowEndDevice;
 
   return (
-    <section className="relative py-12 md:py-16 overflow-hidden">
+    <section className="relative py-12 md:py-16 overflow-hidden bg-gray-900">
       {/* Animated Wave Background - Simplified or removed on mobile/low-end */}
       {showWaveAnimation && (
         <div className="absolute inset-0 w-full h-full pointer-events-none">
           <svg
-            className="absolute bottom-0 left-0 w-full h-auto min-h-[200px] opacity-20"
+            className="absolute bottom-0 left-0 w-full h-auto min-h-[200px] opacity-10"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 1440 320"
             preserveAspectRatio="none"
           >
             <motion.path
-              fill="rgba(249, 115, 22, 0.08)"
+              fill="rgba(245, 158, 11, 0.15)"
               fillOpacity="1"
               d="M0,192L48,197.3C96,203,192,213,288,208C384,203,480,181,576,181.3C672,181,768,203,864,208C960,213,1056,203,1152,186.7C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
               animate={{
@@ -122,8 +126,8 @@ const Stats = () => {
       {/* Floating Orbs - Simplified on mobile */}
       {!isLowEndDevice && (
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-20 left-10 w-24 md:w-32 h-24 md:h-32 bg-purple-200/20 rounded-full blur-2xl animate-float-slow"></div>
-          <div className="absolute bottom-20 right-10 w-32 md:w-40 h-32 md:h-40 bg-orange-200/20 rounded-full blur-2xl animate-float-slower"></div>
+          <div className="absolute top-20 left-10 w-24 md:w-32 h-24 md:h-32 bg-amber-500/10 rounded-full blur-2xl animate-float-slow"></div>
+          <div className="absolute bottom-20 right-10 w-32 md:w-40 h-32 md:h-40 bg-purple-500/10 rounded-full blur-2xl animate-float-slower"></div>
         </div>
       )}
 
@@ -148,42 +152,47 @@ const Stats = () => {
                   y: -6,
                   transition: { duration: 0.2 }
                 } : {}}
-                className={`relative bg-gradient-to-br ${stat.gradient} rounded-xl md:rounded-2xl p-4 md:p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-white/50 overflow-hidden group`}
+                className={`relative bg-gradient-to-br ${stat.gradient} rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border ${stat.borderColor} overflow-hidden group`}
               >
                 {/* Background Icon - Removed animation on low-end */}
                 {!isLowEndDevice && (
                   <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity duration-300">
-                    <DecorativeIcon size={isMobile ? 60 : 80} className="text-gray-700" />
+                    <DecorativeIcon size={isMobile ? 60 : 80} className="text-white" />
                   </div>
                 )}
 
                 {/* Icon Container */}
-                <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl ${stat.iconBg} flex items-center justify-center mb-3 md:mb-4 shadow-sm group-hover:shadow-md transition-shadow`}>
+                <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl ${stat.iconBg} flex items-center justify-center mb-3 md:mb-4 shadow-md group-hover:shadow-lg transition-all backdrop-blur-sm border border-white/10`}>
                   <IconComponent className={`w-5 h-5 md:w-6 md:h-6 ${stat.iconColor}`} />
                 </div>
 
                 {/* Stats Content */}
                 <div className="relative z-10">
-                  <div className="text-xs md:text-sm text-gray-500 font-medium tracking-wide">
+                  <div className="text-xs md:text-sm text-gray-400 font-medium tracking-wide">
                     {stat.label}
                   </div>
-                  <div className="mt-1 md:mt-2 font-bold text-2xl md:text-3xl lg:text-4xl text-gray-900 flex items-baseline gap-0.5 md:gap-1">
+                  <div className="mt-1 md:mt-2 font-bold text-2xl md:text-3xl lg:text-4xl text-white flex items-baseline gap-0.5 md:gap-1">
                     {stat.value}
                     {stat.suffix && (
-                      <span className="text-base md:text-lg lg:text-xl text-gray-600">
+                      <span className="text-base md:text-lg lg:text-xl text-gray-400">
                         {stat.suffix}
                       </span>
                     )}
                   </div>
-                  <div className="text-[10px] md:text-xs text-gray-400 mt-1 md:mt-2 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                  <div className="text-[10px] md:text-xs text-gray-500 mt-1 md:mt-2 flex items-center gap-1">
+                    <span className={`inline-block w-1 h-1 md:w-1.5 md:h-1.5 rounded-full ${
+                      stat.label === "Happy Clients" ? "bg-amber-400" :
+                      stat.label === "Live Classes" ? "bg-purple-400" :
+                      stat.label === "Authentic Products" ? "bg-cyan-400" :
+                      "bg-yellow-400"
+                    } animate-pulse`}></span>
                     {stat.subtitle}
                   </div>
                 </div>
 
                 {/* Hover Border Effect - Disabled on mobile */}
                 {!isMobile && (
-                  <div className="absolute inset-0 rounded-xl md:rounded-2xl border-2 border-transparent group-hover:border-red-200/30 transition-all duration-300 pointer-events-none" />
+                  <div className={`absolute inset-0 rounded-xl md:rounded-2xl border-2 border-transparent group-hover:${stat.borderColor} transition-all duration-300 pointer-events-none`} />
                 )}
               </motion.div>
             );
