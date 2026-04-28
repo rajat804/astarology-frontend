@@ -17,7 +17,7 @@ import {
   GiGhost,
   GiHealing
 } from "react-icons/gi";
-import assets from "../assets/assets";
+// import assets from "../assets/assets";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -99,7 +99,7 @@ const Navbar = () => {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3">
-              <img src={assets.logo} className="w-28 brightness-0 invert" alt="Logo" />
+              {/* <img src={assets.logo} className="w-28 brightness-0 invert" alt="Logo" /> */}
             </Link>
 
             {/* Desktop nav */}
@@ -130,7 +130,7 @@ const Navbar = () => {
                           className="absolute left-0 mt-2 w-72 bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-hidden z-50"
                         >
                           <div className="py-2">
-                            {servicesItems.map((item, idx) => {
+                            {servicesItems.map((item) => {
                               const IconComponent = item.icon;
                               return (
                                 <Link
