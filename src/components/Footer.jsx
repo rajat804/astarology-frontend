@@ -3,7 +3,7 @@ import React from "react";
 import { GiCrystalBall } from "react-icons/gi";
 import { HiMail, HiPhone } from "react-icons/hi";
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
-import assets from "../assets/assets";
+// import assets from "../assets/assets";
 import { Link } from "react-router-dom";
 
 // Helper component: Accent - Updated to amber for dark theme
@@ -21,7 +21,7 @@ const Footer = () => {
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-3">
               <div className="flex flex-col items-start">
-                <img src={assets.logo} className="w-36 brightness-0 invert" alt="Logo" />
+                {/* <img src={assets.logo} className="w-36 brightness-0 invert" alt="Logo" /> */}
                 <div className="text-sm text-gray-400 mt-2">Align your stars. Find your calm.</div>
               </div>
             </div>
@@ -97,7 +97,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 border-t border-gray-800 pt-6 text-sm text-gray-500 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>© {new Date().getFullYear()} AstroPlanets • All rights reserved</div>
+          <div>© {new Date().getFullYear()} All rights reserved</div>
           <div className="flex items-center gap-4">
             <a className="hover:text-amber-400 transition-colors duration-300 cursor-pointer">Privacy</a>
             <a className="hover:text-amber-400 transition-colors duration-300 cursor-pointer">Terms</a>
