@@ -34,10 +34,8 @@ const Instructors = () => {
     
     Join us on a journey of transformation—where your space and numbers work for you, not against you.`,
       color: "from-orange-500 to-red-600",
-      bgColor: "bg-orange-950",
-      cardBg: "bg-gray-800",
-      iconColor: "text-orange-400",
-      borderColor: "border-orange-500/30",
+      bgColor: "bg-orange-50",
+      iconColor: "text-orange-600",
       stats: { experience: "12+ years", students: "1500+", consultations: "3000+" },
       specialties: ["Vastu Shastra", "Numerology", "Space Healing", "Energy Balancing"]
     },
@@ -54,10 +52,8 @@ const Instructors = () => {
     
     Are you seeking clarity, true guidance, or peace of mind in your life? Our palmistry readings will help you understand the hidden patterns within yourself and fully unlock your true potential.`,
       color: "from-purple-500 to-pink-600",
-      bgColor: "bg-purple-950",
-      cardBg: "bg-gray-800",
-      iconColor: "text-purple-400",
-      borderColor: "border-purple-500/30",
+      bgColor: "bg-purple-50",
+      iconColor: "text-purple-600",
       stats: { experience: "10+ years", readings: "2500+", accuracy: "95%" },
       specialties: ["Palmistry", "Hand Analysis", "Life Guidance", "Future Prediction"]
     },
@@ -72,23 +68,21 @@ const Instructors = () => {
 
 As a dedicated and passionate yoga instructor, I will lead you through a series of exercises and movements that will empower and uplift your body, as well as bring peace and tranquility to your mind and soul. Whether a beginner or a seasoned yogi, every session is carefully crafted to address your needs and assist you in your personal growth and development. Through breathing exercises, movements, and meditation, you will learn to reconnect with yourself and find balance and harmony within your life. Step onto the mat and begin your journey to a healthier, more peaceful, and balanced you.`,
       color: "from-green-500 to-emerald-600",
-      bgColor: "bg-green-950",
-      cardBg: "bg-gray-800",
-      iconColor: "text-emerald-400",
-      borderColor: "border-emerald-500/30",
+      bgColor: "bg-green-50",
+      iconColor: "text-green-600",
       stats: { experience: "8+ years", students: "2000+", classes: "500+" },
       specialties: ["Hatha Yoga", "Pranayama", "Meditation", "Mindfulness"]
     },
   ];
 
   return (
-    <section className="relative py-20 overflow-hidden bg-gradient-to-b from-gray-900 to-gray-800">
+    <section className="relative py-20 overflow-hidden bg-gradient-to-b from-orange-50/50 to-white">
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(30)].map((_, i) => (
           <motion.div
             key={`bg-star-${i}`}
-            className="absolute w-1 h-1 bg-amber-300 rounded-full"
+            className="absolute w-1 h-1 bg-yellow-300 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -115,16 +109,16 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
           className="text-center mb-12"
         >
           <motion.div
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-sm px-4 py-2 rounded-full mb-4 border border-amber-500/30"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-red-100 to-orange-100 px-4 py-2 rounded-full mb-4"
             whileHover={{ scale: 1.05 }}
           >
-            <Sparkles className="text-amber-400 w-4 h-4" />
-            <span className="text-sm font-semibold text-amber-400">Meet Our Masters</span>
+            <Sparkles className="text-red-500 w-4 h-4" />
+            <span className="text-sm font-semibold text-red-600">Meet Our Masters</span>
           </motion.div>
-          <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+          <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">
             Our Spiritual Experts
           </h3>
-          <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
+          <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
             Carefully selected practitioners with deep traditional knowledge and years of experience
           </p>
         </motion.div>
@@ -148,7 +142,7 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
                   className={`absolute -inset-0.5 bg-gradient-to-r ${mentor.color} rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 blur-xl`}
                 />
                 
-                <div className={`relative ${mentor.cardBg} rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border ${mentor.borderColor}`}>
+                <div className={`relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-orange-100 ${mentor.bgColor}`}>
                   {/* Image Container */}
                   <div className="relative h-64 overflow-hidden">
                     <motion.img
@@ -158,11 +152,11 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
                       whileHover={{ scale: 1.1 }}
                       transition={{ duration: 0.6 }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                     
                     {/* Floating Icon */}
                     <motion.div
-                      className="absolute top-4 right-4 bg-gray-900/90 backdrop-blur rounded-full p-2 shadow-lg border border-white/10"
+                      className="absolute top-4 right-4 bg-white/90 backdrop-blur rounded-full p-2 shadow-lg"
                       animate={{
                         y: [0, -5, 0],
                         rotate: [0, 10, 0],
@@ -184,23 +178,23 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
                       transition={{ delay: 0.2 }}
                     >
                       <h4 className="text-white font-bold text-xl">{mentor.name}</h4>
-                      <p className="text-gray-300 text-sm">{mentor.role}</p>
+                      <p className="text-white/80 text-sm">{mentor.role}</p>
                     </motion.div>
                   </div>
 
                   {/* Content */}
                   <div className="p-6 space-y-4">
                     <div className="flex items-center gap-2">
-                      <Award className={`w-4 h-4 ${mentor.iconColor}`} />
-                      <span className="text-xs font-medium text-gray-400">{mentor.expertise}</span>
+                      <Award className="w-4 h-4 text-red-500" />
+                      <span className="text-xs font-medium text-gray-600">{mentor.expertise}</span>
                     </div>
 
                     {/* Stats */}
-                    <div className="grid grid-cols-3 gap-2 py-3 border-t border-b border-gray-700">
+                    <div className="grid grid-cols-3 gap-2 py-3 border-t border-b border-orange-100">
                       {Object.entries(mentor.stats).map(([key, value]) => (
                         <div key={key} className="text-center">
-                          <div className="text-lg font-bold text-white">{value}</div>
-                          <div className="text-xs text-gray-400 capitalize">{key}</div>
+                          <div className="text-lg font-bold text-gray-900">{value}</div>
+                          <div className="text-xs text-gray-500 capitalize">{key}</div>
                         </div>
                       ))}
                     </div>
@@ -213,7 +207,7 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
                           initial={{ opacity: 0, scale: 0.8 }}
                           whileInView={{ opacity: 1, scale: 1 }}
                           transition={{ delay: idx * 0.1 }}
-                          className={`text-xs px-2 py-1 rounded-full bg-gray-700 border ${mentor.borderColor} ${mentor.iconColor}`}
+                          className={`text-xs px-2 py-1 rounded-full bg-white border border-${mentor.iconColor.split('-')[1]}-200 text-${mentor.iconColor.split('-')[1]}-600`}
                         >
                           {specialty}
                         </motion.span>
@@ -224,7 +218,7 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
                     <div className="flex gap-3 pt-2">
                       <motion.button
                         onClick={() => setSelectedMentor(mentor)}
-                        className="flex-1 px-4 py-2 rounded-xl border border-amber-500/30 text-amber-400 font-semibold hover:bg-amber-500/10 transition-all duration-300 text-sm flex items-center justify-center gap-2"
+                        className="flex-1 px-4 py-2 rounded-xl border-2 border-red-200 text-red-600 font-semibold hover:bg-red-50 transition-all duration-300 text-sm flex items-center justify-center gap-2"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -232,7 +226,7 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
                         View Profile
                       </motion.button>
                       <motion.button
-                        className="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-gray-900 font-semibold hover:from-amber-600 hover:to-amber-700 transition-all duration-300 text-sm flex items-center justify-center gap-2"
+                        className="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 text-sm flex items-center justify-center gap-2"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -254,12 +248,12 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
           transition={{ delay: 0.4 }}
           className="mt-16 text-center"
         >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/20 to-purple-500/20 backdrop-blur-sm px-6 py-3 rounded-full border border-amber-500/30">
-            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-            <span className="text-sm font-semibold text-amber-400">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-100 to-pink-100 px-6 py-3 rounded-full">
+            <Star className="w-4 h-4 text-purple-500 fill-purple-500" />
+            <span className="text-sm font-semibold text-purple-700">
               "Ancient wisdom meets modern guidance — Transform your life today"
             </span>
-            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <Star className="w-4 h-4 text-purple-500 fill-purple-500" />
           </div>
         </motion.div>
       </div>
@@ -271,22 +265,22 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={() => setSelectedMentor(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-gray-800 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-amber-500/30"
+              className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative">
                 <button
                   onClick={() => setSelectedMentor(null)}
-                  className="absolute top-4 right-4 z-10 bg-gray-900/90 backdrop-blur rounded-full p-2 shadow-lg hover:bg-gray-700 transition border border-amber-500/30"
+                  className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur rounded-full p-2 shadow-lg hover:bg-white transition"
                 >
-                  <X className="w-5 h-5 text-gray-300" />
+                  <X className="w-5 h-5 text-gray-600" />
                 </button>
                 
                 <div className="grid md:grid-cols-2">
@@ -297,34 +291,34 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
                       alt={selectedMentor.name}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent md:bg-gradient-to-r" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:bg-gradient-to-r" />
                     <div className="absolute bottom-6 left-6 right-6 md:bottom-auto md:top-6">
                       <h3 className="text-2xl font-bold text-white mb-2">{selectedMentor.name}</h3>
-                      <p className="text-gray-300">{selectedMentor.role}</p>
+                      <p className="text-white/90">{selectedMentor.role}</p>
                     </div>
                   </div>
 
                   {/* Content Section */}
                   <div className="p-8">
                     <div className="flex items-center gap-2 mb-4">
-                      <Award className={`w-5 h-5 ${selectedMentor.iconColor}`} />
-                      <span className="text-sm font-semibold text-gray-300">{selectedMentor.expertise}</span>
+                      <Award className="w-5 h-5 text-red-500" />
+                      <span className="text-sm font-semibold text-gray-700">{selectedMentor.expertise}</span>
                     </div>
 
                     <div className="mb-6">
-                      <h4 className="text-lg font-semibold text-white mb-3">About</h4>
-                      <p className="text-gray-400 leading-relaxed whitespace-pre-line">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-3">About</h4>
+                      <p className="text-gray-600 leading-relaxed whitespace-pre-line">
                         {selectedMentor.intro}
                       </p>
                     </div>
 
                     <div className="mb-6">
-                      <h4 className="text-lg font-semibold text-white mb-3">Specialties</h4>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-3">Specialties</h4>
                       <div className="flex flex-wrap gap-2">
                         {selectedMentor.specialties.map((specialty) => (
                           <span
                             key={specialty}
-                            className={`text-sm px-3 py-1 rounded-full bg-gray-700 border ${selectedMentor.borderColor} ${selectedMentor.iconColor}`}
+                            className={`text-sm px-3 py-1 rounded-full bg-${selectedMentor.bgColor.split('-')[1]} border border-${selectedMentor.iconColor.split('-')[1]}-200 text-${selectedMentor.iconColor.split('-')[1]}-600`}
                           >
                             {specialty}
                           </span>
@@ -332,16 +326,16 @@ As a dedicated and passionate yoga instructor, I will lead you through a series 
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-gray-900/50 rounded-2xl border border-gray-700">
+                    <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-2xl">
                       {Object.entries(selectedMentor.stats).map(([key, value]) => (
                         <div key={key} className="text-center">
-                          <div className="text-2xl font-bold text-white">{value}</div>
-                          <div className="text-xs text-gray-400 capitalize">{key}</div>
+                          <div className="text-2xl font-bold text-gray-900">{value}</div>
+                          <div className="text-xs text-gray-500 capitalize">{key}</div>
                         </div>
                       ))}
                     </div>
 
-                    <button className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-gray-900 font-semibold hover:from-amber-600 hover:to-amber-700 transition flex items-center justify-center gap-2">
+                    <button className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold hover:from-red-600 hover:to-red-700 transition flex items-center justify-center gap-2">
                       <Calendar className="w-4 h-4" />
                       Book a Consultation
                     </button>
