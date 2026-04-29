@@ -13,6 +13,15 @@ import hemant from "./Himesh A Kumar.png";
 import shravya from "./Shravya Saxena.jpeg";
 import anuja from "./Anuja S Chavaan.jpeg";
 import dharmawheel from "./dharmawheel.png";
+import service1 from "./service-1.jpg";
+import service2 from "./service-2.jpg";
+import service3 from "./service-3.jpg";
+import service4 from "./service-4.jpg";
+import service6 from "./service-6.jpg";
+
+import paranormal from "./paranormal.jpg";
+// import service1 from "./service-1.jpg";
+
 const assets = {
     logo,
     oneFace,
@@ -29,6 +38,12 @@ const assets = {
     shravya,
     anuja,
     dharmawheel,
+    service1,
+    service2,
+    service3,
+    service4,
+    paranormal,
+    service6
 };
 
 export default assets;
