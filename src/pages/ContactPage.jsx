@@ -1,15 +1,15 @@
-// pages/Contact.jsx
+// pages/ContactPage.jsx
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { 
   HiOutlinePhone, 
-  HiOutlineMail, 
   HiOutlineLocationMarker,
   HiOutlineUser,
   HiOutlineDeviceMobile,
   HiOutlineChatAlt,
   HiOutlineArrowRight,
-  HiOutlineCheckCircle
+  HiOutlineCheckCircle,
+  HiOutlineMail
 } from "react-icons/hi";
 import { 
   GiCrystalBall, 
