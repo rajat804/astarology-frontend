@@ -2,7 +2,7 @@
 import React from "react";
 import { GiCrystalBall } from "react-icons/gi";
 import { HiMail, HiPhone } from "react-icons/hi";
-// import assets from "../assets/assets";
+import assets from "../assets/assets";
 import { Link } from "react-router-dom";
 
 // Helper component: Accent - Updated to green (for heading)
@@ -19,7 +19,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center gap-3 mb-3">
               <div className="flex flex-col items-center">
-                {/* <img src={assets.logo} className="w-36" alt="" /> */}
+                <img src={assets.logo} className="w-36" alt="" />
                 <div className="text-sm text-gray-500 mt-2">Align your stars. Find your calm.</div>
               </div>
             </div>
