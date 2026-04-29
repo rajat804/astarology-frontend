@@ -25,6 +25,9 @@ import AdminLogin from "./admin/AdminLogin";
 import Numerology from "./pages/Numerology";
 import FaceReading from "./pages/FaceReading";
 import VedicAstrology from "./pages/VedicAstrology";
+import VastuShastra from "./pages/VastuShastra";
+import ParanormalActivity from "./pages/ParanormalActivity";
+import SpiritualHealer from "./pages/SpiritualHealer";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -62,9 +65,14 @@ const AppRoutes = () => {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<HomePage />} />
+      {/* <Route path="/services" element={<ServicesPage />} /> */}
       <Route path="/services/vedic-astrology" element={<VedicAstrology />} />
       <Route path="/services/numerology" element={<Numerology />} />
       <Route path="/services/face-reading" element={<FaceReading />} />
+      <Route path="/services/vastu" element={<VastuShastra />} />
+      <Route path="/services/paranormal" element={<ParanormalActivity />} />
+      <Route path="/services/spiritual-healer" element={<SpiritualHealer />} />
+
       <Route path="/courses" element={<Classes />} />
       <Route path="/products" element={<ProductsPage />} />
       <Route path="/product/:id" element={<ProductDetails />} />
