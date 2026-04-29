@@ -87,7 +87,7 @@ const Navbar = () => {
     { name: "How We Guide", path: "/how-we-guide" },
     { name: "Services", path: "/services", hasDropdown: true },
     { name: "Courses", path: "/courses" },
-    { name: "Products", path: "/products" },
+    // { name: "Products", path: "/products" },
     { name: "Blogs", path: "/blogs" },
     { name: "Contact", path: "/contact" },
   ];
@@ -154,16 +154,7 @@ const Navbar = () => {
                               );
                             })}
                           </div>
-                          {/* View All Services Link */}
-                          <div className="border-t border-gray-700 p-3 bg-gray-800/50">
-                            <Link
-                              to="/services"
-                              onClick={() => setServicesDropdownOpen(false)}
-                              className="block text-center text-sm text-amber-400 hover:text-amber-300 font-semibold transition-colors"
-                            >
-                              View All Services →
-                            </Link>
-                          </div>
+                          
                         </motion.div>
                       )}
                     </AnimatePresence>
