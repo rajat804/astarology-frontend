@@ -18,9 +18,9 @@ import service2 from "./service-2.jpg";
 import service3 from "./service-3.jpg";
 import service4 from "./service-4.jpg";
 import service6 from "./service-6.jpg";
-
 import paranormal from "./paranormal.jpg";
-// import service1 from "./service-1.jpg";
+import guide from "./guide.webp";
+import nakshatraganak from "./nakshatraganak.jpg"
 
 const assets = {
     logo,
@@ -43,7 +43,9 @@ const assets = {
     service3,
     service4,
     paranormal,
-    service6
+    service6,
+    guide,
+    nakshatraganak
 };
 
 export default assets;
