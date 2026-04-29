@@ -86,7 +86,7 @@ const Navbar = () => {
     { name: "About", path: "/about" },
     { name: "How We Guide", path: "/how-we-guide" },
     { name: "Services", path: "/services", hasDropdown: true },
-    { name: "Courses", path: "/courses" },
+    // { name: "Courses", path: "/courses" },
     { name: "Blogs", path: "/blogs" },
     { name: "Contact", path: "/contact" },
   ];
