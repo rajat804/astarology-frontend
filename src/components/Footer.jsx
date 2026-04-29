@@ -38,8 +38,8 @@ const Footer = () => {
             <div className="font-semibold mb-3 text-gray-800">Explore</div>
             <ul className="text-sm text-gray-600 space-y-2">
               <li><Link to="/services" className="hover:text-red-600 transition">Services</Link></li>
-              <li><Link to="/courses" className="hover:text-red-600 transition">Courses</Link></li>
-              <li><Link to="/products" className="hover:text-red-600 transition">Products</Link></li>
+              {/* <li><Link to="/courses" className="hover:text-red-600 transition">Courses</Link></li> */}
+              {/* <li><Link to="/products" className="hover:text-red-600 transition">Products</Link></li> */}
               <li><Link to="/about" className="hover:text-red-600 transition">About</Link></li>
             </ul>
           </div>
