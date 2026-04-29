@@ -1,416 +1,526 @@
-// ContactPage.jsx
-import React, { useState } from "react";
+// pages/Contact.jsx
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Send, 
-  Clock, 
-  Facebook, 
-  Twitter, 
-  Instagram, 
-  Linkedin,
-  CheckCircle,
-  AlertCircle,
-  Star
-} from "lucide-react";
+  HiOutlinePhone, 
+  HiOutlineMail, 
+  HiOutlineLocationMarker,
+  HiOutlineUser,
+  HiOutlineDeviceMobile,
+  HiOutlineChatAlt,
+  HiOutlineArrowRight,
+  HiOutlineCheckCircle
+} from "react-icons/hi";
+import { 
+  GiCrystalBall, 
+  GiMagicSwirl, 
+  GiLotus,
+  GiStarsStack,
+  GiYinYang,
+  GiHealing,
+  GiCompass
+} from "react-icons/gi";
+import { FaFacebook, FaInstagram, FaTwitter, FaYoutube, FaWhatsapp } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import CTA from "../components/common/CTA";
 
 const ContactPage = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isLowEndDevice, setIsLowEndDevice] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
+    mobile: "",
+    service: "",
     message: ""
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
-    if (!formData.subject.trim()) newErrors.subject = "Subject is required";
-    if (!formData.message.trim()) newErrors.message = "Message is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  // Detect device performance
+  useEffect(() => {
+    const checkDevice = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      
+      const isSlow = navigator.deviceMemory ? navigator.deviceMemory < 4 : false;
+      const isLowEnd = mobile && isSlow;
+      setIsLowEndDevice(isLowEnd);
+    };
+    
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    return () => window.removeEventListener('resize', checkDevice);
+  }, []);
+
+  const showBackgroundAnimations = !isLowEndDevice;
+  const orbCount = isLowEndDevice ? 2 : isMobile ? 3 : 6;
+  const starCount = isLowEndDevice ? 15 : isMobile ? 25 : 50;
+
+  const servicesList = [
+    "Vedic Astrology",
+    "Numerology",
+    "Face Reading",
+    "Vastu Shastra",
+    "Paranormal Activity",
+    "Spiritual Healer"
+  ];
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    setIsSubmitting(true);
     
-    setIsLoading(true);
     // Simulate API call
     setTimeout(() => {
-      setIsLoading(false);
-      setIsSubmitted(true);
-      setFormData({ name: "", email: "", subject: "", message: "" });
-      setTimeout(() => setIsSubmitted(false), 5000);
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      setFormData({
+        name: "",
+        email: "",
+        mobile: "",
+        service: "",
+        message: ""
+      });
+      setTimeout(() => setSubmitSuccess(false), 5000);
     }, 1500);
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (errors[e.target.name]) {
-      setErrors({ ...errors, [e.target.name]: "" });
-    }
-  };
-
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const contactInfo = [
-    {
-      icon: <Mail className="w-8 h-8" />,
-      title: "Email Us",
-      details: ["support@astroplanets.com", "hello@astroplanets.com"],
-      link: "mailto:support@astroplanets.com",
-      color: "from-red-50 to-orange-50"
-    },
-    {
-      icon: <Phone className="w-8 h-8" />,
-      title: "Call Us",
-      details: ["+91 98765 43210", "+91 98765 43211"],
-      link: "tel:+919876543210",
-      color: "from-orange-50 to-red-50"
-    },
-    {
-      icon: <MapPin className="w-8 h-8" />,
-      title: "Visit Us",
-      details: ["123 Galaxy Avenue", "Delhi, India - 110001"],
-      link: "https://maps.google.com",
-      color: "from-red-50 to-orange-50"
-    }
-  ];
-
-  const faqs = [
-    { q: "How quickly do you respond to inquiries?", a: "We typically respond within 24-48 hours during business days." },
-    { q: "Do you offer consultations?", a: "Yes! We offer personalized consultations via video call. Book through our services page." },
-    { q: "Can I visit your physical store?", a: "Absolutely! Our store is open Monday-Saturday, 10 AM - 7 PM. Walk-ins are welcome!" }
-  ];
-
   return (
-    <div className="bg-offWhite text-gray-900">
-      {/* Hero Section - Enhanced */}
-      <section className="relative overflow-hidden py-24 px-6 text-center bg-gradient-to-br from-red-50 via-orange-50 to-offWhite">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-200 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-200 rounded-full filter blur-3xl opacity-30 animate-pulse"></div>
-        </div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="relative z-10"
+    <>
+      {/* Hero Section */}
+      <section className="relative min-h-[50vh] md:min-h-[60vh] flex items-center justify-center overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://nakshatraganak.com/img/curosel5.webp')`,
+          }}
         >
-          <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Star className="w-4 h-4 fill-current" />
-            Get in Touch
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+        </div>
+
+        {showBackgroundAnimations && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(orbCount)].map((_, i) => (
+              <div
+                key={`hero-orb-${i}`}
+                className="absolute rounded-full blur-3xl opacity-20 animate-float-orb"
+                style={{
+                  width: `${100 + Math.random() * 150}px`,
+                  height: `${100 + Math.random() * 150}px`,
+                  background: `radial-gradient(circle, rgba(168,85,247,0.3) 0%, rgba(249,115,22,0.3) 100%)`,
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${i * 2}s`,
+                  animationDuration: `${15 + i * 3}s`,
+                }}
+              />
+            ))}
+            {[...Array(starCount)].map((_, i) => (
+              <div
+                key={`hero-star-${i}`}
+                className="absolute w-0.5 h-0.5 bg-yellow-200 rounded-full animate-twinkle"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 5}s`,
+                  animationDuration: `${2 + Math.random() * 3}s`,
+                }}
+              />
+            ))}
           </div>
-          <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-            Contact Us
-          </h1>
-          <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Have questions, feedback, or want to collaborate? We'd love to hear from you. 
-            Our team is here to help you on your cosmic journey.
-          </p>
+        )}
+
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/20">
+              <HiOutlineMail className="text-yellow-400 w-4 h-4" />
+              <span className="text-sm font-semibold text-yellow-200">Get in Touch</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+              Contact Us
+            </h1>
+            <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
+              Reach out for personalized astrological guidance and consultations
+            </p>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.6 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        >
+          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+            <div className="w-1 h-2 bg-white/50 rounded-full mt-2 animate-scroll"></div>
+          </div>
         </motion.div>
       </section>
 
-      {/* Contact Form + Info */}
-      <section className="py-20 px-6 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12">
-          {/* Form - Enhanced */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="bg-white p-8 rounded-2xl shadow-xl border border-orange-100"
-          >
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Send us a Message</h2>
-            <p className="text-gray-500 mb-6">We'll get back to you within 24 hours</p>
-            
-            {isSubmitted && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2"
-              >
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <span className="text-green-700">Message sent successfully! We'll contact you soon.</span>
-              </motion.div>
-            )}
-            
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Your Name *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="John Doe"
-                  className={`w-full px-4 py-3 border rounded-xl text-gray-900 bg-orange-50/50 focus:outline-none focus:ring-2 focus:ring-red-500 transition ${
-                    errors.name ? 'border-red-500' : 'border-orange-200 focus:border-red-500'
-                  }`}
-                />
-                {errors.name && <p className="mt-1 text-sm text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.name}</p>}
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Your Email *</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="john@example.com"
-                  className={`w-full px-4 py-3 border rounded-xl text-gray-900 bg-orange-50/50 focus:outline-none focus:ring-2 focus:ring-red-500 transition ${
-                    errors.email ? 'border-red-500' : 'border-orange-200 focus:border-red-500'
-                  }`}
-                />
-                {errors.email && <p className="mt-1 text-sm text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.email}</p>}
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
-                <input
-                  type="text"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  placeholder="How can we help?"
-                  className={`w-full px-4 py-3 border rounded-xl text-gray-900 bg-orange-50/50 focus:outline-none focus:ring-2 focus:ring-red-500 transition ${
-                    errors.subject ? 'border-red-500' : 'border-orange-200 focus:border-red-500'
-                  }`}
-                />
-                {errors.subject && <p className="mt-1 text-sm text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.subject}</p>}
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Your Message *</label>
-                <textarea
-                  rows="5"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder="Tell us more about your inquiry..."
-                  className={`w-full px-4 py-3 border rounded-xl text-gray-900 bg-orange-50/50 focus:outline-none focus:ring-2 focus:ring-red-500 transition resize-none ${
-                    errors.message ? 'border-red-500' : 'border-orange-200 focus:border-red-500'
-                  }`}
-                ></textarea>
-                {errors.message && <p className="mt-1 text-sm text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.message}</p>}
-              </div>
-              
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4" />
-                    Send Message
-                  </>
-                )}
-              </motion.button>
-            </form>
-          </motion.div>
+      {/* Contact Section */}
+      <section className="relative py-12 md:py-20 overflow-hidden bg-gradient-to-b from-offWhite to-orange-50/50">
+        {showBackgroundAnimations && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(orbCount)].map((_, i) => (
+              <div
+                key={`contact-orb-${i}`}
+                className="absolute rounded-full blur-3xl opacity-20 animate-float-orb"
+                style={{
+                  width: `${100 + Math.random() * 150}px`,
+                  height: `${100 + Math.random() * 150}px`,
+                  background: `radial-gradient(circle, rgba(168,85,247,0.2) 0%, rgba(249,115,22,0.2) 100%)`,
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${i * 2}s`,
+                  animationDuration: `${15 + i * 3}s`,
+                }}
+              />
+            ))}
+          </div>
+        )}
 
-          {/* Contact Info - Enhanced */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
-            <div className="bg-gradient-to-r from-red-50 to-orange-50 p-6 rounded-2xl shadow-md mb-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Connect With Us</h3>
-              <p className="text-gray-600 text-sm">We're here to answer your questions and support your journey</p>
-            </div>
-            
-            {contactInfo.map((info, idx) => (
-              <motion.a
-                key={idx}
-                href={info.link}
-                target={info.title === "Visit Us" ? "_blank" : "_self"}
-                rel="noopener noreferrer"
-                whileHover={{ x: 5 }}
-                className={`block bg-gradient-to-r ${info.color} p-6 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 border border-orange-100 group`}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-white rounded-xl shadow-sm text-red-500 group-hover:scale-110 transition">
-                    {info.icon}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+            {/* Left Side - Contact Info */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-100 to-orange-100 px-3 md:px-4 py-1.5 md:py-2 rounded-full mb-4 md:mb-6">
+                <GiMagicSwirl className="text-red-500 w-3 h-3 md:w-4 md:h-4" />
+                <span className="text-xs md:text-sm font-semibold text-red-600">Get in Touch</span>
+              </div>
+              
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent mb-4">
+                Contact Us
+              </h2>
+              
+              <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
+                We're Here to Help. Have questions about astrology, numerology, or vastu? 
+                Reach out to Praveen Nangia for personalized guidance and consultations.
+              </p>
+
+              {/* Contact Details */}
+              <div className="space-y-5 mb-8">
+                <div className="flex items-start gap-4 p-3 bg-white rounded-xl border border-orange-100 hover:shadow-md transition-all duration-300">
+                  <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <HiOutlinePhone className="w-5 h-5 text-red-500" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg text-gray-800">{info.title}</h3>
-                    {info.details.map((detail, i) => (
-                      <p key={i} className="text-gray-600 mt-1">{detail}</p>
-                    ))}
+                    <div className="text-xs text-gray-500">Phone</div>
+                    <div className="font-semibold text-gray-900">+91 9953043676</div>
+                    <div className="text-xs text-gray-400">Mon-Sat, 10 AM - 7 PM</div>
                   </div>
                 </div>
-              </motion.a>
-            ))}
 
-            {/* Business Hours */}
-            <div className="bg-white p-6 rounded-2xl shadow-md border border-orange-100">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-red-100 rounded-xl">
-                  <Clock className="w-6 h-6 text-red-500" />
+                <div className="flex items-start gap-4 p-3 bg-white rounded-xl border border-orange-100 hover:shadow-md transition-all duration-300">
+                  <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <HiOutlineMail className="w-5 h-5 text-red-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500">Email</div>
+                    <div className="font-semibold text-gray-900">info@nakshatraganak.com</div>
+                    <div className="text-xs text-gray-400">Response within 24 hours</div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-800">Business Hours</h3>
-                  <div className="mt-2 space-y-1 text-gray-600">
-                    <p>Monday - Friday: 9:00 AM - 7:00 PM</p>
-                    <p>Saturday: 10:00 AM - 5:00 PM</p>
-                    <p>Sunday: Closed</p>
+
+                <div className="flex items-start gap-4 p-3 bg-white rounded-xl border border-orange-100 hover:shadow-md transition-all duration-300">
+                  <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <HiOutlineLocationMarker className="w-5 h-5 text-red-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500">Address</div>
+                    <div className="font-semibold text-gray-900">Delhi, India</div>
+                    <div className="text-xs text-gray-400">Online consultations available worldwide</div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Social Media Links */}
-            <div className="bg-white p-6 rounded-2xl shadow-md border border-orange-100">
-              <h3 className="font-semibold text-lg text-gray-800 mb-4">Follow Us</h3>
-              <div className="flex gap-4">
-                {[
-                  { icon: <Facebook className="w-5 h-5" />, name: "Facebook", color: "hover:bg-blue-600" },
-                  { icon: <Twitter className="w-5 h-5" />, name: "Twitter", color: "hover:bg-sky-500" },
-                  { icon: <Instagram className="w-5 h-5" />, name: "Instagram", color: "hover:bg-pink-600" },
-                  { icon: <Linkedin className="w-5 h-5" />, name: "LinkedIn", color: "hover:bg-blue-700" }
-                ].map((social, idx) => (
-                  <a
-                    key={idx}
-                    href="#"
-                    className={`p-3 bg-orange-50 rounded-xl text-gray-600 ${social.color} hover:text-white transition-all duration-300`}
-                  >
-                    {social.icon}
+              {/* WhatsApp Button */}
+              <a 
+                href="https://wa.me/919953043676" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 mb-6"
+              >
+                <FaWhatsapp className="w-5 h-5" />
+                Chat on WhatsApp
+              </a>
+
+              {/* Social Links */}
+              <div>
+                <div className="font-semibold text-gray-900 mb-3">Follow Us</div>
+                <div className="flex gap-3">
+                  <a href="#" className="w-10 h-10 rounded-full bg-white border border-orange-200 flex items-center justify-center text-gray-600 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all duration-300">
+                    <FaFacebook className="w-4 h-4" />
                   </a>
-                ))}
+                  <a href="#" className="w-10 h-10 rounded-full bg-white border border-orange-200 flex items-center justify-center text-gray-600 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all duration-300">
+                    <FaInstagram className="w-4 h-4" />
+                  </a>
+                  <a href="#" className="w-10 h-10 rounded-full bg-white border border-orange-200 flex items-center justify-center text-gray-600 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all duration-300">
+                    <FaTwitter className="w-4 h-4" />
+                  </a>
+                  <a href="#" className="w-10 h-10 rounded-full bg-white border border-orange-200 flex items-center justify-center text-gray-600 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all duration-300">
+                    <FaYoutube className="w-4 h-4" />
+                  </a>
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+
+            {/* Right Side - Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <div className="bg-white rounded-2xl p-6 md:p-8 shadow-xl border border-orange-100">
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">Send us a Message</h3>
+                <p className="text-gray-500 text-sm mb-6">Fill out the form below and we'll get back to you soon.</p>
+
+                {submitSuccess && (
+                  <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+                    <HiOutlineCheckCircle className="w-5 h-5 text-green-500" />
+                    <span className="text-green-700 text-sm">Message sent successfully! We'll contact you soon.</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Your Name *</label>
+                    <div className="relative">
+                      <HiOutlineUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent bg-white text-gray-900"
+                        placeholder="Enter your full name"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
+                    <div className="relative">
+                      <HiOutlineMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent bg-white text-gray-900"
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Mobile Number *</label>
+                    <div className="relative">
+                      <HiOutlineDeviceMobile className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <input
+                        type="tel"
+                        name="mobile"
+                        value={formData.mobile}
+                        onChange={handleChange}
+                        required
+                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent bg-white text-gray-900"
+                        placeholder="+91 98765 43210"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Select a Service</label>
+                    <div className="relative">
+                      <GiCrystalBall className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <select
+                        name="service"
+                        value={formData.service}
+                        onChange={handleChange}
+                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent bg-white text-gray-900 appearance-none cursor-pointer"
+                      >
+                        <option value="">Select a service</option>
+                        {servicesList.map(service => (
+                          <option key={service} value={service}>{service}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Message *</label>
+                    <div className="relative">
+                      <HiOutlineChatAlt className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+                      <textarea
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
+                        required
+                        rows="4"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent bg-white text-gray-900 resize-none"
+                        placeholder="Tell us about your query or concern..."
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold hover:from-red-600 hover:to-orange-600 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <>Sending... <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div></>
+                    ) : (
+                      <>Send Message <HiOutlineArrowRight className="w-4 h-4" /></>
+                    )}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* FAQ Section - New */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
+      {/* Google Maps Section */}
+      <section className="relative py-12 overflow-hidden bg-white">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.4 }}
+            className="text-center mb-6"
           >
-            <span className="text-red-600 font-semibold text-sm uppercase tracking-wider">FAQ</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mt-2 mb-4">
-              Frequently Asked <span className="text-red-600">Questions</span>
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Find quick answers to common questions about our services and support
-            </p>
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-100 to-orange-100 px-4 py-2 rounded-full mb-4">
+              <HiOutlineLocationMarker className="text-red-500 w-4 h-4" />
+              <span className="text-sm font-semibold text-red-600">Find Us</span>
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">
+              Our Location
+            </h3>
           </motion.div>
-
-          <div className="space-y-4">
-            {faqs.map((faq, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="bg-offWhite rounded-xl p-5 border border-orange-100 hover:shadow-md transition"
-              >
-                <h3 className="font-semibold text-gray-800 mb-2">{faq.q}</h3>
-                <p className="text-gray-600 text-sm">{faq.a}</p>
-              </motion.div>
-            ))}
+          
+          <div className="rounded-2xl overflow-hidden shadow-lg border border-orange-100 h-64 md:h-80">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224345.8392319276!2d77.068897!3d28.527554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd5b347eb62d%3A0x372e4f5bfe6b6a6!2sDelhi!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="NakshatraGanak Location"
+            ></iframe>
           </div>
         </div>
       </section>
 
-      {/* Map Section - Enhanced */}
-      <section className="px-6 pb-20 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="rounded-2xl overflow-hidden shadow-xl border border-orange-100"
-        >
-          <div className="relative">
-            <iframe
-              title="Google Maps"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224345.50715108155!2d77.06889963502458!3d28.527280343409085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce26e5e9a5c4f%3A0x6f8f3f76d8cf66d7!2sDelhi!5e0!3m2!1sen!2sin!4v1695893714701!5m2!1sen!2sin"
-              width="100%"
-              height="450"
-              allowFullScreen=""
-              loading="lazy"
-              className="w-full"
-            ></iframe>
-            <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-md">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-red-500" />
-                <span className="text-sm font-medium text-gray-700">123 Galaxy Avenue, Delhi, India</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+      {/* CTA Banner Section */}
+      <section className="relative py-16 md:py-20 overflow-hidden bg-gradient-to-r from-red-600 to-orange-600">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={`cta-star-${i}`}
+              className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${2 + Math.random() * 3}s`,
+              }}
+            />
+          ))}
+        </div>
+        
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <GiCrystalBall className="w-16 h-16 text-white/80 mx-auto mb-4" />
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+              Ready to Begin Your Cosmic Journey?
+            </h2>
+            <p className="text-lg md:text-xl text-orange-100 mb-8 max-w-2xl mx-auto">
+              Book a consultation today and discover what the stars have planned for you
+            </p>
+            <CTA>Book Consultation</CTA>
+          </motion.div>
+        </div>
       </section>
 
-      {/* CTA Section - Enhanced */}
-      <section className="py-20 px-6 text-center bg-gradient-to-r from-red-600 to-red-700 text-white">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Let's Connect 🌟</h2>
-          <p className="mb-6 text-lg text-white/90 max-w-2xl mx-auto">
-            Have a project in mind or just want to say hi? Reach out today—we'd love to chat 
-            and help you on your cosmic journey!
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-3 bg-white text-red-600 font-semibold rounded-xl shadow-lg hover:bg-orange-50 transition"
-            >
-              Book a Consultation
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-3 border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition"
-            >
-              Join Newsletter
-            </motion.button>
-          </div>
-        </motion.div>
-      </section>
-    </div>
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes float-orb {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+          }
+          33% {
+            transform: translate(20px, -15px) scale(1.05);
+          }
+          66% {
+            transform: translate(-15px, 10px) scale(0.95);
+          }
+        }
+        
+        @keyframes twinkle {
+          0%, 100% {
+            opacity: 0;
+            transform: scale(0);
+          }
+          50% {
+            opacity: 0.5;
+            transform: scale(1);
+          }
+        }
+        
+        @keyframes scroll {
+          0% {
+            transform: translateY(0);
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(15px);
+            opacity: 0;
+          }
+        }
+        
+        .animate-float-orb {
+          animation: float-orb ease-in-out infinite;
+          will-change: transform;
+        }
+        
+        .animate-twinkle {
+          animation: twinkle ease-in-out infinite;
+          will-change: opacity, transform;
+        }
+        
+        .animate-scroll {
+          animation: scroll 1.5s ease-in-out infinite;
+          will-change: transform, opacity;
+        }
+      `}</style>
+    </>
   );
 };
 
