@@ -1,4 +1,4 @@
-import logo from "./logo.png";
+import logo from "./logo.jpeg";
 import oneFace from "./1face.jpeg";
 import twoFace from "./2face.jpeg";
 import threeFace from "./3face.jpeg";
