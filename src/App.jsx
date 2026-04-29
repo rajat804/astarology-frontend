@@ -22,6 +22,9 @@ import CheckoutPage from "./pages/CheckoutPage";
 import MyBookingsPage from "./pages/MyBookingsPage";
 import AdminDashboardShell from "./admin/AdminDashboard";
 import AdminLogin from "./admin/AdminLogin";
+import Numerology from "./pages/Numerology";
+import FaceReading from "./pages/FaceReading";
+import VedicAstrology from "./pages/VedicAstrology";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -59,7 +62,9 @@ const AppRoutes = () => {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<HomePage />} />
-      <Route path="/services" element={<ServicesPage />} />
+      <Route path="/services/vedic-astrology" element={<VedicAstrology />} />
+      <Route path="/services/numerology" element={<Numerology />} />
+      <Route path="/services/face-reading" element={<FaceReading />} />
       <Route path="/courses" element={<Classes />} />
       <Route path="/products" element={<ProductsPage />} />
       <Route path="/product/:id" element={<ProductDetails />} />
