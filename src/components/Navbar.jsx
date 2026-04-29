@@ -17,7 +17,7 @@ import {
   GiGhost,
   GiHealing
 } from "react-icons/gi";
-// import assets from "../assets/assets";
+import assets from "../assets/assets";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -87,7 +87,6 @@ const Navbar = () => {
     { name: "How We Guide", path: "/how-we-guide" },
     { name: "Services", path: "/services", hasDropdown: true },
     { name: "Courses", path: "/courses" },
-    // { name: "Products", path: "/products" },
     { name: "Blogs", path: "/blogs" },
     { name: "Contact", path: "/contact" },
   ];
@@ -97,9 +96,21 @@ const Navbar = () => {
       <header className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-md border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-3">
-              {/* <img src={assets.logo} className="w-28 brightness-0 invert" alt="Logo" /> */}
+            {/* Logo with Text */}
+            <Link to="/" className="flex items-center gap-3 group">
+              <img 
+                src={assets.logo} 
+                className="w-10 h-10 md:w-12 md:h-12 object-contain" 
+                alt="Logo" 
+              />
+              <div className="flex flex-col">
+                <span className="text-white font-bold text-lg md:text-xl tracking-wide group-hover:text-amber-400 transition-colors duration-300">
+                  Nakshatra Ganak
+                </span>
+                <span className="text-gray-400 text-xs md:text-sm">
+                  Praveen Nangia
+                </span>
+              </div>
             </Link>
 
             {/* Desktop nav */}
@@ -154,7 +165,6 @@ const Navbar = () => {
                               );
                             })}
                           </div>
-                          
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -275,6 +285,23 @@ const Navbar = () => {
               className="md:hidden bg-gray-900 border-t border-gray-700"
             >
               <div className="px-4 py-4 space-y-2">
+                {/* Mobile Logo Text */}
+                <div className="flex items-center gap-3 pb-4 mb-2 border-b border-gray-700">
+                  <img 
+                    src={assets.logo} 
+                    className="w-10 h-10 object-contain" 
+                    alt="Logo" 
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-white font-bold text-base">
+                      Nakshatra Ganak
+                    </span>
+                    <span className="text-gray-400 text-xs">
+                      Praveen Nangia
+                    </span>
+                  </div>
+                </div>
+
                 {/* Mobile nav links */}
                 {navLinks.map((link) => 
                   link.hasDropdown ? (
