@@ -197,16 +197,13 @@ const Hero = () => {
             <div className="inline-flex items-center gap-3 bg-orange-100/60 text-red-700 px-3 py-1 rounded-full text-sm font-medium w-max shadow-sm backdrop-blur-sm">
               <RiStarSLine /> Featured
             </div>
-
+            <h2 className="txt-2xl text-red-600">Welcome to Divine Guidance</h2>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-tight">
-              Elevate your life with <Accent>astrology</Accent>, yoga &
-              authentic ritual tools
+              Vedic <Accent>astrology</Accent>, & Numerology
             </h1>
 
             <p className="text-gray-600 max-w-2xl text-base sm:text-lg">
-              Personalized consultations, premium courses, and ethically sourced
-              products — all designed to help you live with clarity, balance,
-              and intention.
+              Unveil your destiny through ancient astrological wisdom. Understand the power of stars, numbers, and cosmic energy guiding your life path.
             </p>
 
             <div className="flex flex-wrap gap-3 sm:gap-4 items-center">
