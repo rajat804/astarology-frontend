@@ -26,7 +26,7 @@ const Footer = () => {
 
             <div className="mt-4 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <HiMail className="text-red-500" /> contact@astroplanets.example
+                <HiMail className="text-red-500" /> contact@NakshatraGanak.example
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <HiPhone className="text-red-500" /> +91 98765 43210
@@ -60,7 +60,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 border-t border-orange-100 pt-6 text-sm text-gray-500 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>© {new Date().getFullYear()} AstroPlanets • All rights reserved</div>
+          <div>© {new Date().getFullYear()} Nakshatra Ganak • All rights reserved</div>
           <div className="flex items-center gap-4">
             <a className="hover:text-red-600 transition cursor-pointer">Privacy</a>
             <a className="hover:text-red-600 transition cursor-pointer">Terms</a>
