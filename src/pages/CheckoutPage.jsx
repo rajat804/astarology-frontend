@@ -72,7 +72,7 @@ const CheckoutPage = () => {
         key: orderResponse.razorpayKey,
         amount: amount * 100,
         currency: 'INR',
-        name: 'AstroPlanets',
+        name: 'Nakshatra Ganak',
         description: `Order ${orderId}`,
         order_id: razorpayOrderId,
         handler: async (response) => {
