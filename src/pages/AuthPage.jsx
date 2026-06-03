@@ -118,7 +118,7 @@ const AuthPage = () => {
             <div className="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-5xl">🔮</span>
             </div>
-            <h3 className="text-white text-2xl font-bold mb-2">Welcome to AstroPlanets</h3>
+            <h3 className="text-white text-2xl font-bold mb-2">Welcome to Nakshatra Ganak</h3>
             <p className="text-white/80 text-sm">Your journey to cosmic wisdom begins here</p>
             
             <div className="mt-8 space-y-3">
