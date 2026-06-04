@@ -23,6 +23,7 @@ import {
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube, FaWhatsapp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import CTA from "../components/common/CTA";
+import assets from "../assets/assets";
 
 const ContactPage = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -99,7 +100,7 @@ const ContactPage = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://nakshatraganak.com/img/curosel5.webp')`,
+            backgroundImage: `url(${assets.curosel5})`,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
