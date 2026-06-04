@@ -1,0 +1,425 @@
+.astrology-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.astrology-form-container,
+.astrology-result-container {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  margin: 20px auto;
+  max-width: 900px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.astrology-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.astrology-header h1 {
+  color: #667eea;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.astrology-header p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.form-section {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 25px;
+}
+
+.form-section h3 {
+  color: #667eea;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.helper-text {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.location-btn,
+.generate-btn,
+.switch-btn,
+.new-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.location-btn {
+  background: #ffd700;
+  color: #333;
+  margin-top: 24px;
+}
+
+.generate-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 18px;
+  padding: 15px;
+}
+
+.location-btn:hover,
+.generate-btn:hover,
+.switch-btn:hover,
+.new-btn:hover {
+  transform: translateY(-2px);
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.switch-btn {
+  background: #667eea;
+  color: white;
+}
+
+.new-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.ascendant-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.ascendant-value {
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.ascendant-degree {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.section-title {
+  color: #667eea;
+  margin: 30px 0 20px;
+  font-size: 1.5rem;
+}
+
+.planets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.planet-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+  transition: transform 0.2s;
+}
+
+.planet-card:hover {
+  transform: translateX(5px);
+}
+
+.planet-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 10px;
+}
+
+.planet-detail {
+  margin: 5px 0;
+  color: #555;
+}
+
+.retrograde-badge {
+  display: inline-block;
+  background: #ff6b6b;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.houses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.house-card {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.house-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.house-number {
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.house-sign {
+  font-size: 1rem;
+  margin: 5px 0;
+}
+
+.house-degree {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.house-lord {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 5px;
+}
+
+.dasha-card {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  padding: 20px;
+  border-radius: 15px;
+  margin-top: 20px;
+}
+
+.dasha-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.divisional-section {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 15px;
+}
+
+.divisional-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.divisional-item {
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.sun-times {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.sun-card {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sun-card span:first-child {
+  font-size: 2rem;
+}
+
+.sun-card strong {
+  font-size: 1.1rem;
+}
+
+.panchang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.panchang-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.panchang-card:hover {
+  transform: translateY(-5px);
+}
+
+.panchang-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.panchang-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.panchang-value {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin: 8px 0;
+}
+
+.panchang-time {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.additional-info {
+  display: flex;
+  justify-content: space-around;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.info-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.info-item span {
+  color: #666;
+}
+
+.info-item strong {
+  color: #667eea;
+}
+
+@media (max-width: 768px) {
+  .astrology-form-container,
+  .astrology-result-container {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .result-header {
+    flex-direction: column;
+  }
+  
+  .btn-group {
+    width: 100%;
+  }
+  
+  .switch-btn,
+  .new-btn {
+    flex: 1;
+  }
+  
+  .planets-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .houses-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+  
+  .panchang-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .astrology-header h1 {
+    font-size: 1.8rem;
+  }
+}
