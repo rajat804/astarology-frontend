@@ -10,7 +10,7 @@ import {
 } from 'react-icons/hi';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { login, register } from '../services/api';
+import { login as loginAPI, register as registerAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
 const AuthPage = () => {
@@ -67,26 +67,77 @@ const AuthPage = () => {
     setIsLoading(true);
     
     try {
+      let response;
+      
       if (isLogin) {
-        const response = await login({
+        response = await loginAPI({
           email: formData.email,
           password: formData.password,
         });
-        authLogin(response.user, response.token);
+        console.log('Login API Response:', response);
+        
+        // Handle different response structures
+        let userData;
+        let token;
+        
+        if (response.success && response.token) {
+          userData = response.user || {
+            _id: response._id,
+            fullName: response.fullName,
+            email: response.email
+          };
+          token = response.token;
+        } else if (response.token) {
+          userData = {
+            _id: response._id || response.user?._id,
+            fullName: response.fullName || response.user?.fullName || formData.email.split('@')[0],
+            email: response.email || response.user?.email || formData.email
+          };
+          token = response.token;
+        } else {
+          throw new Error('Invalid response from server');
+        }
+        
+        authLogin(userData, token);
         toast.success('Login successful!');
         navigate('/');
       } else {
-        const response = await register({
+        response = await registerAPI({
           fullName: formData.fullName,
           email: formData.email,
           password: formData.password,
         });
-        authLogin(response.user, response.token);
+        console.log('Register API Response:', response);
+        
+        // Handle different response structures
+        let userData;
+        let token;
+        
+        if (response.success && response.token) {
+          userData = response.user || {
+            _id: response._id,
+            fullName: response.fullName,
+            email: response.email
+          };
+          token = response.token;
+        } else if (response.token) {
+          userData = {
+            _id: response._id || response.user?._id,
+            fullName: response.fullName || response.user?.fullName || formData.fullName,
+            email: response.email || response.user?.email || formData.email
+          };
+          token = response.token;
+        } else {
+          throw new Error('Invalid response from server');
+        }
+        
+        authLogin(userData, token);
         toast.success('Account created successfully!');
         navigate('/');
       }
     } catch (error) {
       console.error('Auth error:', error);
+      toast.error(error.response?.data?.message || error.message || 'Authentication failed');
     } finally {
       setIsLoading(false);
     }
