@@ -24,6 +24,7 @@ import {
 import { FaInfinity, FaMoon, FaStar, FaQuoteLeft, FaChartLine } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import CTA from "../components/common/CTA";
+import assets from "../assets/assets";
 
 const Numerology = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -75,7 +76,7 @@ const Numerology = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://nakshatraganak.com/img/curosel5.webp')`,
+            backgroundImage: `url(${assets.curosel5})`,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
@@ -196,7 +197,7 @@ const Numerology = () => {
             >
               <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
                 <img
-                  src="https://nakshatraganak.com/img/service-2.jpg"
+                  src={assets.service2}
                   alt="Numerology Consultation"
                   className="w-full h-auto object-cover"
                   loading="lazy"
