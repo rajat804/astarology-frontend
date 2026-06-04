@@ -8,117 +8,52 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [remainingTime, setRemainingTime] = useState(0);
+  const [token, setToken] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
+    const storedToken = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-    const loginTime = localStorage.getItem('loginTime');
-
-    if (token && userData && loginTime) {
-      const now = Date.now();
-      const timeElapsed = now - parseInt(loginTime, 10);
-      const sessionDuration = 3600000; // 1 hour
-
-      if (timeElapsed < sessionDuration) {
-        setIsAuthenticated(true);
-        setUser(JSON.parse(userData));
-        setRemainingTime(sessionDuration - timeElapsed);
-
-        // Set timer for auto logout
-        const timer = setTimeout(() => {
-          logout();
-        }, sessionDuration - timeElapsed);
-
-        // Update remaining time every second
-        const interval = setInterval(() => {
-          setRemainingTime((prev) => {
-            if (prev <= 1000) {
-              clearInterval(interval);
-              return 0;
-            }
-            return prev - 1000;
-          });
-        }, 1000);
-
-        return () => {
-          clearTimeout(timer);
-          clearInterval(interval);
-        };
-      } else {
-        logout();
-      }
+    if (storedToken && userData) {
+      setIsAuthenticated(true);
+      setUser(JSON.parse(userData));
+      setToken(storedToken);
     }
     setLoading(false);
   }, []);
 
-  const login = (userData, token) => {
-    const now = Date.now();
-    localStorage.setItem('token', token);
+  const login = (userData, authToken) => {
+    localStorage.setItem('token', authToken);
     localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('loginTime', now.toString());
     setIsAuthenticated(true);
     setUser(userData);
-    setRemainingTime(3600000);
-
-    // Set auto logout timer
-    const timer = setTimeout(() => {
-      logout();
-    }, 3600000);
-
-    // Update remaining time
-    const interval = setInterval(() => {
-      setRemainingTime((prev) => {
-        if (prev <= 1000) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1000;
-      });
-    }, 1000);
-
-    return () => {
-      clearTimeout(timer);
-      clearInterval(interval);
-    };
+    setToken(authToken);
+    toast.success('Login successful!');
+    navigate('/');
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    localStorage.removeItem('loginTime');
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('admin');
     setIsAuthenticated(false);
     setUser(null);
-    setRemainingTime(0);
-    toast.success('Logged out successfully');
+    setToken(null);
+    toast.success('Logged out');
     navigate('/auth');
   };
 
-  const formatRemainingTime = () => {
-    const minutes = Math.floor(remainingTime / 60000);
-    const seconds = Math.floor((remainingTime % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
+  const getToken = () => localStorage.getItem('token');
+  const isTokenValid = () => !!localStorage.getItem('token');
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        user,
-        loading,
-        remainingTime,
-        formatRemainingTime,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, user, token, loading, login, logout, getToken, isTokenValid }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  return context;
+};
