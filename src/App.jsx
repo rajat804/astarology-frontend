@@ -31,6 +31,8 @@ import SpiritualHealer from "./pages/SpiritualHealer";
 import HowWeGuide from "./pages/HowWeGuide";
 import Blogs from "./pages/Blogs";
 import BlogDetail from "./pages/BlogDetails";
+import AstrologyPage from "./pages/AstrologyPage";
+
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -69,6 +71,8 @@ const AppRoutes = () => {
       {/* Public Routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/how-we-guide" element={<HowWeGuide />} />
+      <Route path="/astrology" element={<AstrologyPage />} />
+
       <Route path="/blogs" element={<Blogs />} />
       <Route path="/blog/:id" element={<BlogDetail />} />
 
