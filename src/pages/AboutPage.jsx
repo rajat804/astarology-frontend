@@ -20,6 +20,7 @@ import {
 import { FaInfinity, FaMoon, FaStar, FaQuoteLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import CTA from "../components/common/CTA";
+import assets from "../assets/assets";
 
 const AboutPage = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -59,7 +60,7 @@ const AboutPage = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://nakshatraganak.com/img/curosel5.webp')`,
+            backgroundImage: `url(${assets.curosel5})`,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
@@ -226,7 +227,7 @@ const AboutPage = () => {
             >
               <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
                 <img
-                  src="https://nakshatraganak.com/img/about.jpg"
+                  src={assets.nakshatraganak}
                   alt="Praveen Nangia - Astrologer"
                   className="w-full h-auto object-cover"
                   loading="lazy"
