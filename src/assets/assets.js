@@ -21,6 +21,7 @@ import service6 from "./service-6.jpg";
 import paranormal from "./paranormal.jpg";
 import guide from "./guide.webp";
 import nakshatraganak from "./nakshatraganak.jpg"
+import curosel5 from "./curosel5.webp";
 
 const assets = {
     logo,
@@ -45,7 +46,7 @@ const assets = {
     paranormal,
     service6,
     guide,
-    nakshatraganak
+    nakshatraganak,curosel5
 };
 
 export default assets;
