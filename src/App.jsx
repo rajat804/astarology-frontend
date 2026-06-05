@@ -32,6 +32,7 @@ import HowWeGuide from "./pages/HowWeGuide";
 import Blogs from "./pages/Blogs";
 import BlogDetail from "./pages/BlogDetails";
 import AstrologyPage from "./pages/AstrologyPage";
+import ProfilePage from "./pages/ProfilePage";
 
 
 // Protected Route Component
@@ -70,6 +71,7 @@ const AppRoutes = () => {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<HomePage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="/how-we-guide" element={<HowWeGuide />} />
       <Route path="/astrology" element={<AstrologyPage />} />
 
