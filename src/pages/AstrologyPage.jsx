@@ -47,7 +47,6 @@ const AstrologyPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ FIXED: Get Current Location with better error handling
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
       toast.error('Geolocation is not supported by your browser');
@@ -624,48 +623,310 @@ const AstrologyPage = () => {
   );
 };
 
+// ✅ ONLY CSS CHANGED - Responsive styles added
 const styles = {
-  page: { minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '40px 0' },
-  container: { maxWidth: '1200px', margin: '0 auto', padding: '0 20px' },
-  formContainer: { background: 'white', borderRadius: '20px', padding: '40px', maxWidth: '1000px', margin: '0 auto', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' },
-  resultContainer: { background: 'white', borderRadius: '20px', padding: '40px', margin: '0 auto', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' },
-  title: { textAlign: 'center', color: '#667eea', marginBottom: '30px', fontSize: '2.2rem' },
-  section: { background: '#f8f9fa', padding: '25px', borderRadius: '15px', marginBottom: '25px' },
-  sectionTitle: { color: '#667eea', marginTop: '30px', marginBottom: '15px', fontSize: '1.3rem', borderLeft: '4px solid #667eea', paddingLeft: '15px' },
-  row: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '15px' },
-  inputGroup: { display: 'flex', flexDirection: 'column' },
-  input: { padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '16px' },
-  locationBtn: { padding: '12px', background: '#ffd700', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' },
-  cityBtn: { padding: '12px', background: '#4caf50', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
-  submitBtn: { width: '100%', padding: '16px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', marginTop: '20px' },
-  downloadBtn: { width: '100%', padding: '16px', background: '#28a745', color: 'white', border: 'none', borderRadius: '10px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', marginTop: '30px' },
-  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '15px' },
-  switchBtn: { padding: '10px 20px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', marginRight: '10px' },
-  backBtn: { padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
-  ascendantCard: { background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', padding: '30px', borderRadius: '15px', textAlign: 'center', marginBottom: '30px' },
-  ascendantValue: { fontSize: '2.5rem', fontWeight: 'bold', margin: '10px 0' },
-  specialCard: { background: '#f0f0ff', padding: '20px', borderRadius: '12px', textAlign: 'center', marginBottom: '20px', border: '1px solid #667eea' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', margin: '20px 0' },
-  planetCard: { background: '#f8f9fa', padding: '12px', borderRadius: '10px', borderLeft: '4px solid #667eea' },
-  planetsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', margin: '20px 0' },
-  planetDetailCard: { background: '#f8f9fa', padding: '12px', borderRadius: '10px', borderLeft: '3px solid #667eea' },
-  housesGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px', margin: '20px 0' },
-  houseCard: { background: '#f8f9fa', padding: '12px', borderRadius: '10px', textAlign: 'center' },
-  dashaCard: { marginTop: '30px', background: '#fff3cd', padding: '20px', borderRadius: '12px' },
-  dashaGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginTop: '10px' },
-  sunTimes: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginBottom: '30px' },
-  sunCard: { background: 'linear-gradient(135deg, #ffd700, #ffed4e)', padding: '15px', borderRadius: '10px', textAlign: 'center', fontWeight: 'bold' },
-  panchangGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '20px' },
-  panchangCard: { background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center' },
-  muhuratCard: { background: '#f8f9fa', padding: '15px', borderRadius: '10px', textAlign: 'center', border: '1px solid #ddd' },
-  additionalInfo: { display: 'flex', justifyContent: 'center', gap: '30px', background: '#f8f9fa', padding: '15px', borderRadius: '12px', marginTop: '20px', flexWrap: 'wrap' },
-  cityGrid: { display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '15px' },
-  cityChip: { padding: '8px 16px', background: '#e0f0ff', border: 'none', borderRadius: '20px', cursor: 'pointer', fontSize: '14px' },
-  modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 },
-  modalContent: { background: 'white', padding: '30px', borderRadius: '20px', maxWidth: '400px', width: '90%', textAlign: 'center' },
-  price: { fontSize: '2rem', fontWeight: 'bold', color: '#28a745', margin: '20px 0' },
-  payBtn: { width: '100%', padding: '15px', background: '#28a745', color: 'white', border: 'none', borderRadius: '10px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', marginBottom: '10px' },
-  cancelBtn: { width: '100%', padding: '12px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer' }
+  page: { 
+    minHeight: '100vh', 
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+    padding: 'clamp(20px, 5vw, 40px) 0' 
+  },
+  container: { 
+    maxWidth: '1200px', 
+    margin: '0 auto', 
+    padding: '0 clamp(15px, 4vw, 20px)' 
+  },
+  formContainer: { 
+    background: 'white', 
+    borderRadius: 'clamp(15px, 4vw, 20px)', 
+    padding: 'clamp(20px, 5vw, 40px)', 
+    maxWidth: '1000px', 
+    margin: '0 auto', 
+    boxShadow: '0 20px 60px rgba(0,0,0,0.3)' 
+  },
+  resultContainer: { 
+    background: 'white', 
+    borderRadius: 'clamp(15px, 4vw, 20px)', 
+    padding: 'clamp(20px, 5vw, 40px)', 
+    margin: '0 auto', 
+    boxShadow: '0 20px 60px rgba(0,0,0,0.3)' 
+  },
+  title: { 
+    textAlign: 'center', 
+    color: '#667eea', 
+    marginBottom: 'clamp(20px, 5vw, 30px)', 
+    fontSize: 'clamp(1.5rem, 6vw, 2.2rem)' 
+  },
+  section: { 
+    background: '#f8f9fa', 
+    padding: 'clamp(15px, 4vw, 25px)', 
+    borderRadius: '15px', 
+    marginBottom: '25px' 
+  },
+  sectionTitle: { 
+    color: '#667eea', 
+    marginTop: 'clamp(20px, 4vw, 30px)', 
+    marginBottom: '15px', 
+    fontSize: 'clamp(1.1rem, 4vw, 1.3rem)', 
+    borderLeft: '4px solid #667eea', 
+    paddingLeft: '15px' 
+  },
+  row: { 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', 
+    gap: '15px' 
+  },
+  inputGroup: { 
+    display: 'flex', 
+    flexDirection: 'column' 
+  },
+  input: { 
+    padding: '12px', 
+    border: '2px solid #e0e0e0', 
+    borderRadius: '8px', 
+    fontSize: 'clamp(14px, 3vw, 16px)' 
+  },
+  locationBtn: { 
+    padding: '12px', 
+    background: '#ffd700', 
+    border: 'none', 
+    borderRadius: '8px', 
+    cursor: 'pointer', 
+    fontWeight: 'bold',
+    width: '100%'
+  },
+  cityBtn: { 
+    padding: '12px', 
+    background: '#4caf50', 
+    color: 'white', 
+    border: 'none', 
+    borderRadius: '8px', 
+    cursor: 'pointer',
+    width: '100%'
+  },
+  submitBtn: { 
+    width: '100%', 
+    padding: 'clamp(12px, 4vw, 16px)', 
+    background: 'linear-gradient(135deg, #667eea, #764ba2)', 
+    color: 'white', 
+    border: 'none', 
+    borderRadius: '10px', 
+    fontSize: 'clamp(14px, 4vw, 18px)', 
+    fontWeight: 'bold', 
+    cursor: 'pointer', 
+    marginTop: '20px' 
+  },
+  downloadBtn: { 
+    width: '100%', 
+    padding: 'clamp(12px, 4vw, 16px)', 
+    background: '#28a745', 
+    color: 'white', 
+    border: 'none', 
+    borderRadius: '10px', 
+    fontSize: 'clamp(14px, 4vw, 18px)', 
+    fontWeight: 'bold', 
+    cursor: 'pointer', 
+    marginTop: '30px' 
+  },
+  header: { 
+    display: 'flex', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    marginBottom: '30px', 
+    flexWrap: 'wrap', 
+    gap: '15px' 
+  },
+  switchBtn: { 
+    padding: '10px 20px', 
+    background: '#667eea', 
+    color: 'white', 
+    border: 'none', 
+    borderRadius: '8px', 
+    cursor: 'pointer', 
+    marginRight: '10px' 
+  },
+  backBtn: { 
+    padding: '10px 20px', 
+    background: '#6c757d', 
+    color: 'white', 
+    border: 'none', 
+    borderRadius: '8px', 
+    cursor: 'pointer' 
+  },
+  ascendantCard: { 
+    background: 'linear-gradient(135deg, #667eea, #764ba2)', 
+    color: 'white', 
+    padding: 'clamp(20px, 5vw, 30px)', 
+    borderRadius: '15px', 
+    textAlign: 'center', 
+    marginBottom: '30px' 
+  },
+  ascendantValue: { 
+    fontSize: 'clamp(1.8rem, 6vw, 2.5rem)', 
+    fontWeight: 'bold', 
+    margin: '10px 0' 
+  },
+  specialCard: { 
+    background: '#f0f0ff', 
+    padding: 'clamp(15px, 4vw, 20px)', 
+    borderRadius: '12px', 
+    textAlign: 'center', 
+    marginBottom: '20px', 
+    border: '1px solid #667eea' 
+  },
+  grid: { 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
+    gap: '12px', 
+    margin: '20px 0' 
+  },
+  planetCard: { 
+    background: '#f8f9fa', 
+    padding: '12px', 
+    borderRadius: '10px', 
+    borderLeft: '4px solid #667eea' 
+  },
+  planetsGrid: { 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', 
+    gap: '12px', 
+    margin: '20px 0' 
+  },
+  planetDetailCard: { 
+    background: '#f8f9fa', 
+    padding: '12px', 
+    borderRadius: '10px', 
+    borderLeft: '3px solid #667eea' 
+  },
+  housesGrid: { 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', 
+    gap: '12px', 
+    margin: '20px 0' 
+  },
+  houseCard: { 
+    background: '#f8f9fa', 
+    padding: '12px', 
+    borderRadius: '10px', 
+    textAlign: 'center' 
+  },
+  dashaCard: { 
+    marginTop: '30px', 
+    background: '#fff3cd', 
+    padding: '20px', 
+    borderRadius: '12px' 
+  },
+  dashaGrid: { 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+    gap: '12px', 
+    marginTop: '10px' 
+  },
+  sunTimes: { 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+    gap: '15px', 
+    marginBottom: '30px', 
+    textAlign: 'center' 
+  },
+  sunCard: { 
+    background: 'linear-gradient(135deg, #ffd700, #ffed4e)', 
+    padding: '15px', 
+    borderRadius: '10px', 
+    textAlign: 'center', 
+    fontWeight: 'bold' 
+  },
+  panchangGrid: { 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', 
+    gap: '15px', 
+    marginBottom: '20px' 
+  },
+  panchangCard: { 
+    background: 'linear-gradient(135deg, #667eea, #764ba2)', 
+    color: 'white', 
+    padding: '20px', 
+    borderRadius: '10px', 
+    textAlign: 'center' 
+  },
+  muhuratCard: { 
+    background: '#f8f9fa', 
+    padding: '15px', 
+    borderRadius: '10px', 
+    textAlign: 'center', 
+    border: '1px solid #ddd' 
+  },
+  additionalInfo: { 
+    display: 'flex', 
+    justifyContent: 'center', 
+    gap: '30px', 
+    background: '#f8f9fa', 
+    padding: '15px', 
+    borderRadius: '12px', 
+    marginTop: '20px', 
+    flexWrap: 'wrap' 
+  },
+  cityGrid: { 
+    display: 'flex', 
+    flexWrap: 'wrap', 
+    gap: '8px', 
+    marginBottom: '15px' 
+  },
+  cityChip: { 
+    padding: '8px 16px', 
+    background: '#e0f0ff', 
+    border: 'none', 
+    borderRadius: '20px', 
+    cursor: 'pointer', 
+    fontSize: 'clamp(12px, 3vw, 14px)' 
+  },
+  modalOverlay: { 
+    position: 'fixed', 
+    top: 0, 
+    left: 0, 
+    right: 0, 
+    bottom: 0, 
+    background: 'rgba(0,0,0,0.7)', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    zIndex: 1000,
+    padding: '20px'
+  },
+  modalContent: { 
+    background: 'white', 
+    padding: 'clamp(20px, 5vw, 30px)', 
+    borderRadius: '20px', 
+    maxWidth: '400px', 
+    width: '90%', 
+    textAlign: 'center' 
+  },
+  price: { 
+    fontSize: 'clamp(1.5rem, 5vw, 2rem)', 
+    fontWeight: 'bold', 
+    color: '#28a745', 
+    margin: '20px 0' 
+  },
+  payBtn: { 
+    width: '100%', 
+    padding: 'clamp(12px, 4vw, 15px)', 
+    background: '#28a745', 
+    color: 'white', 
+    border: 'none', 
+    borderRadius: '10px', 
+    fontSize: 'clamp(14px, 4vw, 18px)', 
+    fontWeight: 'bold', 
+    cursor: 'pointer', 
+    marginBottom: '10px' 
+  },
+  cancelBtn: { 
+    width: '100%', 
+    padding: 'clamp(10px, 3vw, 12px)', 
+    background: '#dc3545', 
+    color: 'white', 
+    border: 'none', 
+    borderRadius: '10px', 
+    cursor: 'pointer' 
+  }
 };
 
 export default AstrologyPage;
