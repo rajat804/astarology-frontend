@@ -10,14 +10,16 @@ import Testimonials from "../components/home/Testimonials";
 import FAQ from "../components/home/FAQ";
 import BlogPreview from "../components/home/BlogPreview";
 import OurJourney from "../components/home/OurJourney";
-import HomeAstrologySection from "../components/HomeAstrologySection";
+// import HomeAstrologySection from "../components/HomeAstrologySection";
+import AstrologyPage from "./AstrologyPage";
 
 export default function HomePage() {
   return (
     <div className="bg-offWhite text-gray-900">
       <Hero />
       <Stats />
-      <HomeAstrologySection />
+      {/* <HomeAstrologySection /> */}
+      <AstrologyPage />
       <OurJourney />
       <Services />
       {/* <Products /> */}
