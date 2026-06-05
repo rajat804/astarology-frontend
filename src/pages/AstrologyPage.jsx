@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const AstrologyPage = () => {
-  const { getToken } = useAuth();
+  const { getToken, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  
+  // ✅ Redirect if not authenticated
+  useEffect(() => {
+    const token = getToken();
+    if (!token && !isAuthenticated) {
+      toast.error('Please login to access Astrology features');
+      navigate('/auth');
+    }
+  }, [isAuthenticated, getToken, navigate]);
   const [loading, setLoading] = useState(false);
   const [kundliData, setKundliData] = useState(null);
   const [panchangData, setPanchangData] = useState(null);
@@ -96,40 +107,116 @@ const AstrologyPage = () => {
   };
 
   const generate = async (e) => {
-    e.preventDefault();
-    if (!formData.date || !formData.month || !formData.year || !formData.hour || 
-        !formData.minute || !formData.latitude || !formData.longitude) {
-      return toast.error('Please fill all fields');
-    }
+  e.preventDefault();
+  
+  // Parse values
+  const dateNum = parseInt(formData.date);
+  const monthNum = parseInt(formData.month);
+  const yearNum = parseInt(formData.year);
+  const hourNum = parseInt(formData.hour);
+  const minuteNum = parseInt(formData.minute);
+  const latNum = parseFloat(formData.latitude);
+  const lonNum = parseFloat(formData.longitude);
+  
+  // Check if values are valid (not NaN)
+  if (isNaN(dateNum)) {
+    toast.error('Please enter a valid date');
+    return;
+  }
+  if (dateNum < 1 || dateNum > 31) {
+    toast.error('Date must be between 1 and 31');
+    return;
+  }
+  
+  if (isNaN(monthNum)) {
+    toast.error('Please enter a valid month');
+    return;
+  }
+  if (monthNum < 1 || monthNum > 12) {
+    toast.error('Month must be between 1 and 12');
+    return;
+  }
+  
+  if (isNaN(yearNum)) {
+    toast.error('Please enter a valid year');
+    return;
+  }
+  if (yearNum < 1900 || yearNum > new Date().getFullYear()) {
+    toast.error(`Year must be between 1900 and ${new Date().getFullYear()}`);
+    return;
+  }
+  
+  if (isNaN(hourNum)) {
+    toast.error('Please enter a valid hour');
+    return;
+  }
+  if (hourNum < 0 || hourNum > 23) {
+    toast.error('Hour must be between 0 and 23');
+    return;
+  }
+  
+  // ✅ Minute validation - 0 is valid
+  if (isNaN(minuteNum)) {
+    toast.error('Please enter a valid minute');
+    return;
+  }
+  if (minuteNum < 0 || minuteNum > 59) {
+    toast.error('Minute must be between 0 and 59');
+    return;
+  }
+  
+  if (isNaN(latNum)) {
+    toast.error('Please enter a valid latitude');
+    return;
+  }
+  if (isNaN(lonNum)) {
+    toast.error('Please enter a valid longitude');
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const res = await api.post('/astrology/generate', {
-        date: parseInt(formData.date),
-        month: parseInt(formData.month),
-        year: parseInt(formData.year),
-        hour: parseInt(formData.hour),
-        minute: parseInt(formData.minute),
-        latitude: parseFloat(formData.latitude),
-        longitude: parseFloat(formData.longitude),
-        timezone: parseFloat(formData.timezone)
-      });
+  // Check if fields are empty (string empty)
+  if (formData.date === '' || formData.month === '' || formData.year === '' || 
+      formData.hour === '' || formData.minute === '' || 
+      formData.latitude === '' || formData.longitude === '') {
+    toast.error('Please fill all fields');
+    return;
+  }
 
-      if (res.data.success) {
-        setKundliData(res.data.kundli);
-        setPanchangData(res.data.panchang);
-        setActiveView('kundli');
-        toast.success(res.data.isMockData ? '✨ Demo Mode - Sample Kundli' : '✨ Kundli Generated!');
-      } else {
-        toast.error(res.data.message || 'Failed');
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error('Error generating kundli');
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  try {
+    const res = await api.post('/astrology/generate', {
+      date: dateNum,
+      month: monthNum,
+      year: yearNum,
+      hour: hourNum,
+      minute: minuteNum,
+      latitude: latNum,
+      longitude: lonNum,
+      timezone: parseFloat(formData.timezone)
+    });
+
+    if (res.data.success) {
+      setKundliData(res.data.kundli);
+      setPanchangData(res.data.panchang);
+      setActiveView('kundli');
+      toast.success(res.data.isMockData ? '✨ Demo Mode - Sample Kundli' : '✨ Kundli Generated!');
+    } else {
+      toast.error(res.data.message || 'Failed to generate Kundli');
     }
-  };
+  } catch (err) {
+    console.error('Generation error:', err);
+    if (err.response?.status === 401) {
+      toast.error('Session expired. Please login again.');
+      navigate('/auth');
+    } else if (err.response?.status === 400) {
+      toast.error(err.response?.data?.message || 'Invalid birth details. Please check your entries.');
+    } else {
+      toast.error('Error generating kundli. Please try again.');
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Helper function to safely get nested values
   const getValue = (obj, keys, defaultValue = 'N/A') => {
