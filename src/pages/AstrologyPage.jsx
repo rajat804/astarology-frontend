@@ -8,15 +8,6 @@ const AstrologyPage = () => {
   const { getToken, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   
-  // ✅ Redirect if not authenticated
-  useEffect(() => {
-    const token = getToken();
-    if (!token && !isAuthenticated) {
-      toast.error('Please login to access Astrology features');
-      navigate('/auth');
-    }
-  }, [isAuthenticated, getToken, navigate]);
-  
   const [loading, setLoading] = useState(false);
   const [kundliData, setKundliData] = useState(null);
   const [panchangData, setPanchangData] = useState(null);
@@ -24,7 +15,6 @@ const AstrologyPage = () => {
   const [gettingLocation, setGettingLocation] = useState(false);
   const [searchingCity, setSearchingCity] = useState(false);
   
-  // ✅ Payment states - Removed isPaid (no free unlimited)
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [pendingFormData, setPendingFormData] = useState(null);
 
@@ -43,14 +33,12 @@ const AstrologyPage = () => {
     return config;
   });
 
-  // ✅ Check for pending data after login
   useEffect(() => {
     const pendingData = localStorage.getItem('pending_kundli_data');
     if (pendingData && isAuthenticated) {
       const data = JSON.parse(pendingData);
       localStorage.removeItem('pending_kundli_data');
       setPendingFormData(data);
-      // ✅ Always show payment for new kundli
       setShowPaymentModal(true);
     }
   }, [isAuthenticated]);
@@ -59,23 +47,55 @@ const AstrologyPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // ✅ FIXED: Get Current Location with better error handling
   const getCurrentLocation = () => {
-    if (!navigator.geolocation) return toast.error('Geolocation not supported');
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser');
+      return;
+    }
     
     setGettingLocation(true);
+    toast.loading('Getting your location...', { id: 'location' });
+    
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log('📍 Location received:', latitude, longitude);
+        
         setFormData(prev => ({
           ...prev,
-          latitude: pos.coords.latitude.toFixed(4),
-          longitude: pos.coords.longitude.toFixed(4)
+          latitude: latitude.toFixed(6),
+          longitude: longitude.toFixed(6)
         }));
-        toast.success('✅ Location fetched!');
+        
+        toast.success(`Location set: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`, { id: 'location' });
         setGettingLocation(false);
       },
-      () => {
-        toast.error('Failed to get location');
+      (error) => {
+        console.error('Geolocation error:', error);
+        let errorMessage = 'Unable to get location';
+        
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location permission denied. Please allow location access and try again.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Location information is unavailable. Please enter manually.';
+            break;
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out. Please try again.';
+            break;
+          default:
+            errorMessage = 'An unknown error occurred.';
+        }
+        
+        toast.error(errorMessage, { id: 'location' });
         setGettingLocation(false);
+      },
+      { 
+        enableHighAccuracy: true, 
+        timeout: 10000, 
+        maximumAge: 0 
       }
     );
   };
@@ -91,8 +111,8 @@ const AstrologyPage = () => {
         const loc = res.data[0];
         setFormData(prev => ({
           ...prev,
-          latitude: parseFloat(loc.lat).toFixed(4),
-          longitude: parseFloat(loc.lon).toFixed(4)
+          latitude: parseFloat(loc.lat).toFixed(6),
+          longitude: parseFloat(loc.lon).toFixed(6)
         }));
         toast.success(`✅ ${loc.display_name.split(',')[0]} selected`);
       } else toast.error('City not found');
@@ -111,6 +131,10 @@ const AstrologyPage = () => {
     { name: 'Chennai', lat: 13.0827, lon: 80.2707 },
     { name: 'Kolkata', lat: 22.5726, lon: 88.3639 },
     { name: 'Hyderabad', lat: 17.3850, lon: 78.4867 },
+    { name: 'Jaipur', lat: 26.9124, lon: 75.7873 },
+    { name: 'Lucknow', lat: 26.8467, lon: 80.9462 },
+    { name: 'Pune', lat: 18.5204, lon: 73.8567 },
+    { name: 'Ahmedabad', lat: 23.0225, lon: 72.5714 }
   ];
 
   const selectPopularCity = (city) => {
@@ -123,9 +147,27 @@ const AstrologyPage = () => {
     toast.success(`${city.name} selected`);
   };
 
-  // ✅ Generate function - Always requires payment
   const generate = async (e) => {
     e.preventDefault();
+    
+    const token = getToken();
+    if (!token && !isAuthenticated) {
+      const requestData = {
+        date: parseInt(formData.date),
+        month: parseInt(formData.month),
+        year: parseInt(formData.year),
+        hour: parseInt(formData.hour),
+        minute: parseInt(formData.minute),
+        latitude: parseFloat(formData.latitude),
+        longitude: parseFloat(formData.longitude),
+        timezone: parseFloat(formData.timezone)
+      };
+      localStorage.setItem('pending_kundli_data', JSON.stringify(requestData));
+      localStorage.setItem('redirect_after_login', '/astrology');
+      toast.error('Please login to generate Kundli');
+      navigate('/auth');
+      return;
+    }
     
     const dateNum = parseInt(formData.date);
     const monthNum = parseInt(formData.month);
@@ -156,7 +198,7 @@ const AstrologyPage = () => {
       return;
     }
     if (isNaN(latNum) || isNaN(lonNum)) {
-      toast.error('Please select a location');
+      toast.error('Please select a location (use popular cities or search)');
       return;
     }
     if (formData.date === '' || formData.month === '' || formData.year === '' || 
@@ -174,12 +216,9 @@ const AstrologyPage = () => {
     };
     
     setPendingFormData(requestData);
-    
-    // ✅ Always show payment modal - Every kundli requires payment
     setShowPaymentModal(true);
   };
 
-  // ✅ Generate Kundli API Call
   const generateKundli = async (data) => {
     setLoading(true);
     try {
@@ -192,14 +231,12 @@ const AstrologyPage = () => {
         setPanchangData(panchang);
         setActiveView('kundli');
         
-        // ✅ Save purchased kundli to user profile
         try {
           const saveRes = await api.post('/astrology/save-purchased-kundli', {
             kundliData: kundli,
             panchangData: panchang,
             birthDetails: data
           });
-          
           if (saveRes.data.success) {
             console.log('✅ Kundli saved to profile');
           }
@@ -224,12 +261,11 @@ const AstrologyPage = () => {
     }
   };
 
-  // ✅ Handle Payment - Testing mode ₹1
   const handlePayment = async () => {
     setLoading(true);
     try {
       const orderRes = await api.post('/kundlipayments/create-order', {
-        amount: 99,  // ✅ ₹1 for testing
+        amount: 99,
         currency: 'INR'
       });
       
@@ -248,7 +284,6 @@ const AstrologyPage = () => {
           });
           
           if (verifyRes.data.success) {
-            // ✅ No localStorage.setItem - Each payment is separate
             setShowPaymentModal(false);
             toast.success('Payment successful! Generating your Kundli...');
             generateKundli(pendingFormData);
@@ -273,7 +308,6 @@ const AstrologyPage = () => {
     }
   };
 
-  // ✅ Download PDF
   const downloadPDF = async () => {
     if (!kundliData) return;
     
@@ -313,7 +347,6 @@ const AstrologyPage = () => {
     }
   };
 
-  // ✅ Payment Modal Component - Testing mode ₹1
   const PaymentModal = () => (
     <div style={styles.modalOverlay}>
       <div style={styles.modalContent}>
@@ -337,7 +370,6 @@ const AstrologyPage = () => {
     </div>
   );
 
-  // Helper function
   const getValue = (obj, keys, defaultValue = 'N/A') => {
     if (!obj) return defaultValue;
     const keyArray = Array.isArray(keys) ? keys : [keys];
@@ -349,7 +381,6 @@ const AstrologyPage = () => {
     return defaultValue;
   };
 
-  // Render functions (renderForm, renderKundli, renderPanchang remain same as your existing code)
   const renderForm = () => (
     <div style={styles.formContainer}>
       <h1 style={styles.title}>🔮 Generate Kundli & Panchang</h1>
@@ -398,11 +429,17 @@ const AstrologyPage = () => {
           </div>
 
           <div style={styles.row}>
-            <input type="number" step="any" name="latitude" placeholder="Latitude" value={formData.latitude} onChange={handleChange} style={styles.input} required />
-            <input type="number" step="any" name="longitude" placeholder="Longitude" value={formData.longitude} onChange={handleChange} style={styles.input} required />
-            <button type="button" onClick={getCurrentLocation} disabled={gettingLocation} style={styles.locationBtn}>
-              {gettingLocation ? 'Fetching...' : '📍 My Location'}
-            </button>
+            <div style={styles.inputGroup}>
+              <input type="number" step="any" name="latitude" placeholder="Latitude" value={formData.latitude} onChange={handleChange} style={styles.input} required />
+            </div>
+            <div style={styles.inputGroup}>
+              <input type="number" step="any" name="longitude" placeholder="Longitude" value={formData.longitude} onChange={handleChange} style={styles.input} required />
+            </div>
+            <div style={styles.inputGroup}>
+              <button type="button" onClick={getCurrentLocation} disabled={gettingLocation} style={styles.locationBtn}>
+                {gettingLocation ? '⏳ Getting...' : '📍 My Current Location'}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -596,8 +633,9 @@ const styles = {
   section: { background: '#f8f9fa', padding: '25px', borderRadius: '15px', marginBottom: '25px' },
   sectionTitle: { color: '#667eea', marginTop: '30px', marginBottom: '15px', fontSize: '1.3rem', borderLeft: '4px solid #667eea', paddingLeft: '15px' },
   row: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '15px' },
+  inputGroup: { display: 'flex', flexDirection: 'column' },
   input: { padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '16px' },
-  locationBtn: { padding: '12px', background: '#ffd700', border: 'none', borderRadius: '8px', cursor: 'pointer' },
+  locationBtn: { padding: '12px', background: '#ffd700', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' },
   cityBtn: { padding: '12px', background: '#4caf50', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
   submitBtn: { width: '100%', padding: '16px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', marginTop: '20px' },
   downloadBtn: { width: '100%', padding: '16px', background: '#28a745', color: 'white', border: 'none', borderRadius: '10px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer', marginTop: '30px' },
@@ -621,7 +659,7 @@ const styles = {
   panchangCard: { background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center' },
   muhuratCard: { background: '#f8f9fa', padding: '15px', borderRadius: '10px', textAlign: 'center', border: '1px solid #ddd' },
   additionalInfo: { display: 'flex', justifyContent: 'center', gap: '30px', background: '#f8f9fa', padding: '15px', borderRadius: '12px', marginTop: '20px', flexWrap: 'wrap' },
-  cityGrid: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
+  cityGrid: { display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '15px' },
   cityChip: { padding: '8px 16px', background: '#e0f0ff', border: 'none', borderRadius: '20px', cursor: 'pointer', fontSize: '14px' },
   modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 },
   modalContent: { background: 'white', padding: '30px', borderRadius: '20px', maxWidth: '400px', width: '90%', textAlign: 'center' },
