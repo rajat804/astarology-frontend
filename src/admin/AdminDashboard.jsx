@@ -25,14 +25,15 @@ import {
   getAllBookings, 
   updateBookingStatus, 
   deleteBooking,
-  getBookingStats 
+  // getBookingStats 
 } from "../services/api";
 import { 
   getAllOrders, 
   updateOrderStatus, 
   deleteOrder,
-  getOrderStats 
+  // getOrderStats 
 } from "../services/api";
+import BlogManager from "./components/BlogManager";
 
 function useCount(to = 0, duration = 1200) {
   const [num, setNum] = useState(0);
@@ -477,7 +478,8 @@ function AdminDashboard() {
                 )}
               </motion.section>
             )}
-
+              {/* Blog Tab */}
+            {tab === "blog" && <BlogManager />}
             {/* Orders Tab */}
             {tab === "orders" && (
               <motion.section
