@@ -16,6 +16,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, tab, setTab, logout }) => {
     { key: "overview", label: "Overview", icon: <FaChartLine /> },
     { key: "services", label: "Services", icon: <FaBook /> },
     { key: "products", label: "Products", icon: <FaBoxOpen /> },
+  { key: "blog", label: "Blog", icon: <HiOutlineDocumentText /> },
     { key: "classes", label: "Classes", icon: <HiOutlineUserCircle /> },
     { key: "bookings", label: "Bookings", icon: <HiOutlineCalendar /> },
     { key: "orders", label: "Orders", icon: <HiOutlineShoppingBag /> },
