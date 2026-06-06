@@ -29,10 +29,11 @@ import VastuShastra from "./pages/VastuShastra";
 import ParanormalActivity from "./pages/ParanormalActivity";
 import SpiritualHealer from "./pages/SpiritualHealer";
 import HowWeGuide from "./pages/HowWeGuide";
-import Blogs from "./pages/Blogs";
-import BlogDetail from "./pages/BlogDetails";
+// import Blogs from "./pages/Blogs";
+import BlogDetailPage from "./pages/BlogDetailPage";
 import AstrologyPage from "./pages/AstrologyPage";
 import ProfilePage from "./pages/ProfilePage";
+import BlogPage from "./pages/BlogPage";
 
 
 // Protected Route Component
@@ -75,8 +76,8 @@ const AppRoutes = () => {
       <Route path="/how-we-guide" element={<HowWeGuide />} />
       <Route path="/astrology" element={<AstrologyPage />} />
 
-      <Route path="/blogs" element={<Blogs />} />
-      <Route path="/blog/:id" element={<BlogDetail />} />
+      <Route path="/blog" element={<BlogPage />} />
+      <Route path="/blog/:slug" element={<BlogDetailPage />} />
 
       {/* <Route path="/services" element={<ServicesPage />} /> */}
       <Route path="/services/vedic-astrology" element={<VedicAstrology />} />
