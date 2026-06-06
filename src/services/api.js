@@ -323,7 +323,7 @@ export const getAdminOrderById = async (orderId) => {
   return response.data;
 };
 
-// ==================== BOOKING APIs ====================
+// ==================== BOOKING APIs (Admin) ====================
 export const getAllBookings = async (filters = {}) => {
   const params = new URLSearchParams(filters).toString();
   const response = await api.get(`/bookings/admin${params ? `?${params}` : ''}`);
@@ -362,6 +362,164 @@ export const getMyBookings = async () => {
 
 export const getBookingStats = async () => {
   const response = await api.get('/bookings/admin/stats/dashboard');
+  return response.data;
+};
+
+// ==================== BLOG APIs (Public) ====================
+// Blog APIs (Public)
+export const getAllBlogs = async (tag = '', page = 1, limit = 6) => {
+  const params = new URLSearchParams();
+  if (tag) params.append('tag', tag);
+  params.append('page', page);
+  params.append('limit', limit);
+  
+  const response = await api.get(`/blogs?${params.toString()}`);
+  return response.data;
+};
+
+export const getBlogBySlug = async (slug) => {
+  const response = await api.get(`/blogs/${slug}`);
+  return response.data;
+};
+
+export const likeBlog = async (id) => {
+  const response = await api.put(`/blogs/${id}/like`);
+  return response.data;
+};
+
+// Blog APIs (Admin)
+export const getAllBlogsAdmin = async () => {
+  const response = await api.get('/blogs/admin/all');
+  return response.data;
+};
+
+export const getBlogById = async (id) => {
+  const response = await api.get(`/blogs/admin/${id}`);
+  return response.data;
+};
+
+export const createBlog = async (blogData) => {
+  const response = await api.post('/blogs/admin', blogData);
+  return response.data;
+};
+
+export const updateBlog = async (id, blogData) => {
+  const response = await api.put(`/blogs/admin/${id}`, blogData);
+  return response.data;
+};
+
+export const deleteBlog = async (id) => {
+  const response = await api.delete(`/blogs/admin/${id}`);
+  return response.data;
+};
+
+export const toggleBlogPublish = async (id) => {
+  const response = await api.patch(`/blogs/admin/${id}/toggle`);
+  return response.data;
+};
+
+// ==================== SERVICE APIs ====================
+export const getAllServices = async () => {
+  const response = await api.get('/services');
+  return response.data;
+};
+
+export const getServiceById = async (id) => {
+  const response = await api.get(`/services/${id}`);
+  return response.data;
+};
+
+export const createService = async (serviceData) => {
+  const response = await api.post('/admin/services', serviceData);
+  return response.data;
+};
+
+export const updateService = async (id, serviceData) => {
+  const response = await api.put(`/admin/services/${id}`, serviceData);
+  return response.data;
+};
+
+export const deleteService = async (id) => {
+  const response = await api.delete(`/admin/services/${id}`);
+  return response.data;
+};
+
+// ==================== CONTACT APIs ====================
+export const sendContactMessage = async (messageData) => {
+  const response = await api.post('/contact', messageData);
+  return response.data;
+};
+
+export const getAllMessages = async () => {
+  const response = await api.get('/admin/contact-messages');
+  return response.data;
+};
+
+export const updateMessageStatus = async (id, status) => {
+  const response = await api.put(`/admin/contact-messages/${id}`, { status });
+  return response.data;
+};
+
+// ==================== ASTROLOGY APIs ====================
+export const generateKundli = async (birthDetails) => {
+  const response = await api.post('/astrology/generate', birthDetails);
+  return response.data;
+};
+
+export const saveChart = async (chartData) => {
+  const response = await api.post('/astrology/save', chartData);
+  return response.data;
+};
+
+export const getSavedCharts = async () => {
+  const response = await api.get('/astrology/saved');
+  return response.data;
+};
+
+export const deleteChart = async (chartId) => {
+  const response = await api.delete(`/astrology/saved/${chartId}`);
+  return response.data;
+};
+
+export const getPurchasedKundlis = async () => {
+  const response = await api.get('/astrology/my-purchased-kundlis');
+  return response.data;
+};
+
+// ==================== STATS APIs ====================
+export const getDashboardStats = async () => {
+  const response = await api.get('/admin/stats/dashboard');
+  return response.data;
+};
+
+export const getRevenueStats = async () => {
+  const response = await api.get('/admin/stats/revenue');
+  return response.data;
+};
+
+export const getUserStats = async () => {
+  const response = await api.get('/admin/stats/users');
+  return response.data;
+};
+
+export const getNotifications = async () => {
+  const response = await api.get('/notifications');
+  return response.data;
+};
+
+export const markNotificationRead = async (notificationId) => {
+  const response = await api.put(`/notifications/${notificationId}/read`);
+  return response.data;
+};
+
+// ==================== DASHBOARD APIs (Admin) ====================
+export const getAdminDashboardStats = async () => {
+  const response = await api.get('/admin/dashboard/stats');
+  return response.data;
+};
+
+export const getRecentActivity = async () => {
+  const response = await api.get('/admin/recent-activity');
   return response.data;
 };
 
