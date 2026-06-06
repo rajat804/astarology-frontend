@@ -27,7 +27,7 @@ export default function HomePage() {
       {/* <Instructors /> */}
       <Testimonials />
       <FAQ />
-      {/* <BlogPreview /> */}
+      <BlogPreview />
     </div>
   );
 }
