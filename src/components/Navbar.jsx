@@ -113,7 +113,7 @@ const Navbar = () => {
     { name: "How We Guide", path: "/how-we-guide" },
     { name: "Services", path: "#", hasDropdown: true },
     { name: "Astrology", path: "/astrology" },
-    { name: "Blogs", path: "/blogs" },
+    { name: "Blogs", path: "/blog" },
     { name: "Contact", path: "/contact" },
   ];
 
