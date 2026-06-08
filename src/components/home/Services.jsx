@@ -1,92 +1,130 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { HiOutlineArrowRight, HiOutlineSparkles } from "react-icons/hi";
+import { HiOutlineArrowRight } from "react-icons/hi";
 import { GiStarsStack } from "react-icons/gi";
-import assets from "../../assets/assets";
+import { getAllServices } from "../../services/api";
+import toast from "react-hot-toast";
 
 const Services = () => {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const services = [
-    {
-      id: 1,
-      title: "Vedic Astrology",
-      image: assets.service1,
-      description:
-        "Explore the science of planets and stars to reveal your destiny. Our detailed horoscope analysis offers insight into career, marriage, health, and life path — guiding you to make confident decisions in harmony with the cosmos.",
-      link: "/services/vedic-astrology",
-      iconColor: "text-purple-600",
-      bgColor: "from-purple-100 to-purple-50",
-      buttonColor: "border-purple-500 text-purple-600 hover:bg-purple-500",
-      gradient: "from-purple-600 to-pink-600",
-      align: "left" // image left, content right
-    },
-    {
-      id: 2,
-      title: "Numerology",
-      image: assets.service2,
-      description:
-        "Decode the divine power of numbers. Discover what your name and date of birth reveal about your personality, opportunities, and spiritual purpose. Numerology helps you attract success and align with your true vibrations.",
-      link: "/services/numerology",
-      iconColor: "text-blue-600",
-      bgColor: "from-blue-100 to-blue-50",
-      buttonColor: "border-blue-500 text-blue-600 hover:bg-blue-500",
-      gradient: "from-blue-600 to-cyan-600",
-      align: "right" // image right, content left
-    },
-    {
-      id: 3,
-      title: "Vastu Shastra",
-      image: assets.service3,
-      description:
-        "Balance your surroundings to attract prosperity and peace. Our Vastu experts align your home or workplace with cosmic energies — promoting happiness, health, and spiritual harmony in your daily life.",
-      link: "/services/vastu",
-      iconColor: "text-green-600",
-      bgColor: "from-green-100 to-green-50",
-      buttonColor: "border-green-500 text-green-600 hover:bg-green-500",
-      gradient: "from-green-600 to-emerald-600",
-      align: "left"
-    },
-    {
-      id: 4,
-      title: "Spiritual Healer",
-      image: assets.service6,
-      description:
-        "Heal your aura and free yourself from negative influences. Through meditation, mantra, and energy balancing, our spiritual healing sessions restore inner peace and strengthen your divine connection.",
-      link: "/services/spiritual-healer",
-      iconColor: "text-amber-600",
-      bgColor: "from-amber-100 to-amber-50",
-      buttonColor: "border-amber-500 text-amber-600 hover:bg-amber-500",
-      gradient: "from-amber-600 to-orange-600",
-      align: "right"
-    },
-    {
-      id: 5,
-      title: "Paranormal Activity",
-      image: assets.paranormal,
-      description:
-        "Restore harmony when unseen forces disturb your peace. Our spiritual experts use ancient Vedic rituals and mantra healing to neutralize negative energies and protect your space from paranormal disturbances.",
-      link: "/services/paranormal",
-      iconColor: "text-indigo-600",
-      bgColor: "from-indigo-100 to-indigo-50",
-      buttonColor: "border-indigo-500 text-indigo-600 hover:bg-indigo-500",
-      gradient: "from-indigo-600 to-purple-600",
-      align: "left"
-    },
-    {
-      id: 6,
-      title: "Face Reading",
-      image: assets.service4,
-      description:
-        "Discover the ancient art of Samudrika Shastra. Your facial features reveal your personality, destiny, and inner nature. Our experts analyze your expressions and features to provide deep insights into your life path.",
-      link: "/services/face-reading",
-      iconColor: "text-pink-600",
-      bgColor: "from-pink-100 to-pink-50",
-      buttonColor: "border-pink-500 text-pink-600 hover:bg-pink-500",
-      gradient: "from-pink-600 to-rose-600",
-      align: "right"
-    },
-  ];
+  // ✅ Dynamic category style generator - based on category name
+  const getCategoryStyle = (category) => {
+    // Color mapping based on category name
+    const colorMap = {
+      'vedic': 'purple',
+      'astrology': 'purple',
+      'numerology': 'blue',
+      'face': 'pink',
+      'reading': 'pink',
+      'vastu': 'green',
+      'paranormal': 'indigo',
+      'spiritual': 'amber',
+      'healing': 'amber'
+    };
+
+    const color = colorMap[category?.toLowerCase()] || 'purple';
+
+    return {
+      icon: `text-${color}-600`,
+      bg: `from-${color}-100 to-${color}-50`,
+      button: `border-${color}-500 text-${color}-600 hover:bg-${color}-500`,
+      gradient: `from-${color}-600 to-pink-600`,
+    };
+  };
+
+  // Format price in Indian Rupees
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
+  };
+
+  // Get service link from name
+  const getServiceLink = (service) => {
+    return `/services/${service.slug || service.category}`;
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    setLoading(true);
+    try {
+      const response = await getAllServices();
+      console.log('📦 Services from backend:', response);
+
+      let servicesList = [];
+      if (response.success && response.services) {
+        servicesList = response.services;
+      } else if (response.services) {
+        servicesList = response.services;
+      } else if (Array.isArray(response)) {
+        servicesList = response;
+      }
+
+      // Filter only active services and sort by order
+      const activeServices = servicesList
+        .filter(s => s.isActive !== false)
+        .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+      console.log('✅ Active services:', activeServices.length);
+      setServices(activeServices);
+    } catch (error) {
+      console.error('❌ Error fetching services:', error);
+      toast.error('Failed to load services');
+      setServices([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="bg-gradient-to-b from-offWhite to-orange-50/50 py-16 md:py-20">
+        <div className="text-center mb-12 md:mb-16">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-100 to-orange-100 px-3 md:px-4 py-1.5 md:py-2 rounded-full mb-4">
+            <GiStarsStack className="text-red-500 w-3 h-3 md:w-4 md:h-4" />
+            <span className="text-xs md:text-sm font-semibold text-red-600">Our Services</span>
+          </div>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">
+            How We Guide You
+          </h2>
+          <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
+            Loading services...
+          </p>
+        </div>
+        <div className="flex justify-center">
+          <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </section>
+    );
+  }
+
+  if (services.length === 0) {
+    return (
+      <section className="bg-gradient-to-b from-offWhite to-orange-50/50 py-16 md:py-20">
+        <div className="text-center mb-12 md:mb-16">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-100 to-orange-100 px-3 md:px-4 py-1.5 md:py-2 rounded-full mb-4">
+            <GiStarsStack className="text-red-500 w-3 h-3 md:w-4 md:h-4" />
+            <span className="text-xs md:text-sm font-semibold text-red-600">Our Services</span>
+          </div>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">
+            How We Guide You
+          </h2>
+          <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
+            No services available at the moment. Please check back later.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-gradient-to-b from-offWhite to-orange-50/50 py-16 md:py-20 overflow-hidden">
@@ -105,58 +143,119 @@ const Services = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4">
-        {services.map((service, index) => (
-          <motion.div
-            key={service.id}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            viewport={{ once: true }}
-            className={`bg-white rounded-[80px] p-6 md:p-10 mb-12 shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-100 flex flex-col md:flex-row items-center gap-8 md:gap-10 ${
-              service.align === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'
-            }`}
-          >
-            {/* IMAGE SIDE */}
-            <div className="relative w-full md:w-1/2 flex justify-center">
-              <div className={`bg-gradient-to-br ${service.bgColor} rounded-[120px] p-6 w-full max-w-[480px] h-[220px] flex items-center justify-center transition-all duration-300 hover:scale-105`}>
-                <div className="overflow-hidden rounded-full w-[380px] h-[180px] shadow-md">
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                  />
+        {services.map((service, index) => {
+          const style = getCategoryStyle(service.category);
+          const serviceLink = getServiceLink(service);
+          const alignment = index % 2 === 0 ? 'left' : 'right';
+
+          return (
+            <motion.div
+              key={service._id}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className={`bg-white rounded-[80px] p-6 md:p-10 mb-12 shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-100 flex flex-col md:flex-row items-center gap-8 md:gap-10 ${alignment === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'
+                }`}
+            >
+              {/* IMAGE SIDE - Using backend image or fallback */}
+              <div className="relative w-full md:w-1/2 flex justify-center">
+                <div className={`bg-gradient-to-br ${style.bg} rounded-[120px] p-6 w-full max-w-[480px] h-[220px] flex items-center justify-center transition-all duration-300 hover:scale-105`}>
+                  <div className="overflow-hidden rounded-full w-[380px] h-[180px] shadow-md bg-white flex items-center justify-center">
+                    {service.image && service.image !== '' && !service.image.includes('undefined') ? (
+                      <img
+                        src={service.image}
+                        alt={service.name}
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.parentElement.innerHTML = `<span class="text-6xl">${service.icon || '🔮'}</span>`;
+                        }}
+                      />
+                    ) : (
+                      <span className="text-6xl">{service.icon || '🔮'}</span>
+                    )}
+                  </div>
                 </div>
+                <div className={`absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gradient-to-r ${style.gradient} opacity-60`} />
+
+                {/* Discount Badge - From backend */}
+                {service.discount > 0 && (
+                  <div className="absolute -top-2 -left-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                    {service.discount}% OFF
+                  </div>
+                )}
               </div>
-              {/* Decorative dot */}
-              <div className={`absolute -top-2 -right-2 w-6 h-6 rounded-full bg-gradient-to-r ${service.gradient} opacity-60`} />
-            </div>
 
-            {/* TEXT SIDE */}
-            <div className="md:w-1/2">
-              {/* Title with accent color on dot */}
-              <div className="flex items-center gap-2 mb-3">
-                <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${service.gradient}`} />
-                <span className={`text-sm font-semibold ${service.iconColor}`}>Discover Your Path</span>
+              {/* TEXT SIDE - All data from backend */}
+              <div className="md:w-1/2">
+                {/* Icon and Tag */}
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">{service.icon || '🔮'}</span>
+                  <span className={`text-sm font-semibold ${style.icon}`}>Discover Your Path</span>
+                </div>
+
+                {/* Title - From backend */}
+                <h2 className={`text-3xl md:text-4xl font-bold mb-4 uppercase tracking-wide bg-gradient-to-r ${style.gradient} bg-clip-text text-transparent`}>
+                  {service.name}
+                </h2>
+
+                {/* Description - From backend */}
+                <p className="text-gray-600 mb-4 leading-relaxed line-clamp-3">
+                  {service.shortDescription || service.description}
+                </p>
+
+                {/* Price and Discount - From backend */}
+                <div className="mb-4 flex items-center gap-3 flex-wrap">
+                  <span className="text-2xl font-bold text-green-600">
+                    {formatPrice(service.price)}
+                  </span>
+                  {service.originalPrice && service.originalPrice > service.price && (
+                    <span className="text-sm text-gray-400 line-through">
+                      {formatPrice(service.originalPrice)}
+                    </span>
+                  )}
+                  {service.discount > 0 && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                      Save {service.discount}%
+                    </span>
+                  )}
+                </div>
+
+                {/* Duration - From backend */}
+                <div className="mb-4 flex items-center gap-2 text-sm text-gray-500">
+                  <span>⏰</span>
+                  <span>Duration: {service.duration}</span>
+                </div>
+
+                {/* Features Preview - From backend */}
+                {service.features && service.features.length > 0 && (
+                  <div className="mb-4">
+                    <div className="flex flex-wrap gap-2">
+                      {service.features.slice(0, 3).map((feature, idx) => (
+                        <span key={idx} className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                          ✓ {feature.length > 25 ? feature.substring(0, 25) + '...' : feature}
+                        </span>
+                      ))}
+                      {service.features.length > 3 && (
+                        <span className="text-xs text-gray-400">+{service.features.length - 3} more</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Learn More Button - Dynamic link */}
+                <Link
+                  to={serviceLink}
+                  className={`group inline-flex items-center gap-2 border-2 ${style.button} px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:bg-black hover:text-white`}
+                >
+                  Learn More
+                  <HiOutlineArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
               </div>
-              
-              <h2 className={`text-3xl md:text-4xl font-bold mb-4 uppercase tracking-wide bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}>
-                {service.title}
-              </h2>
-
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                {service.description}
-              </p>
-
-              <Link
-                to={service.link}
-                className={`inline-flex items-center gap-2 border-2 ${service.buttonColor} px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:text-white hover:gap-3`}
-              >
-                Learn More
-                <HiOutlineArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          );
+        })}
       </div>
     </section>
   );
