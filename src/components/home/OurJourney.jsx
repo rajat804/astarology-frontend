@@ -14,6 +14,7 @@ import {
 } from "react-icons/gi";
 import { Link } from "react-router-dom";
 import CTA from "../common/CTA";
+import nakshatraganak from "../../assets/nakshatraganak-img-2.png";
 
 const OurJourney = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -81,7 +82,7 @@ const OurJourney = () => {
       )}
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Left Side - Content */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -100,7 +101,7 @@ const OurJourney = () => {
             
             <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-6">
               For centuries, the universe has guided human life through the movement of stars and planets. 
-              At Poseify Astrology, we bring ancient Vedic wisdom into the modern world—helping people discover 
+              At Nakshatra Ganak, we bring ancient Vedic wisdom into the modern world—helping people discover 
               clarity, purpose, and balance. Our experts specialize in Vedic Astrology, Numerology, Vastu, and 
               Spiritual Healing to illuminate your life's true path.
             </p>
@@ -144,19 +145,23 @@ const OurJourney = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="relative"
+            className="relative flex justify-center"
           >
-            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto bg-gray-100">
               <img
-                src="https://nakshatraganak.com/img/about.jpg"
-                alt="Poseify Astrology Center"
-                className="w-full h-auto object-cover"
-                loading="lazy"
-                onError={(e) => {
-                  e.target.src = "https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=800&auto=format";
+                src={nakshatraganak}
+                alt="Praveen Nangia - Nakshatra Ganak Astrologer"
+                className="w-full h-auto"
+                style={{
+                  display: 'block',
+                  objectFit: 'contain',
+                  objectPosition: 'top center',
+                  maxHeight: '500px',
+                  width: '100%'
                 }}
+                loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
               
               {/* Floating Quote Card */}
               <motion.div
@@ -167,12 +172,12 @@ const OurJourney = () => {
                 className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 bg-white/95 backdrop-blur rounded-xl p-3 md:p-4 shadow-lg"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center">
-                    <GiLotus className="text-white w-5 h-5" />
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-r from-red-500 to-orange-500 flex items-center justify-center flex-shrink-0">
+                    <GiLotus className="text-white w-4 h-4 md:w-5 md:h-5" />
                   </div>
                   <div>
-                    <p className="text-xs md:text-sm font-semibold text-gray-900">Ancient Wisdom, Modern Guidance</p>
-                    <p className="text-xs text-gray-500">Trusted by thousands for spiritual clarity</p>
+                    <p className="text-xs md:text-sm font-semibold text-gray-900">25+ Years of Experience</p>
+                    <p className="text-[10px] md:text-xs text-gray-500">Praveen Nangia - Astrologer</p>
                   </div>
                 </div>
               </motion.div>
@@ -181,15 +186,14 @@ const OurJourney = () => {
             {/* Decorative Elements */}
             {!isMobile && (
               <>
-                <div className="absolute -top-5 -left-5 w-20 h-20 bg-purple-200/50 rounded-full blur-2xl animate-float-slow" />
-                <div className="absolute -bottom-5 -right-5 w-24 h-24 bg-orange-200/50 rounded-full blur-2xl animate-float-slower" />
+                <div className="absolute -top-5 -left-5 w-20 h-20 bg-purple-200/50 rounded-full blur-2xl animate-float-slow -z-10" />
+                <div className="absolute -bottom-5 -right-5 w-24 h-24 bg-orange-200/50 rounded-full blur-2xl animate-float-slower -z-10" />
               </>
             )}
           </motion.div>
         </div>
       </div>
 
-      {/* CSS Animations */}
       <style jsx>{`
         @keyframes float-orb {
           0%, 100% {
