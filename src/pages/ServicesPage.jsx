@@ -1,262 +1,475 @@
-// ServicesPage.jsx
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  HiOutlineCalendar,
-  HiOutlineClock,
-  HiOutlineUserGroup,
-} from "react-icons/hi";
-import { FaCheck, FaStar, FaChevronDown } from "react-icons/fa";
+import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
+import { 
+  HiOutlineCalendar, 
+  HiOutlineClock, 
+  HiOutlineCash, 
+  HiOutlineX,
+  HiOutlineCheck,
+  HiOutlineArrowRight,
+  HiOutlineSparkles
+} from 'react-icons/hi';
+// import { HiOutlineTag } from "react-icons/hi2";
+const ServicesPage = () => {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [bookingDetails, setBookingDetails] = useState({
+    date: '',
+    time: '',
+    notes: '',
+    name: '',
+    email: '',
+    phone: ''
+  });
+  const [processing, setProcessing] = useState(false);
+  
+  const { getToken, isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
 
-/* ---------- Helpers ---------- */
-const Accent = ({ children }) => (
-  <span className="text-green-600">{children}</span>
-);
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const api = axios.create({ baseURL: API_BASE_URL });
 
-const CTA = ({ children, className = "", ...rest }) => (
-  <button
-    {...rest}
-    className={
-      "inline-flex items-center gap-3 px-5 py-2 rounded-2xl font-semibold shadow-md text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transition " +
-      className
+  // Add token to requests
+  api.interceptors.request.use((config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
-  >
-    {children}
-  </button>
-);
+    return config;
+  });
 
-/* ---------- HERO ---------- */
-const Hero = () => (
-  <section className="relative bg-gradient-to-b from-orange-50/50 to-offWhite py-20">
-    <div className="max-w-6xl mx-auto px-6 text-center">
-      <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
-        Talk to our experts about <Accent>Astro, Numero, Vastu, Yoga</Accent> & more
-      </h1>
-      <p className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg">
-        From astrology to vastu, numerology, and personalized wellness — find
-        the right guidance and tools crafted for your journey.
-      </p>
-      <div className="mt-6">
-        <CTA>Book a Consultation</CTA>
-      </div>
-    </div>
-  </section>
-);
-
-/* ---------- SERVICE CATEGORIES ---------- */
-const Categories = () => {
-  const cats = [
-    {
-      name: "Astrology Readings",
-      desc: "Get clarity on career, relationships, and life path.",
-      img: "https://images.unsplash.com/photo-1622649517030-0e0597f5b6a1",
-    },
-    {
-      name: "Numerology Insights",
-      desc: "Decode your life numbers and cycles with expert reports.",
-      img: "https://images.unsplash.com/photo-1605170439002-22c3da6a142a",
-    },
-    {
-      name: "Vastu Consultations",
-      desc: "Balance your space with ancient architectural wisdom.",
-      img: "https://images.unsplash.com/photo-1600585152220-90363fe7e115",
-    },
-    {
-      name: "Wellness & Yoga",
-      desc: "Mind-body harmony through guided practices.",
-      img: "https://images.unsplash.com/photo-1554344056-591b3d3f197d",
-    },
+  const categories = [
+    { id: 'all', name: 'All Services', icon: '✨', color: 'purple' },
+    { id: 'vedic-astrology', name: 'Vedic Astrology', icon: '🔮', color: 'purple' },
+    { id: 'numerology', name: 'Numerology', icon: '🔢', color: 'blue' },
+    { id: 'face-reading', name: 'Face Reading', icon: '👤', color: 'pink' },
+    { id: 'vastu', name: 'Vastu Shastra', icon: '🏠', color: 'green' },
+    { id: 'paranormal', name: 'Paranormal', icon: '👻', color: 'indigo' },
+    { id: 'spiritual-healing', name: 'Spiritual Healing', icon: '🕉️', color: 'amber' }
   ];
 
+  useEffect(() => {
+    fetchServices();
+  }, [selectedCategory]);
+
+  const fetchServices = async () => {
+    setLoading(true);
+    try {
+      const url = selectedCategory === 'all' 
+        ? '/services' 
+        : `/services/category/${selectedCategory}`;
+      const response = await api.get(url);
+      
+      if (response.data.success) {
+        setServices(response.data.services);
+      } else if (response.data.services) {
+        setServices(response.data.services);
+      } else {
+        setServices([]);
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      toast.error('Failed to load services');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBookNow = (service) => {
+    if (!getToken() || !isAuthenticated) {
+      toast.error('Please login to book services');
+      navigate('/auth');
+      return;
+    }
+    setSelectedService(service);
+    setBookingDetails({ 
+      date: '', 
+      time: '', 
+      notes: '',
+      name: user?.fullName || '',
+      email: user?.email || '',
+      phone: ''
+    });
+    setShowPaymentModal(true);
+  };
+
+  const closeModal = useCallback(() => {
+    setShowPaymentModal(false);
+    setTimeout(() => {
+      setSelectedService(null);
+    }, 300);
+  }, []);
+
+  const handlePayment = async () => {
+    if (!selectedService) return;
+    
+    if (!bookingDetails.date || !bookingDetails.time) {
+      toast.error('Please select date and time');
+      return;
+    }
+    
+    setProcessing(true);
+    try {
+      const orderRes = await api.post('/service-payment/create-order', {
+        serviceId: selectedService._id,
+        amount: selectedService.price
+      });
+      
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: orderRes.data.amount,
+        currency: orderRes.data.currency,
+        name: 'Nakshatra Ganak',
+        description: selectedService.name,
+        order_id: orderRes.data.id,
+        handler: async (response) => {
+          const verifyRes = await api.post('/service-payment/verify-payment', {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            serviceId: selectedService._id,
+            bookingDate: bookingDetails.date,
+            bookingTime: bookingDetails.time,
+            notes: bookingDetails.notes
+          });
+          
+          if (verifyRes.data.success) {
+            closeModal();
+            toast.success('Booking confirmed! Check your profile.');
+            navigate('/my-bookings');
+          } else {
+            toast.error('Payment verification failed');
+          }
+        },
+        prefill: {
+          name: bookingDetails.name || user?.fullName || '',
+          email: bookingDetails.email || user?.email || '',
+          contact: bookingDetails.phone || ''
+        },
+        theme: { color: '#667eea' }
+      };
+      
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (err) {
+      console.error('Payment error:', err);
+      toast.error('Payment failed. Please try again.');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
+  };
+
+  const timeSlots = [
+    '10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', 
+    '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'
+  ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading mystical services...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <section className="py-14 bg-offWhite">
-      <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-2xl font-bold mb-8 text-gray-800">Service Categories</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {cats.map((c, i) => (
-            <motion.div
-              key={c.name}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden hover:-translate-y-1 transition border border-orange-100"
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm mb-4">
+            <HiOutlineSparkles className="w-5 h-5 text-purple-600" />
+            <span className="text-sm font-semibold text-purple-600">Sacred Services</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent mb-3">
+            Our Divine Services
+          </h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Choose from our expert astrological and spiritual services tailored to guide your journey
+          </p>
+        </div>
+
+        {/* Category Filter */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-5 py-2.5 rounded-full font-medium transition-all duration-300 flex items-center gap-2 ${
+                selectedCategory === cat.id
+                  ? `bg-gradient-to-r from-${cat.color}-600 to-${cat.color}-700 text-white shadow-lg scale-105`
+                  : 'bg-white/80 backdrop-blur-sm text-gray-700 hover:shadow-md'
+              }`}
             >
-              <img
-                src={c.img}
-                alt={c.name}
-                className="h-40 w-full object-cover"
-              />
-              <div className="p-4">
-                <h3 className="font-semibold text-lg text-gray-900">
-                  {c.name}
-                </h3>
-                <p className="text-gray-600 text-sm">{c.desc}</p>
-                <button className="mt-3 text-red-600 font-semibold text-sm hover:text-red-700 transition">
-                  Learn more →
+              <span className="text-lg">{cat.icon}</span>
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Services Grid */}
+        {services.length === 0 ? (
+          <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl">
+            <p className="text-gray-500 text-lg">No services found in this category.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service, index) => (
+              <motion.div
+                key={service._id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -8 }}
+                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+              >
+                {/* Image/Icon Section */}
+                <div className="relative h-56 overflow-hidden">
+                  {service.image ? (
+                    <img 
+                      src={service.image} 
+                      alt={service.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
+                      <span className="text-7xl">{service.icon || '🔮'}</span>
+                    </div>
+                  )}
+                  {service.discount > 0 && (
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                      {service.discount}% OFF
+                    </div>
+                  )}
+                  {service.isPopular && (
+                    <div className="absolute top-4 left-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                      ⭐ Popular
+                    </div>
+                  )}
+                </div>
+
+                {/* Content Section */}
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-purple-600 transition-colors">
+                    {service.name}
+                  </h3>
+                  <p className="text-gray-500 text-sm mb-4 line-clamp-2">
+                    {service.shortDescription}
+                  </p>
+                  
+                  {/* Price Section */}
+                  <div className="flex items-baseline gap-2 mb-3">
+                    <span className="text-2xl font-bold text-purple-600">
+                      {formatPrice(service.price)}
+                    </span>
+                    {service.originalPrice && (
+                      <span className="text-sm text-gray-400 line-through">
+                        {formatPrice(service.originalPrice)}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Duration */}
+                  <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
+                    <HiOutlineClock className="w-4 h-4" />
+                    <span>{service.duration}</span>
+                  </div>
+
+                  {/* Book Button */}
+                  <button
+                    onClick={() => handleBookNow(service)}
+                    className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 group-hover:gap-3"
+                  >
+                    Book Now
+                    <HiOutlineArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Payment Modal */}
+      <AnimatePresence>
+        {showPaymentModal && selectedService && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+            onClick={closeModal}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 30 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 30 }}
+              className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center text-2xl">
+                    {selectedService.icon || '🔮'}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-800">Book Session</h2>
+                    <p className="text-sm text-gray-500">{selectedService.name}</p>
+                  </div>
+                </div>
+                <button onClick={closeModal} className="p-2 hover:bg-gray-100 rounded-full transition">
+                  <HiOutlineX className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6">
+                {/* Service Summary */}
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 mb-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-gray-600">Service Price</span>
+                    <span className="text-xl font-bold text-purple-600">{formatPrice(selectedService.price)}</span>
+                  </div>
+                  {selectedService.discount > 0 && (
+                    <div className="flex justify-between items-center text-sm text-green-600 mb-2">
+                      <span>Discount Applied</span>
+                      <span>{selectedService.discount}% OFF</span>
+                    </div>
+                  )}
+                  <div className="border-t border-purple-100 pt-2 mt-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-gray-800">Total Amount</span>
+                      <span className="text-2xl font-bold text-green-600">{formatPrice(selectedService.price)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Booking Form */}
+                <div className="space-y-5">
+                  <h3 className="font-semibold text-gray-800 text-lg">Booking Details</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                      <input
+                        type="text"
+                        value={bookingDetails.name}
+                        onChange={(e) => setBookingDetails(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="Enter your full name"
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                      <input
+                        type="email"
+                        value={bookingDetails.email}
+                        onChange={(e) => setBookingDetails(prev => ({ ...prev, email: e.target.value }))}
+                        placeholder="your@email.com"
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={bookingDetails.phone}
+                      onChange={(e) => setBookingDetails(prev => ({ ...prev, phone: e.target.value }))}
+                      placeholder="+91 98765 43210"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Date *</label>
+                      <input
+                        type="date"
+                        value={bookingDetails.date}
+                        onChange={(e) => setBookingDetails(prev => ({ ...prev, date: e.target.value }))}
+                        min={new Date().toISOString().split('T')[0]}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Time *</label>
+                      <select
+                        value={bookingDetails.time}
+                        onChange={(e) => setBookingDetails(prev => ({ ...prev, time: e.target.value }))}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                      >
+                        <option value="">Select time slot</option>
+                        {timeSlots.map(slot => (
+                          <option key={slot} value={slot}>{slot}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
+                    <textarea
+                      value={bookingDetails.notes}
+                      onChange={(e) => setBookingDetails(prev => ({ ...prev, notes: e.target.value }))}
+                      rows="3"
+                      placeholder="Any specific questions or concerns..."
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition resize-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-4 flex gap-3">
+                <button
+                  onClick={closeModal}
+                  className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePayment}
+                  disabled={processing || !bookingDetails.date || !bookingDetails.time}
+                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {processing ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Processing...
+                    </div>
+                  ) : (
+                    `Pay ${formatPrice(selectedService.price)} & Book`
+                  )}
                 </button>
               </div>
             </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-
-
-/* ---------- PRICING PACKAGES ---------- */
-const Pricing = () => {
-  const plans = [
-    {
-      name: "Starter",
-      price: "₹999",
-      features: ["15-min consultation", "1 follow-up email", "Basic notes"],
-      popular: false,
-    },
-    {
-      name: "Premium",
-      price: "₹2,999",
-      features: [
-        "60-min consultation",
-        "Detailed chart report",
-        "Priority booking",
-        "Free gemstone guide",
-      ],
-      popular: true,
-    },
-    {
-      name: "Elite",
-      price: "₹5,999",
-      features: [
-        "90-min session",
-        "Full written report",
-        "3 follow-up emails",
-        "Exclusive remedies kit",
-      ],
-      popular: false,
-    },
-  ];
-
-  return (
-    <section className="py-16 bg-white">
-      <div className="max-w-6xl mx-auto px-6 text-center">
-        <h2 className="text-3xl font-bold text-gray-800">Flexible Packages</h2>
-        <p className="text-gray-600 mt-2">
-          Choose a plan that suits your journey best.
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-6 mt-10">
-          {plans.map((p, i) => (
-            <motion.div
-              key={p.name}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.15 }}
-              className={`relative rounded-2xl shadow-lg p-6 flex flex-col hover:shadow-2xl transition ${
-                p.popular 
-                  ? "bg-gradient-to-br from-red-50 to-offWhite border-2 border-red-200" 
-                  : "bg-offWhite border border-orange-100"
-              }`}
-            >
-              {p.popular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
-                  Most Popular
-                </div>
-              )}
-              <h3 className="font-bold text-lg text-gray-800">{p.name}</h3>
-              <div className="text-3xl font-extrabold text-red-600 mt-2">
-                {p.price}
-              </div>
-              <ul className="mt-4 text-sm space-y-2 text-gray-600 flex-1">
-                {p.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2">
-                    <FaCheck className="text-red-500 text-xs" /> {f}
-                  </li>
-                ))}
-              </ul>
-              <CTA className="mt-6">Choose Plan</CTA>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-
-/* ---------- FAQ ---------- */
-const FAQ = () => {
-  const [open, setOpen] = useState(null);
-  const faqs = [
-    {
-      q: "How do I book a consultation?",
-      a: "Simply select your desired service, pick a slot, and checkout securely online.",
-    },
-    {
-      q: "Are remedies included?",
-      a: "Basic remedies are shared during sessions. Premium kits are available in our shop.",
-    },
-    {
-      q: "Can I reschedule?",
-      a: "Yes, up to 24 hours before your session without extra charge.",
-    },
-    {
-      q: "What payment methods do you accept?",
-      a: "We accept all major credit cards, UPI, and net banking through secure payment gateways.",
-    },
-  ];
-
-  return (
-    <section className="py-16 bg-offWhite">
-      <div className="max-w-4xl mx-auto px-6">
-        <h2 className="text-2xl font-bold mb-8 text-gray-800">Frequently Asked</h2>
-        <div className="space-y-4">
-          {faqs.map((f, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-xl shadow-sm p-4 cursor-pointer border border-orange-100 hover:shadow-md transition"
-            >
-              <button
-                onClick={() => setOpen(open === i ? null : i)}
-                className="flex justify-between w-full items-center font-semibold text-gray-800"
-              >
-                {f.q}
-                <FaChevronDown
-                  className={`transition text-red-500 ${
-                    open === i ? "rotate-180" : "rotate-0"
-                  }`}
-                />
-              </button>
-              <AnimatePresence>
-                {open === i && (
-                  <motion.p
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mt-3 text-sm text-gray-600"
-                  >
-                    {f.a}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-/* ---------- MAIN PAGE ---------- */
-const ServicesPage = () => {
-  return (
-    <main className="bg-offWhite">
-      <Hero />
-      <Categories />
-      <Pricing />
-      <FAQ />
-    </main>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 
