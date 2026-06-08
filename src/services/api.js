@@ -3,7 +3,6 @@ import toast from 'react-hot-toast';
 
 // Simple API URL detection
 const getApiUrl = () => {
-  // Check if we're on Vercel (production)
   const isVercel = window.location.hostname !== 'localhost' && 
                    window.location.hostname !== '127.0.0.1';
   
@@ -11,11 +10,9 @@ const getApiUrl = () => {
   console.log('Is Vercel:', isVercel);
   
   if (isVercel) {
-    // Use your backend URL
     return 'https://nakshatraganak-backend.vercel.app/api';
   }
   
-  // Local development
   return 'http://localhost:5000/api';
 };
 
@@ -24,9 +21,7 @@ console.log('API URL:', API_URL);
 
 const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
   timeout: 30000,
   withCredentials: false,
 });
@@ -43,24 +38,16 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     
-    console.log(`${config.method.toUpperCase()} ${config.url}`, config.data);
     return config;
   },
-  (error) => {
-    console.error('Request error:', error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Handle response errors
 api.interceptors.response.use(
-  (response) => {
-    console.log(`Response: ${response.status}`, response.data);
-    return response;
-  },
+  (response) => response,
   (error) => {
     console.error('Response error:', error.response?.status, error.response?.data);
-    console.error('Full error:', error);
     
     if (error.code === 'ECONNABORTED') {
       toast.error('Request timeout. Please check your connection.');
@@ -72,8 +59,8 @@ api.interceptors.response.use(
       if (error.response?.status === 401) {
         if (error.config.url?.includes('/admin/')) {
           localStorage.removeItem('adminToken');
-          sessionStorage.removeItem('adminToken');
           localStorage.removeItem('admin');
+          sessionStorage.removeItem('adminToken');
           sessionStorage.removeItem('admin');
           window.location.href = '/admin/login';
           toast.error('Admin session expired. Please login again.');
@@ -104,7 +91,6 @@ export const register = async (userData) => {
 };
 
 export const login = async (credentials) => {
-  console.log('Login API called with:', credentials.email);
   const response = await api.post('/auth/login', credentials);
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
@@ -131,20 +117,15 @@ export const getCurrentUser = async () => {
 
 // ==================== ADMIN APIs ====================
 export const adminLogin = async (credentials) => {
-  console.log('Admin login API called with:', credentials.email);
-  
   try {
     const response = await api.post('/admin/login', credentials);
-    console.log('Admin login response:', response.data);
-    
     if (response.data.token) {
       localStorage.setItem('adminToken', response.data.token);
       localStorage.setItem('admin', JSON.stringify(response.data.admin));
-      console.log('Admin token stored successfully');
     }
     return response.data;
   } catch (error) {
-    console.error('Admin login API error:', error);
+    console.error('Admin login error:', error);
     throw error;
   }
 };
@@ -224,24 +205,33 @@ export const getProductStats = async () => {
 // ==================== IMAGE UPLOAD APIs ====================
 export const uploadImage = async (formData) => {
   const response = await api.post('/upload/single', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data;
 };
 
 export const uploadMultipleImages = async (formData) => {
   const response = await api.post('/upload/multiple', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data;
 };
 
 export const deleteImage = async (publicId) => {
   const response = await api.delete('/upload/image', { data: { publicId } });
+  return response.data;
+};
+
+// Service image upload
+export const uploadServiceImage = async (formData) => {
+  const response = await api.post('/upload/service-image', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
+
+export const deleteServiceImage = async (publicId) => {
+  const response = await api.delete('/upload/service-image', { data: { publicId } });
   return response.data;
 };
 
@@ -355,24 +345,17 @@ export const deleteBooking = async (id) => {
   return response.data;
 };
 
-export const getMyBookings = async () => {
-  const response = await api.get('/bookings/my-bookings');
-  return response.data;
-};
-
 export const getBookingStats = async () => {
   const response = await api.get('/bookings/admin/stats/dashboard');
   return response.data;
 };
 
-// ==================== BLOG APIs (Public) ====================
-// Blog APIs (Public)
+// ==================== BLOG APIs ====================
 export const getAllBlogs = async (tag = '', page = 1, limit = 6) => {
   const params = new URLSearchParams();
   if (tag) params.append('tag', tag);
   params.append('page', page);
   params.append('limit', limit);
-  
   const response = await api.get(`/blogs?${params.toString()}`);
   return response.data;
 };
@@ -387,7 +370,6 @@ export const likeBlog = async (id) => {
   return response.data;
 };
 
-// Blog APIs (Admin)
 export const getAllBlogsAdmin = async () => {
   const response = await api.get('/blogs/admin/all');
   return response.data;
@@ -419,6 +401,7 @@ export const toggleBlogPublish = async (id) => {
 };
 
 // ==================== SERVICE APIs ====================
+// Public
 export const getAllServices = async () => {
   const response = await api.get('/services');
   return response.data;
@@ -429,18 +412,61 @@ export const getServiceById = async (id) => {
   return response.data;
 };
 
+export const getServiceBySlug = async (slug) => {
+  const response = await api.get(`/services/slug/${slug}`);
+  return response.data;
+};
+
+export const getServicesByCategory = async (category) => {
+  const response = await api.get(`/services/category/${category}`);
+  return response.data;
+};
+
+export const getServiceStats = async () => {
+  const response = await api.get('/services/stats');
+  return response.data;
+};
+
+// Admin Service APIs
 export const createService = async (serviceData) => {
-  const response = await api.post('/admin/services', serviceData);
+  const response = await api.post('/services', serviceData);
   return response.data;
 };
 
 export const updateService = async (id, serviceData) => {
-  const response = await api.put(`/admin/services/${id}`, serviceData);
+  const response = await api.put(`/services/${id}`, serviceData);
   return response.data;
 };
 
 export const deleteService = async (id) => {
-  const response = await api.delete(`/admin/services/${id}`);
+  const response = await api.delete(`/services/${id}`);
+  return response.data;
+};
+
+export const toggleServiceStatus = async (id) => {
+  const response = await api.patch(`/services/${id}/toggle`);
+  return response.data;
+};
+
+// ==================== SERVICE PAYMENT APIs ====================
+export const createServiceOrder = async (serviceId, amount) => {
+  const response = await api.post('/service-payment/create-order', { serviceId, amount });
+  return response.data;
+};
+
+export const verifyServicePayment = async (paymentData) => {
+  const response = await api.post('/service-payment/verify-payment', paymentData);
+  return response.data;
+};
+
+export const getUserServiceBookings = async () => {
+  const response = await api.get('/service-payment/my-bookings');
+  return response.data;
+};
+
+// ✅ SERVICE BOOKING API - Single export (no duplicate)
+export const getMyBookings = async () => {
+  const response = await api.get('/service-payment/my-bookings');
   return response.data;
 };
 
@@ -509,17 +535,6 @@ export const getNotifications = async () => {
 
 export const markNotificationRead = async (notificationId) => {
   const response = await api.put(`/notifications/${notificationId}/read`);
-  return response.data;
-};
-
-// ==================== DASHBOARD APIs (Admin) ====================
-export const getAdminDashboardStats = async () => {
-  const response = await api.get('/admin/dashboard/stats');
-  return response.data;
-};
-
-export const getRecentActivity = async () => {
-  const response = await api.get('/admin/recent-activity');
   return response.data;
 };
 
