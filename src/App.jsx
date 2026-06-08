@@ -34,6 +34,8 @@ import BlogDetailPage from "./pages/BlogDetailPage";
 import AstrologyPage from "./pages/AstrologyPage";
 import ProfilePage from "./pages/ProfilePage";
 import BlogPage from "./pages/BlogPage";
+import ServiceBooking from "./pages/ServiceBooking";
+import Services from "./components/home/Services";
 
 
 // Protected Route Component
@@ -79,13 +81,14 @@ const AppRoutes = () => {
       <Route path="/blog" element={<BlogPage />} />
       <Route path="/blog/:slug" element={<BlogDetailPage />} />
 
-      {/* <Route path="/services" element={<ServicesPage />} /> */}
-      <Route path="/services/vedic-astrology" element={<VedicAstrology />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/services/:slug" element={<ServiceBooking />} />
+      {/* <Route path="/services/vedic-astrology" element={<VedicAstrology />} />
       <Route path="/services/numerology" element={<Numerology />} />
       <Route path="/services/face-reading" element={<FaceReading />} />
       <Route path="/services/vastu" element={<VastuShastra />} />
       <Route path="/services/paranormal" element={<ParanormalActivity />} />
-      <Route path="/services/spiritual-healer" element={<SpiritualHealer />} />
+      <Route path="/services/spiritual-healer" element={<SpiritualHealer />} /> */}
 
       <Route path="/courses" element={<Classes />} />
       <Route path="/products" element={<ProductsPage />} />
