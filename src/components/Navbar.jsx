@@ -9,14 +9,6 @@ import {
   HiOutlineUserCircle,
   HiOutlineChevronDown
 } from "react-icons/hi";
-import { 
-  GiCrystalBall, 
-  GiMagicSwirl, 
-  GiPalm, 
-  GiVibratingShield,
-  GiGhost,
-  GiHealing
-} from "react-icons/gi";
 import assets from "../assets/assets";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -36,10 +28,8 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
-  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  // ✅ Remove getUser from here if not needed
   const { isAuthenticated, logout, user } = useAuth();
   const { cartCount } = useCart();
   const navigate = useNavigate();
@@ -83,13 +73,10 @@ const Navbar = () => {
       if (userMenuOpen && !event.target.closest('.user-menu')) {
         setUserMenuOpen(false);
       }
-      if (servicesDropdownOpen && !event.target.closest('.services-dropdown')) {
-        setServicesDropdownOpen(false);
-      }
     };
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, [userMenuOpen, servicesDropdownOpen]);
+  }, [userMenuOpen]);
 
   const handleLogout = () => {
     logout();
@@ -98,20 +85,11 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const servicesItems = [
-    { name: "Vedic Astrology", path: "/services/vedic-astrology", icon: GiCrystalBall, description: "Ancient wisdom for modern life" },
-    { name: "Numerology", path: "/services/numerology", icon: GiMagicSwirl, description: "Discover your life path numbers" },
-    { name: "Face Reading", path: "/services/face-reading", icon: GiPalm, description: "Facial features reveal personality" },
-    { name: "Vastu", path: "/services/vastu", icon: GiVibratingShield, description: "Harmonize your living spaces" },
-    { name: "Paranormal Activity", path: "/services/paranormal", icon: GiGhost, description: "Explore the supernatural" },
-    { name: "Spiritual Healer", path: "/services/spiritual-healer", icon: GiHealing, description: "Heal mind, body, and soul" },
-  ];
-
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
     { name: "How We Guide", path: "/how-we-guide" },
-    { name: "Services", path: "#", hasDropdown: true },
+    { name: "Services", path: "/services" },
     { name: "Astrology", path: "/astrology" },
     { name: "Blogs", path: "/blog" },
     { name: "Contact", path: "/contact" },
@@ -141,58 +119,17 @@ const Navbar = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
-              {navLinks.map((link) => 
-                link.hasDropdown ? (
-                  <div key={link.name} className="relative services-dropdown">
-                    <button
-                      onClick={() => setServicesDropdownOpen(!servicesDropdownOpen)}
-                      className={`flex items-center gap-1 transition ${servicesDropdownOpen ? "text-amber-400" : "text-gray-300 hover:text-amber-400"}`}
-                    >
-                      {link.name}
-                      <HiOutlineChevronDown className={`w-4 h-4 transition-transform ${servicesDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
-
-                    <AnimatePresence>
-                      {servicesDropdownOpen && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="absolute left-0 mt-2 w-72 bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-hidden z-50"
-                        >
-                          {servicesItems.map((item) => {
-                            const IconComponent = item.icon;
-                            return (
-                              <Link
-                                key={item.name}
-                                to={item.path}
-                                onClick={() => setServicesDropdownOpen(false)}
-                                className="flex items-start gap-3 px-4 py-3 hover:bg-gray-700 transition-colors group"
-                              >
-                                <IconComponent className="w-5 h-5 text-amber-400 group-hover:text-amber-300 mt-0.5" />
-                                <div>
-                                  <div className="text-sm font-semibold text-white group-hover:text-amber-400">{item.name}</div>
-                                  <div className="text-xs text-gray-400">{item.description}</div>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <NavLink
-                    key={link.name}
-                    to={link.path}
-                    className={({ isActive }) => 
-                      `transition ${isActive ? "text-amber-400 font-semibold" : "text-gray-300 hover:text-amber-400"}`
-                    }
-                  >
-                    {link.name}
-                  </NavLink>
-                )
-              )}
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  className={({ isActive }) => 
+                    `transition ${isActive ? "text-amber-400 font-semibold" : "text-gray-300 hover:text-amber-400"}`
+                  }
+                >
+                  {link.name}
+                </NavLink>
+              ))}
             </nav>
 
             {/* Right Side */}
@@ -275,36 +212,18 @@ const Navbar = () => {
             className="md:hidden bg-gray-900 border-b border-gray-700 overflow-hidden"
           >
             <div className="px-4 py-4 space-y-2">
-              {navLinks.map((link) => 
-                link.hasDropdown ? (
-                  <div key={link.name}>
-                    <div className="text-gray-300 font-medium py-2">{link.name}</div>
-                    <div className="pl-4 space-y-2">
-                      {servicesItems.map((item) => (
-                        <Link
-                          key={item.name}
-                          to={item.path}
-                          onClick={() => setOpen(false)}
-                          className="block text-sm text-gray-400 hover:text-amber-400 py-1"
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <NavLink
-                    key={link.name}
-                    to={link.path}
-                    onClick={() => setOpen(false)}
-                    className={({ isActive }) => 
-                      `block py-2 transition ${isActive ? "text-amber-400 font-semibold" : "text-gray-300 hover:text-amber-400"}`
-                    }
-                  >
-                    {link.name}
-                  </NavLink>
-                )
-              )}
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) => 
+                    `block py-2 transition ${isActive ? "text-amber-400 font-semibold" : "text-gray-300 hover:text-amber-400"}`
+                  }
+                >
+                  {link.name}
+                </NavLink>
+              ))}
               
               {isAuthenticated && (
                 <button onClick={handleLogout} className="w-full text-left py-2 text-red-400">
