@@ -20,7 +20,7 @@ import service4 from "./service-4.jpg";
 import service6 from "./service-6.jpg";
 import paranormal from "./paranormal.jpg";
 import guide from "./guide.webp";
-import nakshatraganak from "./nakshatraganak.jpg"
+import nakshatraganak from "./nakshatraganak-img-2.png";
 import curosel5 from "./curosel5.webp";
 
 const assets = {
