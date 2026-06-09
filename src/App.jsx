@@ -9,7 +9,6 @@ import ScrollToTop from "./components/ScrollToTop";
 import HomePage from "./pages/HomePage";
 import ServicesPage from "./pages/ServicesPage";
 import Classes from "./pages/ClassesPage";
-import ProductsPage from "./pages/ProductPage";
 import ProductDetails from "./pages/ProductDetails";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
@@ -36,6 +35,7 @@ import ProfilePage from "./pages/ProfilePage";
 import BlogPage from "./pages/BlogPage";
 import ServiceBooking from "./pages/ServiceBooking";
 import Services from "./components/home/Services";
+import ProductsPage from "./pages/ProductsPage";
 
 
 // Protected Route Component
