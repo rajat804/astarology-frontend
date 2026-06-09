@@ -127,7 +127,7 @@ const ProductFormModal = ({ isOpen, onClose, editingProduct, onCreate, onUpdate 
             <HiOutlineX className="w-5 h-5" />
           </button>
         </div>
-        
+
         <div className="space-y-4">
           {/* Basic Information */}
           <div className="grid grid-cols-2 gap-4">
@@ -151,10 +151,12 @@ const ProductFormModal = ({ isOpen, onClose, editingProduct, onCreate, onUpdate 
               >
                 <option value="Rudraksha">Rudraksha</option>
                 <option value="Mala">Mala</option>
-                <option value="Rare">Rare</option>
-                <option value="Necklace">Necklace</option>
-                <option value="108 Mala">108 Mala</option>
                 <option value="Bracelet">Bracelet</option>
+                <option value="Necklace">Necklace</option>
+                <option value="Gemstone">Gemstone</option>
+                <option value="Spiritual Tools">Spiritual Tools</option>
+                <option value="Rare Items">Rare Items</option>
+                <option value="108 Mala">108 Mala</option>
               </select>
             </div>
           </div>
@@ -188,7 +190,7 @@ const ProductFormModal = ({ isOpen, onClose, editingProduct, onCreate, onUpdate 
           {/* Images Section */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Product Images *</label>
-            <ImageUploader 
+            <ImageUploader
               images={formData.images}
               setImages={handleImageChange}
               multiple={true}
@@ -205,9 +207,8 @@ const ProductFormModal = ({ isOpen, onClose, editingProduct, onCreate, onUpdate 
                     <button
                       type="button"
                       onClick={() => handleMainImageChange(img)}
-                      className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition ${
-                        formData.image === img ? 'border-red-500 shadow-md' : 'border-orange-200'
-                      }`}
+                      className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition ${formData.image === img ? 'border-red-500 shadow-md' : 'border-orange-200'
+                        }`}
                     >
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
@@ -257,7 +258,7 @@ const ProductFormModal = ({ isOpen, onClose, editingProduct, onCreate, onUpdate 
               className="w-full px-4 py-2 border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea
