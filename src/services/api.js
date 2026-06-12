@@ -82,9 +82,16 @@ api.interceptors.response.use(
 // ==================== AUTH APIs ====================
 export const register = async (userData) => {
   const response = await api.post('/auth/register', userData);
+  console.log('Register response:', response.data);
+  
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
+    const userInfo = {
+      _id: response.data._id,
+      fullName: response.data.fullName,
+      email: response.data.email
+    };
+    localStorage.setItem('user', JSON.stringify(userInfo));
     localStorage.setItem('loginTime', Date.now().toString());
   }
   return response.data;
@@ -92,23 +99,58 @@ export const register = async (userData) => {
 
 export const login = async (credentials) => {
   const response = await api.post('/auth/login', credentials);
+  console.log('Login response:', response.data);
+  
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
+    const userInfo = {
+      _id: response.data._id,
+      fullName: response.data.fullName,
+      email: response.data.email
+    };
+    localStorage.setItem('user', JSON.stringify(userInfo));
     localStorage.setItem('loginTime', Date.now().toString());
   }
   return response.data;
 };
 
-export const forgotPassword = async (email) => {
-  const response = await api.post('/auth/forgot-password', { email });
+// For users who can't login - temporary fix route
+export const fixUserPassword = async (email, newPassword) => {
+  const response = await api.post('/auth/fix-password', { email, newPassword });
   return response.data;
 };
 
-export const resetPassword = async (data) => {
-  const response = await api.post('/auth/reset-password', data);
-  return response.data;
+// Forgot Password
+export const forgotPassword = async (email) => {
+  try {
+    const response = await api.post('/auth/forgot-password', { email });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { msg: 'Network error' };
+  }
 };
+
+// Reset Password
+export const resetPassword = async (data) => {
+  try {
+    const response = await api.post('/auth/reset-password', data);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { msg: 'Network error' };
+  }
+};
+
+// Resend OTP
+export const resendOTP = async (email) => {
+  try {
+    const response = await api.post('/auth/resend-otp', { email });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { msg: 'Network error' };
+  }
+};
+
+
 
 export const getCurrentUser = async () => {
   const response = await api.get('/auth/me');
@@ -537,5 +579,6 @@ export const markNotificationRead = async (notificationId) => {
   const response = await api.put(`/notifications/${notificationId}/read`);
   return response.data;
 };
+
 
 export default api;
