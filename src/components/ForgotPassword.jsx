@@ -12,6 +12,7 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (!email.trim()) {
       toast.error('Please enter your email');
       return;
@@ -23,7 +24,8 @@ const ForgotPassword = () => {
       toast.success(response.msg || 'OTP sent to your email');
       navigate('/reset-password', { state: { email } });
     } catch (error) {
-      console.error('Forgot password error:', error);
+      toast.error(error.msg || 'Failed to send OTP');
+      console.error('Error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -57,6 +59,7 @@ const ForgotPassword = () => {
                   required
                 />
               </div>
+              <p className="text-xs text-gray-500 mt-1">Enter your registered email address</p>
             </div>
 
             <motion.button
