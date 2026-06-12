@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { HiOutlineLockClosed, HiOutlineKey, HiOutlineEye, HiOutlineEyeOff, HiOutlineArrowLeft } from 'react-icons/hi';
+import { 
+  HiOutlineLockClosed, 
+  HiOutlineKey, 
+  HiOutlineEye, 
+  HiOutlineEyeOff, 
+  HiOutlineArrowLeft,
+  HiOutlineRefresh 
+} from 'react-icons/hi';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { resetPassword } from '../services/api';
+import { resetPassword, resendOTP } from '../services/api';
 import toast from 'react-hot-toast';
 
 const ResetPassword = () => {
@@ -12,15 +19,34 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [timer, setTimer] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
   const email = location.state?.email || '';
 
+  useEffect(() => {
+    if (!email) {
+      toast.error('Please request OTP first');
+      navigate('/forgot-password');
+    }
+  }, [email, navigate]);
+
+  // Resend timer
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!otp.trim()) {
-      toast.error('Please enter the OTP');
+    if (!otp.trim() || otp.length !== 6) {
+      toast.error('Please enter valid 6-digit OTP');
       return;
     }
     if (!password.trim()) {
@@ -43,17 +69,51 @@ const ResetPassword = () => {
         otp,
         password,
       });
-      toast.success(response.msg || 'Password reset successful!');
-      navigate('/auth');
+      
+      if (response.success) {
+        toast.success(response.msg || 'Password reset successful!');
+        setTimeout(() => {
+          navigate('/auth');
+        }, 2000);
+      } else {
+        toast.error(response.msg || 'Failed to reset password');
+      }
     } catch (error) {
-      console.error('Reset password error:', error);
+      console.error('Reset error:', error);
+      const errorMsg = error.msg || error.message || 'Failed to reset password';
+      toast.error(errorMsg);
+      
+      // If OTP expired or not found, redirect to forgot password
+      if (errorMsg.includes('OTP') || errorMsg.includes('expired')) {
+        setTimeout(() => {
+          navigate('/forgot-password');
+        }, 2000);
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleResendOTP = async () => {
+    if (timer > 0) {
+      toast.error(`Please wait ${timer} seconds`);
+      return;
+    }
+
+    setIsResending(true);
+    try {
+      const response = await resendOTP(email);
+      toast.success(response.msg || 'New OTP sent to your email');
+      setTimer(60);
+    } catch (error) {
+      toast.error(error.msg || 'Failed to resend OTP');
+      console.error('Resend error:', error);
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   if (!email) {
-    navigate('/forgot-password');
     return null;
   }
 
@@ -79,12 +139,24 @@ const ResetPassword = () => {
                 <input
                   type="text"
                   value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                   placeholder="Enter 6-digit OTP"
                   maxLength={6}
                   className="w-full pl-10 pr-4 py-3 border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
                   required
+                  autoComplete="off"
                 />
+              </div>
+              <div className="mt-2 text-right">
+                <button
+                  type="button"
+                  onClick={handleResendOTP}
+                  disabled={isResending || timer > 0}
+                  className="text-sm text-red-600 hover:text-red-700 disabled:text-gray-400 disabled:cursor-not-allowed inline-flex items-center gap-1"
+                >
+                  <HiOutlineRefresh className={`w-4 h-4 ${isResending ? 'animate-spin' : ''}`} />
+                  {timer > 0 ? `Resend in ${timer}s` : 'Resend OTP'}
+                </button>
               </div>
             </div>
 
@@ -108,6 +180,7 @@ const ResetPassword = () => {
                   {showPassword ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
                 </button>
               </div>
+              <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
             </div>
 
             <div>
@@ -137,7 +210,7 @@ const ResetPassword = () => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center gap-2">
