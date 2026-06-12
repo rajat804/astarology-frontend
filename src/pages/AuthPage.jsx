@@ -70,74 +70,81 @@ const AuthPage = () => {
       let response;
       
       if (isLogin) {
+        // LOGIN REQUEST
         response = await loginAPI({
           email: formData.email,
           password: formData.password,
         });
-        console.log('Login API Response:', response);
         
-        // Handle different response structures
-        let userData;
-        let token;
+        console.log('Login Response:', response);
         
+        // ✅ FIXED: Handle your backend's response structure
         if (response.success && response.token) {
-          userData = response.user || {
+          // Your backend returns { success: true, token, _id, fullName, email }
+          const userData = {
             _id: response._id,
             fullName: response.fullName,
             email: response.email
           };
-          token = response.token;
+          authLogin(userData, response.token);
+          toast.success(`Welcome back, ${response.fullName || 'User'}!`);
+          navigate('/');
         } else if (response.token) {
-          userData = {
-            _id: response._id || response.user?._id,
-            fullName: response.fullName || response.user?.fullName || formData.email.split('@')[0],
-            email: response.email || response.user?.email || formData.email
+          // Fallback structure
+          const userData = {
+            _id: response._id,
+            fullName: response.fullName || formData.email.split('@')[0],
+            email: response.email || formData.email
           };
-          token = response.token;
+          authLogin(userData, response.token);
+          toast.success('Login successful!');
+          navigate('/');
         } else {
-          throw new Error('Invalid response from server');
+          throw new Error(response.message || 'Invalid response from server');
         }
-        
-        authLogin(userData, token);
-        toast.success('Login successful!');
-        navigate('/');
       } else {
+        // REGISTER REQUEST
         response = await registerAPI({
           fullName: formData.fullName,
           email: formData.email,
           password: formData.password,
         });
-        console.log('Register API Response:', response);
         
-        // Handle different response structures
-        let userData;
-        let token;
+        console.log('Register Response:', response);
         
+        // ✅ FIXED: Handle your backend's response structure
         if (response.success && response.token) {
-          userData = response.user || {
+          // Your backend returns { success: true, token, _id, fullName, email }
+          const userData = {
             _id: response._id,
             fullName: response.fullName,
             email: response.email
           };
-          token = response.token;
+          authLogin(userData, response.token);
+          toast.success(`Welcome to Nakshatra Ganak, ${response.fullName || formData.fullName}!`);
+          navigate('/');
         } else if (response.token) {
-          userData = {
-            _id: response._id || response.user?._id,
-            fullName: response.fullName || response.user?.fullName || formData.fullName,
-            email: response.email || response.user?.email || formData.email
+          // Fallback structure
+          const userData = {
+            _id: response._id,
+            fullName: response.fullName || formData.fullName,
+            email: response.email || formData.email
           };
-          token = response.token;
+          authLogin(userData, response.token);
+          toast.success('Account created successfully!');
+          navigate('/');
         } else {
-          throw new Error('Invalid response from server');
+          throw new Error(response.message || 'Invalid response from server');
         }
-        
-        authLogin(userData, token);
-        toast.success('Account created successfully!');
-        navigate('/');
       }
     } catch (error) {
       console.error('Auth error:', error);
-      toast.error(error.response?.data?.message || error.message || 'Authentication failed');
+      // ✅ Better error message handling
+      const errorMsg = error.response?.data?.message || 
+                      error.response?.data?.msg || 
+                      error.message || 
+                      'Authentication failed';
+      toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }
