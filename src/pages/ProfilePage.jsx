@@ -13,9 +13,9 @@ const ProfilePage = () => {
   const [selectedKundli, setSelectedKundli] = useState(null);
   const [showKundliModal, setShowKundliModal] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const [activeModalTab, setActiveModalTab] = useState('kundli'); // 'kundli' or 'panchang'
+  const [activeModalTab, setActiveModalTab] = useState('kundli');
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://nakshatraganak-backend.vercel.app/api';
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   const api = axios.create({ baseURL: API_BASE_URL });
   api.interceptors.request.use((config) => {
@@ -37,33 +37,28 @@ const ProfilePage = () => {
   }, []);
 
   const fetchPurchasedKundlis = async () => {
-  try {
-    setLoading(true);
-    const res = await api.get('/astrology/my-purchased-kundlis');
-    console.log('📊 API Response:', res.data);
-    
-    if (res.data.success) {
-      // ✅ REVERSE ORDER: Index 13 se 0 tak show karega (Latest first)
-      const kundlis = (res.data.kundlis || []);
-      const reversedKundlis = [...kundlis].reverse(); // Reverse the array
+    try {
+      setLoading(true);
+      const res = await api.get('/astrology/my-purchased-kundlis');
+      console.log('📊 API Response:', res.data);
       
-      console.log(`✅ Found ${reversedKundlis.length} kundlis`);
-      console.log(`First item (Latest):`, reversedKundlis[0]?.purchasedAt);
-      console.log(`Last item (Oldest):`, reversedKundlis[reversedKundlis.length - 1]?.purchasedAt);
-      
-      setPurchasedKundlis(reversedKundlis);
-    } else {
-      setError(res.data.message || 'Failed to load kundlis');
+      if (res.data.success) {
+        // Reverse order - latest first
+        const kundlis = (res.data.kundlis || []);
+        const reversedKundlis = [...kundlis].reverse();
+        setPurchasedKundlis(reversedKundlis);
+        console.log(`✅ Found ${reversedKundlis.length} kundlis`);
+      } else {
+        setError(res.data.message || 'Failed to load kundlis');
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      setError('Failed to load your kundlis');
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error('Error:', err);
-    setError('Failed to load your kundlis');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
- 
   const getValue = (obj, keys, defaultValue = 'N/A') => {
     if (!obj) return defaultValue;
     const keyArray = Array.isArray(keys) ? keys : [keys];
@@ -82,35 +77,37 @@ const ProfilePage = () => {
   };
 
   const downloadPDF = async (kundli) => {
-    setDownloading(true);
-    try {
-      const res = await api.post('/astrology/download-pdf', {
-        kundliData: kundli.kundliData,
-        panchangData: kundli.panchangData,
-        userDetails: {
-          name: user?.fullName || 'User',
-          email: user?.email || '',
-          birthDetails: kundli.birthDetails
-        }
-      }, { responseType: 'blob' });
-
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `kundli_${Date.now()}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-
-      toast.success('PDF downloaded successfully!');
-    } catch (err) {
-      console.error('Download error:', err);
-      toast.error('Failed to download PDF');
-    } finally {
-      setDownloading(false);
-    }
-  };
+  setDownloading(true);
+  toast.loading('Generating PDF...', { id: 'pdf' });
+  
+  try {
+    const response = await api.post('/astrology/download-pdf', {
+      kundliData: kundli.kundliData,
+      panchangData: kundli.panchangData,
+      userDetails: {
+        name: user?.fullName || 'User',
+        email: user?.email || '',
+        birthDetails: kundli.birthDetails
+      }
+    }, { responseType: 'blob' });
+    
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `kundli_${user?.fullName || 'User'}_${Date.now()}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    
+    toast.success('PDF downloaded successfully!', { id: 'pdf' });
+  } catch (err) {
+    console.error('Download error:', err);
+    toast.error('Failed to download PDF', { id: 'pdf' });
+  } finally {
+    setDownloading(false);
+  }
+};
 
   const formatDateTime = (dateString) => {
     if (!dateString) return 'N/A';
@@ -188,19 +185,19 @@ const ProfilePage = () => {
                   <span style={styles.kundliDate}>{formatDateTime(kundli.purchasedAt)}</span>
                 </div>
                 <div style={styles.kundliDetails}>
-                  <div><strong>📅 DOB:</strong> {kundli.birthDetails?.date}/{kundli.birthDetails?.month}/{kundli.birthDetails?.year}</div>
-                  <div><strong>⏰ Time:</strong> {kundli.birthDetails?.hour}:{String(kundli.birthDetails?.minute || 0).padStart(2, '0')}</div>
-                  <div><strong>📍 Location:</strong> {kundli.birthDetails?.latitude}, {kundli.birthDetails?.longitude}</div>
-                  <div><strong>🌅 Lagna:</strong> {getValue(kundli.kundliData, ['ascendant_sign', 'lagna', 'ascendant'], 'N/A')}</div>
-                  <div><strong>⭐ Rashi:</strong> {getValue(kundli.kundliData, ['sign', 'rashi', 'moon_sign'], 'N/A')}</div>
-                  <div><strong>⭐ Nakshatra:</strong> {getValue(kundli.kundliData, ['nakshatra', 'Naksahtra'], 'N/A')}</div>
+                  <p><strong>📅 DOB:</strong> {kundli.birthDetails?.date}/{kundli.birthDetails?.month}/{kundli.birthDetails?.year}</p>
+                  <p><strong>⏰ Time:</strong> {kundli.birthDetails?.hour}:{String(kundli.birthDetails?.minute || 0).padStart(2, '0')}</p>
+                  <p><strong>📍 Location:</strong> {kundli.birthDetails?.latitude}, {kundli.birthDetails?.longitude}</p>
+                  <p><strong>🌅 Lagna:</strong> {getValue(kundli.kundliData, ['ascendant_sign', 'lagna', 'ascendant'], 'N/A')}</p>
+                  <p><strong>⭐ Rashi:</strong> {getValue(kundli.kundliData, ['sign', 'rashi', 'moon_sign'], 'N/A')}</p>
+                  <p><strong>⭐ Nakshatra:</strong> {getValue(kundli.kundliData, ['nakshatra', 'Naksahtra'], 'N/A')}</p>
                 </div>
                 <div style={styles.kundliActions}>
                   <button onClick={() => viewKundliDetails(kundli)} style={styles.viewBtn}>
                     📊 View Details
                   </button>
                   <button onClick={() => downloadPDF(kundli)} disabled={downloading} style={styles.downloadBtn}>
-                    {downloading ? '...' : '📥 Download PDF'}
+                    {downloading ? 'Generating...' : '📥 Download PDF'}
                   </button>
                 </div>
               </div>
@@ -208,7 +205,7 @@ const ProfilePage = () => {
           </div>
         )}
 
-        {/* Kundli Details Modal - COMPLETE VIEW */}
+        {/* Kundli Details Modal */}
         {showKundliModal && selectedKundli && (
           <div style={styles.modalOverlay} onClick={() => setShowKundliModal(false)}>
             <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -220,16 +217,14 @@ const ProfilePage = () => {
               {/* Modal Tabs */}
               <div style={styles.modalTabs}>
                 <button
-                  className={activeModalTab === 'kundli' ? 'active' : ''}
                   onClick={() => setActiveModalTab('kundli')}
-                  style={{ ...styles.tabBtn, ...(activeModalTab === 'kundli' ? styles.tabActive : {}) }}
+                  style={activeModalTab === 'kundli' ? styles.tabActive : styles.tabBtn}
                 >
                   🔮 Kundli Details
                 </button>
                 <button
-                  className={activeModalTab === 'panchang' ? 'active' : ''}
                   onClick={() => setActiveModalTab('panchang')}
-                  style={{ ...styles.tabBtn, ...(activeModalTab === 'panchang' ? styles.tabActive : {}) }}
+                  style={activeModalTab === 'panchang' ? styles.tabActive : styles.tabBtn}
                 >
                   📅 Panchang
                 </button>
@@ -237,7 +232,6 @@ const ProfilePage = () => {
 
               <div style={styles.modalBody}>
                 {activeModalTab === 'kundli' ? (
-                  // ========== KUNDLI DETAILS ==========
                   <>
                     {/* Birth Details */}
                     <div style={styles.modalSection}>
@@ -311,7 +305,7 @@ const ProfilePage = () => {
                           <thead>
                             <tr><th>Planet</th><th>Sign</th><th>Degree</th><th>House</th></tr>
                           </thead>
-                          <tbody className='text-center'>
+                          <tbody>
                             {selectedKundli.kundliData?.planets && Object.entries(selectedKundli.kundliData.planets).map(([planet, info]) => (
                               <tr key={planet}>
                                 <td>{planet.toUpperCase()}</td>
@@ -333,7 +327,7 @@ const ProfilePage = () => {
                           <thead>
                             <tr><th>House</th><th>Sign</th><th>Lord</th></tr>
                           </thead>
-                          <tbody className='text-center'>
+                          <tbody>
                             {selectedKundli.kundliData?.houses && selectedKundli.kundliData.houses.slice(0, 12).map((house, i) => (
                               <tr key={i}>
                                 <td>House {i + 1}</td>
@@ -384,7 +378,7 @@ const ProfilePage = () => {
 
               <div style={styles.modalFooter}>
                 <button onClick={() => downloadPDF(selectedKundli)} disabled={downloading} style={styles.downloadBtnModal}>
-                  {downloading ? 'Downloading...' : '📥 Download Full PDF Report'}
+                  {downloading ? 'Generating...' : '📥 Download Full PDF Report'}
                 </button>
                 <button onClick={() => setShowKundliModal(false)} style={styles.closeModalBtn}>Close</button>
               </div>
@@ -425,8 +419,6 @@ const styles = {
   kundliActions: { padding: '15px', display: 'flex', gap: '10px', borderTop: '1px solid #eee' },
   viewBtn: { flex: 1, padding: '10px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
   downloadBtn: { flex: 1, padding: '10px', background: '#28a745', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
-
-  // Modal Styles
   modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 },
   modalContent: { background: 'white', borderRadius: '20px', maxWidth: '800px', width: '90%', maxHeight: '85vh', overflow: 'auto' },
   modalHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', borderBottom: '1px solid #eee', position: 'sticky', top: 0, background: 'white', zIndex: 10 },
@@ -444,7 +436,7 @@ const styles = {
   vedicGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', fontSize: '13px' },
   panchangGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', fontSize: '14px' },
   tableWrapper: { overflowX: 'auto' },
-  modalTable: { width: '100%', borderCollapse: 'collapse', fontSize: '12px' },
+  modalTable: { width: '100%', borderCollapse: 'collapse', fontSize: '12px', border: '1px solid #ddd' },
   dashaBox: { background: '#fff3cd', padding: '12px', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px' },
   downloadBtnModal: { flex: 1, padding: '12px', background: '#28a745', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' },
   closeModalBtn: { flex: 1, padding: '12px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }
