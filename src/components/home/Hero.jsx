@@ -31,27 +31,27 @@ const Hero = () => {
     const checkDevice = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      
+
       // Check for low-end devices (older phones, tablets)
       const isSlow = navigator.deviceMemory ? navigator.deviceMemory < 4 : false;
       const isLowEnd = mobile && isSlow;
       setIsLowEndDevice(isLowEnd);
     };
-    
+
     checkDevice();
     window.addEventListener('resize', checkDevice);
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
   // Reduce floating icons on mobile and low-end devices
-  const floatingIcons = isLowEndDevice 
+  const floatingIcons = isLowEndDevice
     ? [
-        { Icon: FaSun, size: 28, top: "10%", left: "5%", color: "#f59e0b" },
-        { Icon: GiCrystalBall, size: 32, bottom: "20%", left: "3%", color: "#a855f7" },
-        { Icon: FaStar, size: 20, top: "70%", left: "15%", color: "#eab308" },
-      ]
+      { Icon: FaSun, size: 28, top: "10%", left: "5%", color: "#f59e0b" },
+      { Icon: GiCrystalBall, size: 32, bottom: "20%", left: "3%", color: "#a855f7" },
+      { Icon: FaStar, size: 20, top: "70%", left: "15%", color: "#eab308" },
+    ]
     : isMobile
-    ? [
+      ? [
         { Icon: FaSun, size: 28, top: "10%", left: "5%", delay: 0, duration: 20, color: "#f59e0b" },
         { Icon: FaMoon, size: 24, top: "15%", right: "8%", delay: 2, duration: 22, color: "#94a3b8" },
         { Icon: GiCrystalBall, size: 32, bottom: "20%", left: "3%", delay: 1, duration: 18, color: "#a855f7" },
@@ -59,7 +59,7 @@ const Hero = () => {
         { Icon: FaStar, size: 18, top: "70%", left: "15%", delay: 1.5, duration: 16, color: "#eab308" },
         { Icon: FaRing, size: 22, top: "60%", right: "25%", delay: 0.8, duration: 20, color: "#f43f5e" },
       ]
-    : [
+      : [
         { Icon: FaSun, size: 32, top: "10%", left: "5%", delay: 0, duration: 20, color: "#f59e0b" },
         { Icon: FaMoon, size: 28, top: "15%", right: "8%", delay: 2, duration: 22, color: "#94a3b8" },
         { Icon: GiCrystalBall, size: 40, bottom: "20%", left: "3%", delay: 1, duration: 18, color: "#a855f7" },
@@ -116,7 +116,7 @@ const Hero = () => {
               </div>
             );
           }
-          
+
           // Use Framer Motion for desktop with reduced complexity
           return (
             <motion.div
@@ -218,9 +218,15 @@ const Hero = () => {
 
             <div className="flex flex-wrap gap-4 sm:gap-6 items-center mt-4">
               <div className="flex items-center gap-2 sm:gap-3 bg-white/70 px-3 py-2 rounded-lg shadow-sm backdrop-blur-sm">
-                <HiOutlineUser className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
+                <div className="flex items-center gap-0.5 text-yellow-400">
+                  <FaStar className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <FaStar className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <FaStar className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <FaStar className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <FaStar className="w-4 h-4 sm:w-5 sm:h-5" />
+                </div>
                 <div>
-                  <div className="text-xs sm:text-sm font-semibold">4.9/5</div>
+                  <div className="text-xs sm:text-sm font-semibold">5.0</div>
                   <div className="text-[10px] sm:text-xs text-gray-500">Avg. rating</div>
                 </div>
               </div>
@@ -228,7 +234,7 @@ const Hero = () => {
               <div className="flex items-center gap-2 sm:gap-3 bg-white/70 px-3 py-2 rounded-lg shadow-sm backdrop-blur-sm">
                 <GiCrystalBall className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
                 <div>
-                  <div className="text-xs sm:text-sm font-semibold">2500+</div>
+                  <div className="text-xs sm:text-sm font-semibold">70000+</div>
                   <div className="text-[10px] sm:text-xs text-gray-500">Clients served</div>
                 </div>
               </div>
