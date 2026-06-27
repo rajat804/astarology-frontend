@@ -1,6 +1,6 @@
 // components/common/CTA.jsx
 import React from "react";
-
+import { Link } from "react-router-dom";
 const CTA = ({ children, className = "", ...rest }) => (
   <button
     {...rest}
@@ -9,7 +9,9 @@ const CTA = ({ children, className = "", ...rest }) => (
       className
     }
   >
-    {children}
+    <Link to={'/contact'}>
+     {children}
+    </Link>
   </button>
 );
 
