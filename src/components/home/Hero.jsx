@@ -1,5 +1,6 @@
 // components/home/Hero.jsx
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   HiOutlineShoppingCart,
@@ -207,10 +208,12 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-wrap gap-3 sm:gap-4 items-center">
-              <CTA>Book a Consultation</CTA>
-              <button className="px-4 sm:px-5 py-2 rounded-2xl border border-red-200 text-red-600 font-semibold hover:bg-red-50 transition text-sm sm:text-base">
+              <CTA>
+                <Link to={'/contact'}>Book a Consultation</Link>
+              </CTA>
+              <Link to={'/products'} className="px-4 sm:px-5 py-2 rounded-2xl border border-red-200 text-red-600 font-semibold hover:bg-red-50 transition text-sm sm:text-base">
                 Browse Products
-              </button>
+              </Link>
             </div>
 
             <div className="flex flex-wrap gap-4 sm:gap-6 items-center mt-4">
@@ -274,9 +277,9 @@ const Hero = () => {
                   <div className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">✨ New Moon Special ✨</div>
                   <div className="font-semibold text-gray-800 text-sm sm:text-base">First consultation: 20% off</div>
                   <div className="text-[10px] sm:text-xs text-gray-500 mt-1">Use code: WELCOME20</div>
-                  <button className="mt-3 sm:mt-4 px-4 sm:px-5 py-1.5 sm:py-2 bg-red-500 text-white rounded-lg sm:rounded-xl font-semibold hover:bg-red-600 transition text-sm sm:text-base">
+                  {/* <button className="mt-3 sm:mt-4 px-4 sm:px-5 py-1.5 sm:py-2 bg-red-500 text-white rounded-lg sm:rounded-xl font-semibold hover:bg-red-600 transition text-sm sm:text-base">
                     Claim Offer
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
