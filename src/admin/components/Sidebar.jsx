@@ -16,17 +16,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, tab, setTab, logout }) => {
     { key: "overview", label: "Overview", icon: <FaChartLine /> },
     { key: "services", label: "Services", icon: <FaBook /> },
     { key: "products", label: "Products", icon: <FaBoxOpen /> },
-  { key: "blog", label: "Blog", icon: <HiOutlineDocumentText /> },
-    { key: "classes", label: "Classes", icon: <HiOutlineUserCircle /> },
+    { key: "blog", label: "Blog", icon: <HiOutlineDocumentText /> },
+    // { key: "classes", label: "Classes", icon: <HiOutlineUserCircle /> },
     { key: "bookings", label: "Bookings", icon: <HiOutlineCalendar /> },
     { key: "orders", label: "Orders", icon: <HiOutlineShoppingBag /> },
-    { key: "content", label: "Content", icon: <HiOutlineDocumentText /> },
-    { key: "reports", label: "Reports", icon: <HiOutlineChartBar /> },
+    // { key: "content", label: "Content", icon: <HiOutlineDocumentText /> },
+    // { key: "reports", label: "Reports", icon: <HiOutlineChartBar /> },
     { key: "users", label: "Users", icon: <HiOutlineUsers /> },
   ];
 
   return (
-    <motion.aside 
+    <motion.aside
       animate={{ width: sidebarOpen ? 280 : 80 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className="bg-white border-r border-orange-100 shadow-lg relative z-20 flex flex-col"
@@ -53,8 +53,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, tab, setTab, logout }) => {
             )}
           </AnimatePresence>
         </div>
-        <button 
-          onClick={() => setSidebarOpen(!sidebarOpen)} 
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 rounded-lg hover:bg-red-50 transition shrink-0"
         >
           <HiOutlineMenu className="w-5 h-5 text-gray-600" />
@@ -67,11 +67,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, tab, setTab, logout }) => {
           <button
             key={item.key}
             onClick={() => setTab(item.key)}
-            className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${
-              tab === item.key
+            className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${tab === item.key
                 ? "bg-red-50 text-red-600 shadow-sm"
                 : "text-gray-600 hover:bg-red-50 hover:text-red-600"
-            }`}
+              }`}
           >
             <div className={`w-5 h-5 shrink-0 ${tab === item.key ? "text-red-500" : ""}`}>
               {item.icon}
