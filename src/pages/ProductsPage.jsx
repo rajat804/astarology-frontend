@@ -295,7 +295,7 @@ const ProductsPage = () => {
                           e.target.src = 'https://via.placeholder.com/400x400?text=No+Image';
                         }}
                       />
-                      {product.inStock && (
+                      {/* {product.inStock && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -305,7 +305,7 @@ const ProductsPage = () => {
                         >
                           <ShoppingCart size={18} />
                         </button>
-                      )}
+                      )} */}
                     </div>
 
                     <div className="p-4">
